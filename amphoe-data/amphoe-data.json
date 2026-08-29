@@ -1,0 +1,1391 @@
+{
+  "9101": {
+    "name": "เมืองสตูล",
+    "code": "9101",
+    "apiData": {
+      "ok": true,
+      "rows": [
+        {
+          "jsonc": [
+            {
+              "type": "C",
+              "position": "0",
+              "column_name": "name"
+            },
+            {
+              "type": "N",
+              "position": "1",
+              "column_name": "total",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#9dd2f7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "2",
+              "column_name": "f0",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#f7f09d",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "3",
+              "column_name": "f1",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#f7f09d",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "4",
+              "column_name": "f2",
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#eed10e",
+              "sum_type": "SUM",
+              "digit_number": "0"
+            },
+            {
+              "type": "N",
+              "position": "5",
+              "column_name": "f3",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#e4c4d7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "column_name": "f4",
+              "position": "6",
+              "digit_number": 0,
+              "number_format": 1,
+              "is_chart": 0,
+              "bgcolor": "#ae4d86",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "7",
+              "column_name": "f5",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#9dd2f7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "8",
+              "column_name": "f6",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#cefcc5",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "9",
+              "column_name": "f7",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#cefcc5",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "column_name": "f8",
+              "position": "10",
+              "digit_number": 0,
+              "number_format": 1,
+              "is_chart": 1,
+              "bgcolor": "#33ff00",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "11",
+              "column_name": "f9",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#e4c4d7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "column_name": "other",
+              "position": "12",
+              "digit_number": 0,
+              "number_format": 1,
+              "is_chart": 0,
+              "bgcolor": "#ae4d86",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "13",
+              "column_name": "x60_x84",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#9dd2f7",
+              "sum_type": "SUM"
+            }
+          ],
+          "data": [
+            {
+              "name": "0 : 1B030",
+              "total": "1",
+              "f0": "0",
+              "f1": "0",
+              "f2": "0",
+              "f3": "1",
+              "f4": "0",
+              "f5": "0",
+              "f6": "0",
+              "f7": "0",
+              "f8": "0",
+              "f9": "0",
+              "other": "0",
+              "x60_x84": "0"
+            },
+            {
+              "name": "1 : 1B031",
+              "total": "27",
+              "f0": "4",
+              "f1": "22",
+              "f2": "21",
+              "f3": "7",
+              "f4": "1",
+              "f5": "0",
+              "f6": "0",
+              "f7": "1",
+              "f8": "0",
+              "f9": "1",
+              "other": "0",
+              "x60_x84": "1"
+            },
+            {
+              "name": "3 : 1B033",
+              "total": "1",
+              "f0": "0",
+              "f1": "1",
+              "f2": "1",
+              "f3": "0",
+              "f4": "0",
+              "f5": "0",
+              "f6": "0",
+              "f7": "0",
+              "f8": "0",
+              "f9": "0",
+              "other": "0",
+              "x60_x84": "0"
+            }
+          ],
+          "datecom": "26 สิงหาคม 2569",
+          "source": 1,
+          "label": "smiv"
+        }
+      ],
+      "code": 200
+    },
+    "extractedAt": "2026-08-26T17:36:42.285Z"
+  },
+  "9102": {
+    "name": "กวนโดน",
+    "code": "9102",
+    "apiData": {
+      "ok": true,
+      "rows": [
+        {
+          "jsonc": [
+            {
+              "type": "C",
+              "position": "0",
+              "column_name": "name"
+            },
+            {
+              "type": "N",
+              "position": "1",
+              "column_name": "total",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#9dd2f7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "2",
+              "column_name": "f0",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#f7f09d",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "3",
+              "column_name": "f1",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#f7f09d",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "4",
+              "column_name": "f2",
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#eed10e",
+              "sum_type": "SUM",
+              "digit_number": "0"
+            },
+            {
+              "type": "N",
+              "position": "5",
+              "column_name": "f3",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#e4c4d7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "column_name": "f4",
+              "position": "6",
+              "digit_number": 0,
+              "number_format": 1,
+              "is_chart": 0,
+              "bgcolor": "#ae4d86",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "7",
+              "column_name": "f5",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#9dd2f7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "8",
+              "column_name": "f6",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#cefcc5",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "9",
+              "column_name": "f7",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#cefcc5",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "column_name": "f8",
+              "position": "10",
+              "digit_number": 0,
+              "number_format": 1,
+              "is_chart": 1,
+              "bgcolor": "#33ff00",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "11",
+              "column_name": "f9",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#e4c4d7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "column_name": "other",
+              "position": "12",
+              "digit_number": 0,
+              "number_format": 1,
+              "is_chart": 0,
+              "bgcolor": "#ae4d86",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "13",
+              "column_name": "x60_x84",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#9dd2f7",
+              "sum_type": "SUM"
+            }
+          ],
+          "data": [
+            {
+              "name": "0 : 1B030",
+              "total": "9",
+              "f0": "0",
+              "f1": "1",
+              "f2": "0",
+              "f3": "7",
+              "f4": "1",
+              "f5": "1",
+              "f6": "0",
+              "f7": "0",
+              "f8": "0",
+              "f9": "0",
+              "other": "1",
+              "x60_x84": "5"
+            },
+            {
+              "name": "1 : 1B031",
+              "total": "4",
+              "f0": "0",
+              "f1": "4",
+              "f2": "2",
+              "f3": "0",
+              "f4": "0",
+              "f5": "1",
+              "f6": "0",
+              "f7": "0",
+              "f8": "0",
+              "f9": "0",
+              "other": "0",
+              "x60_x84": "0"
+            }
+          ],
+          "datecom": "26 สิงหาคม 2569",
+          "source": 1,
+          "label": "smiv"
+        }
+      ],
+      "code": 200
+    },
+    "extractedAt": "2026-08-26T17:36:42.399Z"
+  },
+  "9103": {
+    "name": "ควนขนุน",
+    "code": "9103",
+    "apiData": {
+      "ok": true,
+      "rows": [
+        {
+          "jsonc": [
+            {
+              "type": "C",
+              "position": "0",
+              "column_name": "name"
+            },
+            {
+              "type": "N",
+              "position": "1",
+              "column_name": "total",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#9dd2f7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "2",
+              "column_name": "f0",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#f7f09d",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "3",
+              "column_name": "f1",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#f7f09d",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "4",
+              "column_name": "f2",
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#eed10e",
+              "sum_type": "SUM",
+              "digit_number": "0"
+            },
+            {
+              "type": "N",
+              "position": "5",
+              "column_name": "f3",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#e4c4d7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "column_name": "f4",
+              "position": "6",
+              "digit_number": 0,
+              "number_format": 1,
+              "is_chart": 0,
+              "bgcolor": "#ae4d86",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "7",
+              "column_name": "f5",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#9dd2f7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "8",
+              "column_name": "f6",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#cefcc5",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "9",
+              "column_name": "f7",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#cefcc5",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "column_name": "f8",
+              "position": "10",
+              "digit_number": 0,
+              "number_format": 1,
+              "is_chart": 1,
+              "bgcolor": "#33ff00",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "11",
+              "column_name": "f9",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#e4c4d7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "column_name": "other",
+              "position": "12",
+              "digit_number": 0,
+              "number_format": 1,
+              "is_chart": 0,
+              "bgcolor": "#ae4d86",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "13",
+              "column_name": "x60_x84",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#9dd2f7",
+              "sum_type": "SUM"
+            }
+          ],
+          "data": [
+            {
+              "name": "0 : 1B030",
+              "total": "3",
+              "f0": "0",
+              "f1": "3",
+              "f2": "2",
+              "f3": "1",
+              "f4": "0",
+              "f5": "0",
+              "f6": "0",
+              "f7": "0",
+              "f8": "0",
+              "f9": "0",
+              "other": "0",
+              "x60_x84": "0"
+            },
+            {
+              "name": "1 : 1B031",
+              "total": "26",
+              "f0": "2",
+              "f1": "19",
+              "f2": "20",
+              "f3": "7",
+              "f4": "1",
+              "f5": "1",
+              "f6": "0",
+              "f7": "0",
+              "f8": "0",
+              "f9": "0",
+              "other": "0",
+              "x60_x84": "0"
+            }
+          ],
+          "datecom": "26 สิงหาคม 2569",
+          "source": 1,
+          "label": "smiv"
+        }
+      ],
+      "code": 200
+    },
+    "extractedAt": "2026-08-26T17:36:42.523Z"
+  },
+  "9104": {
+    "name": "ท่าป่า",
+    "code": "9104",
+    "apiData": {
+      "ok": true,
+      "rows": [
+        {
+          "jsonc": [
+            {
+              "type": "C",
+              "position": "0",
+              "column_name": "name"
+            },
+            {
+              "type": "N",
+              "position": "1",
+              "column_name": "total",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#9dd2f7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "2",
+              "column_name": "f0",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#f7f09d",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "3",
+              "column_name": "f1",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#f7f09d",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "4",
+              "column_name": "f2",
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#eed10e",
+              "sum_type": "SUM",
+              "digit_number": "0"
+            },
+            {
+              "type": "N",
+              "position": "5",
+              "column_name": "f3",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#e4c4d7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "column_name": "f4",
+              "position": "6",
+              "digit_number": 0,
+              "number_format": 1,
+              "is_chart": 0,
+              "bgcolor": "#ae4d86",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "7",
+              "column_name": "f5",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#9dd2f7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "8",
+              "column_name": "f6",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#cefcc5",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "9",
+              "column_name": "f7",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#cefcc5",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "column_name": "f8",
+              "position": "10",
+              "digit_number": 0,
+              "number_format": 1,
+              "is_chart": 1,
+              "bgcolor": "#33ff00",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "11",
+              "column_name": "f9",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#e4c4d7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "column_name": "other",
+              "position": "12",
+              "digit_number": 0,
+              "number_format": 1,
+              "is_chart": 0,
+              "bgcolor": "#ae4d86",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "13",
+              "column_name": "x60_x84",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#9dd2f7",
+              "sum_type": "SUM"
+            }
+          ],
+          "data": [
+            {
+              "name": "2 : 1B032",
+              "total": "1",
+              "f0": "0",
+              "f1": "0",
+              "f2": "0",
+              "f3": "0",
+              "f4": "0",
+              "f5": "0",
+              "f6": "0",
+              "f7": "0",
+              "f8": "0",
+              "f9": "0",
+              "other": "1",
+              "x60_x84": "0"
+            }
+          ],
+          "datecom": "26 สิงหาคม 2569",
+          "source": 1,
+          "label": "smiv"
+        }
+      ],
+      "code": 200
+    },
+    "extractedAt": "2026-08-26T17:36:42.648Z"
+  },
+  "9105": {
+    "name": "ทุ่งหว้า",
+    "code": "9105",
+    "apiData": {
+      "ok": true,
+      "rows": [
+        {
+          "jsonc": [
+            {
+              "type": "C",
+              "position": "0",
+              "column_name": "name"
+            },
+            {
+              "type": "N",
+              "position": "1",
+              "column_name": "total",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#9dd2f7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "2",
+              "column_name": "f0",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#f7f09d",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "3",
+              "column_name": "f1",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#f7f09d",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "4",
+              "column_name": "f2",
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#eed10e",
+              "sum_type": "SUM",
+              "digit_number": "0"
+            },
+            {
+              "type": "N",
+              "position": "5",
+              "column_name": "f3",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#e4c4d7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "column_name": "f4",
+              "position": "6",
+              "digit_number": 0,
+              "number_format": 1,
+              "is_chart": 0,
+              "bgcolor": "#ae4d86",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "7",
+              "column_name": "f5",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#9dd2f7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "8",
+              "column_name": "f6",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#cefcc5",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "9",
+              "column_name": "f7",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#cefcc5",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "column_name": "f8",
+              "position": "10",
+              "digit_number": 0,
+              "number_format": 1,
+              "is_chart": 1,
+              "bgcolor": "#33ff00",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "11",
+              "column_name": "f9",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#e4c4d7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "column_name": "other",
+              "position": "12",
+              "digit_number": 0,
+              "number_format": 1,
+              "is_chart": 0,
+              "bgcolor": "#ae4d86",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "13",
+              "column_name": "x60_x84",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#9dd2f7",
+              "sum_type": "SUM"
+            }
+          ],
+          "data": [
+            {
+              "name": "0 : 1B030",
+              "total": "2",
+              "f0": "0",
+              "f1": "0",
+              "f2": "1",
+              "f3": "0",
+              "f4": "0",
+              "f5": "0",
+              "f6": "0",
+              "f7": "0",
+              "f8": "0",
+              "f9": "0",
+              "other": "1",
+              "x60_x84": "0"
+            },
+            {
+              "name": "1 : 1B031",
+              "total": "14",
+              "f0": "0",
+              "f1": "12",
+              "f2": "12",
+              "f3": "1",
+              "f4": "0",
+              "f5": "0",
+              "f6": "0",
+              "f7": "1",
+              "f8": "1",
+              "f9": "0",
+              "other": "0",
+              "x60_x84": "0"
+            },
+            {
+              "name": "2 : 1B032",
+              "total": "1",
+              "f0": "0",
+              "f1": "1",
+              "f2": "1",
+              "f3": "0",
+              "f4": "0",
+              "f5": "0",
+              "f6": "0",
+              "f7": "0",
+              "f8": "0",
+              "f9": "0",
+              "other": "0",
+              "x60_x84": "0"
+            },
+            {
+              "name": "3 : 1B033",
+              "total": "1561",
+              "f0": "0",
+              "f1": "29",
+              "f2": "22",
+              "f3": "42",
+              "f4": "5",
+              "f5": "1",
+              "f6": "0",
+              "f7": "3",
+              "f8": "0",
+              "f9": "1",
+              "other": "1473",
+              "x60_x84": "6"
+            }
+          ],
+          "datecom": "26 สิงหาคม 2569",
+          "source": 1,
+          "label": "smiv"
+        }
+      ],
+      "code": 200
+    },
+    "extractedAt": "2026-08-26T17:36:42.773Z"
+  },
+  "9106": {
+    "name": "มานัง",
+    "code": "9106",
+    "apiData": {
+      "ok": true,
+      "rows": [
+        {
+          "jsonc": [
+            {
+              "type": "C",
+              "position": "0",
+              "column_name": "name"
+            },
+            {
+              "type": "N",
+              "position": "1",
+              "column_name": "total",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#9dd2f7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "2",
+              "column_name": "f0",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#f7f09d",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "3",
+              "column_name": "f1",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#f7f09d",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "4",
+              "column_name": "f2",
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#eed10e",
+              "sum_type": "SUM",
+              "digit_number": "0"
+            },
+            {
+              "type": "N",
+              "position": "5",
+              "column_name": "f3",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#e4c4d7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "column_name": "f4",
+              "position": "6",
+              "digit_number": 0,
+              "number_format": 1,
+              "is_chart": 0,
+              "bgcolor": "#ae4d86",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "7",
+              "column_name": "f5",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#9dd2f7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "8",
+              "column_name": "f6",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#cefcc5",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "9",
+              "column_name": "f7",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#cefcc5",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "column_name": "f8",
+              "position": "10",
+              "digit_number": 0,
+              "number_format": 1,
+              "is_chart": 1,
+              "bgcolor": "#33ff00",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "11",
+              "column_name": "f9",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#e4c4d7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "column_name": "other",
+              "position": "12",
+              "digit_number": 0,
+              "number_format": 1,
+              "is_chart": 0,
+              "bgcolor": "#ae4d86",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "13",
+              "column_name": "x60_x84",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#9dd2f7",
+              "sum_type": "SUM"
+            }
+          ],
+          "data": [
+            {
+              "name": "0 : 1B030",
+              "total": "3",
+              "f0": "0",
+              "f1": "0",
+              "f2": "1",
+              "f3": "2",
+              "f4": "1",
+              "f5": "0",
+              "f6": "0",
+              "f7": "1",
+              "f8": "1",
+              "f9": "0",
+              "other": "0",
+              "x60_x84": "2"
+            },
+            {
+              "name": "1 : 1B031",
+              "total": "15",
+              "f0": "1",
+              "f1": "11",
+              "f2": "12",
+              "f3": "2",
+              "f4": "1",
+              "f5": "0",
+              "f6": "0",
+              "f7": "0",
+              "f8": "0",
+              "f9": "1",
+              "other": "0",
+              "x60_x84": "2"
+            },
+            {
+              "name": "2 : 1B032",
+              "total": "3",
+              "f0": "1",
+              "f1": "2",
+              "f2": "2",
+              "f3": "1",
+              "f4": "0",
+              "f5": "0",
+              "f6": "0",
+              "f7": "0",
+              "f8": "0",
+              "f9": "0",
+              "other": "0",
+              "x60_x84": "1"
+            },
+            {
+              "name": "3 : 1B033",
+              "total": "2",
+              "f0": "1",
+              "f1": "2",
+              "f2": "1",
+              "f3": "0",
+              "f4": "0",
+              "f5": "0",
+              "f6": "0",
+              "f7": "0",
+              "f8": "0",
+              "f9": "0",
+              "other": "0",
+              "x60_x84": "1"
+            }
+          ],
+          "datecom": "26 สิงหาคม 2569",
+          "source": 1,
+          "label": "smiv"
+        }
+      ],
+      "code": 200
+    },
+    "extractedAt": "2026-08-26T17:36:42.904Z"
+  },
+  "9107": {
+    "name": "ปากบาง",
+    "code": "9107",
+    "apiData": {
+      "ok": true,
+      "rows": [
+        {
+          "jsonc": [
+            {
+              "type": "C",
+              "position": "0",
+              "column_name": "name"
+            },
+            {
+              "type": "N",
+              "position": "1",
+              "column_name": "total",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#9dd2f7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "2",
+              "column_name": "f0",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#f7f09d",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "3",
+              "column_name": "f1",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#f7f09d",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "4",
+              "column_name": "f2",
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#eed10e",
+              "sum_type": "SUM",
+              "digit_number": "0"
+            },
+            {
+              "type": "N",
+              "position": "5",
+              "column_name": "f3",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#e4c4d7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "column_name": "f4",
+              "position": "6",
+              "digit_number": 0,
+              "number_format": 1,
+              "is_chart": 0,
+              "bgcolor": "#ae4d86",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "7",
+              "column_name": "f5",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#9dd2f7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "8",
+              "column_name": "f6",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#cefcc5",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "9",
+              "column_name": "f7",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#cefcc5",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "column_name": "f8",
+              "position": "10",
+              "digit_number": 0,
+              "number_format": 1,
+              "is_chart": 1,
+              "bgcolor": "#33ff00",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "11",
+              "column_name": "f9",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#e4c4d7",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "column_name": "other",
+              "position": "12",
+              "digit_number": 0,
+              "number_format": 1,
+              "is_chart": 0,
+              "bgcolor": "#ae4d86",
+              "sum_type": "SUM"
+            },
+            {
+              "type": "N",
+              "position": "13",
+              "column_name": "x60_x84",
+              "digit_number": 0,
+              "is_show": 1,
+              "is_chart": 0,
+              "bgcolor": "#9dd2f7",
+              "sum_type": "SUM"
+            }
+          ],
+          "data": [
+            {
+              "name": "1 : 1B031",
+              "total": "12",
+              "f0": "1",
+              "f1": "7",
+              "f2": "10",
+              "f3": "2",
+              "f4": "1",
+              "f5": "1",
+              "f6": "0",
+              "f7": "0",
+              "f8": "0",
+              "f9": "0",
+              "other": "0",
+              "x60_x84": "0"
+            },
+            {
+              "name": "2 : 1B032",
+              "total": "2",
+              "f0": "0",
+              "f1": "2",
+              "f2": "1",
+              "f3": "0",
+              "f4": "0",
+              "f5": "0",
+              "f6": "0",
+              "f7": "0",
+              "f8": "0",
+              "f9": "0",
+              "other": "0",
+              "x60_x84": "0"
+            },
+            {
+              "name": "3 : 1B033",
+              "total": "1",
+              "f0": "0",
+              "f1": "1",
+              "f2": "1",
+              "f3": "0",
+              "f4": "0",
+              "f5": "0",
+              "f6": "0",
+              "f7": "0",
+              "f8": "0",
+              "f9": "0",
+              "other": "0",
+              "x60_x84": "0"
+            }
+          ],
+          "datecom": "26 สิงหาคม 2569",
+          "source": 1,
+          "label": "smiv"
+        }
+      ],
+      "code": 200
+    },
+    "extractedAt": "2026-08-26T17:36:43.025Z"
+  }
+}

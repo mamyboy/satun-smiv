@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Flowly Motion Dashboard
 
-## Getting Started
+Next.js dashboard template inspired by a calm, modern project-management interface. The implementation uses Thai UI copy, responsive layouts, meaningful motion, keyboard search, interactive statistics, a live timer, and visual regression checks.
 
-First, run the development server:
+## Design direction
+
+- **Mood:** calm, capable, clean, optimistic
+- **Palette:** forest green, mint, clinical white, cool grey
+- **Visual signature:** striped analytics bars repeated in the progress gauge
+- **Layout:** fixed/collapsible sidebar + sticky top bar + modular card grid
+- **Motion:** staggered KPI entry, animated charts/gauge, restrained hover lift, dialog transitions, live state pulse
+- **Accessibility:** semantic regions, labels, focus-visible states, keyboard shortcut, `prefers-reduced-motion`
+
+## Main modules
+
+- `src/components/dashboard/dashboard-shell.tsx` — layout, cards, dialogs, timer, interactions
+- `src/lib/dashboard-data.ts` — typed mock dashboard data
+- `src/app/globals.css` — visual tokens, responsive grid, component styling
+- `tests/visual-check.mjs` — desktop/mobile Playwright verification
+
+## Libraries
+
+| Library | Purpose |
+|---|---|
+| Next.js 16 / React 19 | App Router and UI runtime |
+| Tailwind CSS 4 | CSS toolchain and future utility expansion |
+| Motion for React | entry choreography, micro-interactions, dialogs |
+| Recharts | responsive weekly analytics chart |
+| Lucide React | consistent accessible icons |
+| Playwright | real-browser desktop/mobile checks |
+
+## Run
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev -- --port 3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Verify
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npm run build
+npm run test:visual
+```
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Screenshots are written to `artifacts/desktop.png` and `artifacts/mobile.png`.

@@ -6,12 +6,22 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:visual": "node tests/visual-check.mjs",
+    "extract:indicator1": "node scripts/extract-indicator.js indicator1",
+    "extract:indicator2": "node scripts/extract-indicator.js indicator2",
+    "extract:indicator3": "node scripts/extract-indicator.js indicator3",
+    "extract:indicator4": "node scripts/extract-indicator.js indicator4",
+    "extract:indicator5": "node scripts/extract-indicator.js indicator5",
+    "extract:all": "node scripts/extract-indicator.js all"
   },
   "dependencies": {
+    "lucide-react": "^1.34.0",
+    "motion": "^13.1.1",
     "next": "16.3.3",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "recharts": "^3.10.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -20,7 +30,16 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.3",
+    "playwright": "^1.62.1",
     "tailwindcss": "^4",
     "typescript": "^5"
-  }
+  },
+  "description": "Next.js dashboard template inspired by a calm, modern project-management interface. The implementation uses Thai UI copy, responsive layouts, meaningful motion, keyboard search, interactive statistics, a live timer, and visual regression checks.",
+  "main": "extract-amphoe-data.js",
+  "directories": {
+    "test": "tests"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

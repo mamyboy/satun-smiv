@@ -1,0 +1,710 @@
+[
+  [
+    [
+      {
+        "text": "จังหวัด",
+        "colspan": 1,
+        "rowspan": 3,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วย SMI-V\nทั้งหมด(คน)\nถึงปัจจุบัน",
+        "colspan": 1,
+        "rowspan": 3,
+        "tag": "th"
+      },
+      {
+        "text": "จํานวนผู้ป่วย SMI-V ที่มารักษา\nในปีงบประมาณ ปัจจุบัน",
+        "colspan": 1,
+        "rowspan": 3,
+        "tag": "th"
+      },
+      {
+        "text": "จํานวนผู้ป่วย SMI-V มารับบริการ\nไม่ก่อความรุนแรงซ้ํา (เข้าเกณฑ์\nSMI-V Low Risk)",
+        "colspan": 1,
+        "rowspan": 3,
+        "tag": "th"
+      },
+      {
+        "text": "จํานวนผู้ป่วย SMI-V มารักษา\nก่อความรุนแรงซ้ําใน\nปีงบประมาณปัจจุบัน",
+        "colspan": 1,
+        "rowspan": 3,
+        "tag": "th"
+      },
+      {
+        "text": "ผู้ป่วย SMI-V ที่มารับบริการในปีงบประมาณปัจจุบัน (คน) จำแนกตามประเภทความรุนแรง",
+        "colspan": 29,
+        "rowspan": 1,
+        "tag": "th"
+      }
+    ],
+    [
+      {
+        "text": "จํานวนผู้ป่วย SMI-V1 Type 1 (ตัวอยู่ ทะเบียนบ้านอยู่)  1B030",
+        "colspan": 2,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จํานวนผู้ป่วย SMI-V1 Type 3 (ตัวอยู่ ทะเบียนบ้านไม่อยู่)  1B030",
+        "colspan": 2,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จํานวนผู้ป่วย SMI-V1 อื่นๆ สถานที่รับบริการตาม Last visit  1B030",
+        "colspan": 2,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จํานวนผู้ป่วย SMI-V2 Type 1 (ตัวอยู่ ทะเบียนบ้านอยู่)  1B031",
+        "colspan": 2,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จํานวนผู้ป่วย SMI-V2 Type 3 (ตัวอยู่ ทะเบียนบ้านไม่อยู่)  1B031",
+        "colspan": 2,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จํานวนผู้ป่วย SMI-V2 อื่นๆ สถานที่รับบริการตาม Last visit 1B031",
+        "colspan": 2,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จํานวนผู้ป่วย SMI-V3 Type 1 (ตัวอยู่ ทะเบียนบ้านอยู่)  1B032",
+        "colspan": 2,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จํานวนผู้ป่วย SMI-V3 Type 3 (ตัวอยู่ ทะเบียนบ้านไม่อยู่)  1B032",
+        "colspan": 2,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จํานวนผู้ป่วย SMI-V3 อื่นๆ สถานที่รับบริการตาม Last visit  1B032",
+        "colspan": 2,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จํานวนผู้ป่วย SMI-V4 Type 1 (ตัวอยู่ ทะเบียนบ้านอยู่)  1B033",
+        "colspan": 2,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จํานวนผู้ป่วย SMI-V4 Type 3 (ตัวอยู่ ทะเบียนบ้านไม่อยู่)  1B033",
+        "colspan": 2,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จํานวนผู้ป่วย SMI-V4 อื่นๆ สถานที่รับบริการตาม Last visit  1B033",
+        "colspan": 2,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "ผู้ป่วย SMI-V ก่อความรุนแรงซ้ำ (V สูงสุด)",
+        "colspan": 5,
+        "rowspan": 1,
+        "tag": "th"
+      }
+    ],
+    [
+      {
+        "text": "จำนวนผู้ป่วยSMI-V(V1)",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "ขาดการรักษา 1 เดือนขึ้นไป",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วยSMI-V(V1)",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "ขาดการรักษา 1 เดือนขึ้นไป",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วยSMI-V(V1)",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "ขาดการรักษา 1 เดือนขึ้นไป",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วยSMI-V(V2)",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "ขาดการรักษา 1 เดือนขึ้นไป",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วยSMI-V(V2)",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "ขาดการรักษา 1 เดือนขึ้นไป",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วยSMI-V(V2)",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "ขาดการรักษา 1 เดือนขึ้นไป",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วยSMI-V(V3)",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "ขาดการรักษา 1 เดือนขึ้นไป",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วยSMI-V(V3)",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "ขาดการรักษา 1 เดือนขึ้นไป",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วยSMI-V(V3)",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "ขาดการรักษา 1 เดือนขึ้นไป",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วยSMI-VV(4)",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "ขาดการรักษา 1 เดือนขึ้นไป",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วยSMI-VV(4)",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "ขาดการรักษา 1 เดือนขึ้นไป",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วยSMI-VV(4)",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "ขาดการรักษา 1 เดือนขึ้นไป",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วย SMI-V 1",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วย SMI-V 2",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วย SMI-V 3",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วย SMI-V 4",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "รวมทั้งหมด",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      }
+    ],
+    [
+      {
+        "text": "สตูล",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "236",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "156",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "42",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "30",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "24",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "16",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "3",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "3",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "97",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "32",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "5",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "5",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "17",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "5",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "2",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "1",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "1",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "7",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "7",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "3",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "24",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "1",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "2",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "30",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      }
+    ],
+    [
+      {
+        "text": "รวม",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "236",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "156",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "42",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "30",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "24",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "16",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "3",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "3",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "97",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "32",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "5",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "5",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "17",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "5",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "2",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "1",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "1",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "7",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "7",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "3",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "24",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "1",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "2",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "30",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      }
+    ]
+  ]
+]

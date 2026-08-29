@@ -1,0 +1,302 @@
+[
+  [
+    [
+      {
+        "text": "areaheader",
+        "colspan": 1,
+        "rowspan": 3,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วย SMI-V (1B030-33) รายเก่าทั้งหมดก่อนปีงบประมาณปัจจุบัน(ตัวเลขอาจมีการ\nเปลี่ยนแปลงตาม\nจํานวนผู้เสียชีวิตและช่วงอายุตาม\nนิยามผู้ป่วย SMI-V) B",
+        "colspan": 1,
+        "rowspan": 3,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วย SMI-V รายใหม่ที่มารับบริการในปีงบปัจจุบัน (ยังไม่เคยรับการวินิจฉัย) C",
+        "colspan": 1,
+        "rowspan": 3,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วย SMI-V ทั้งหมด (คน) ถึงปัจจุบัน (B+C) D",
+        "colspan": 1,
+        "rowspan": 3,
+        "tag": "th"
+      },
+      {
+        "text": "อัตราการเข้าถึงบริการผู้ป่วยจิตเวชและสารเสพติดที่มีความเสี่ยงสูงต่อการก่อความรุนแรงในเขตสุขภาพ (SMI-V Accessibility Rate) สะสม (D/I)*100 E",
+        "colspan": 1,
+        "rowspan": 3,
+        "tag": "th"
+      },
+      {
+        "text": "SMI-V (1B030-33) ไม่ก่อความรุนแรงซ้ำในปีงบประมาณปัจจุบัน (ผู้ป่วยสะสม) F",
+        "colspan": 1,
+        "rowspan": 3,
+        "tag": "th"
+      },
+      {
+        "text": "ร้อยละผู้ป่วยจิตเวชยาเสพติดก่อความรุนแรง (SMI-V) ในเขตสุขภาพเข้าถึงบริการต่อเนื่องและไม่ก่อความรุนแรงซ้ำ [N/I]*100\n(ได้รับการติดตามอย่างน้อย 2 ครั้งและไม่ก่อซ้ำในปีงบประมาณ) G",
+        "colspan": 1,
+        "rowspan": 3,
+        "tag": "th"
+      },
+      {
+        "text": "ผู้ป่วย SMI-V ได้รับการดูแลต่อเนื่องในปีงบประมาณ และไม่ก่อความรุนแรงซ้ำ-ภายในปีงบประมาณ",
+        "colspan": 8,
+        "rowspan": 1,
+        "tag": "th"
+      }
+    ],
+    [
+      {
+        "text": "ประชากรกลางปีก่อนปีงบประมาณปัจจุบันย้อนหลัง 2 ปี (15-60 ปี) H",
+        "colspan": 1,
+        "rowspan": 2,
+        "tag": "th"
+      },
+      {
+        "text": "ประมาณการณ์ผู้ป่วย SMI-V ในพื้นที่สุขภาพ เทียบกับประชากรกลางปี (15-60 ปี) ก่อนปีงบประมาณปัจจุบันย้อนหลัง 2 ปี I",
+        "colspan": 1,
+        "rowspan": 2,
+        "tag": "th"
+      },
+      {
+        "text": "ติดตาม 1 ครั้ง",
+        "colspan": 3,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "ติดตามอย่างน้อย 2 ครั้ง",
+        "colspan": 3,
+        "rowspan": 1,
+        "tag": "th"
+      }
+    ],
+    [
+      {
+        "text": "SMI-V (1B030-33) ติดตาม 1 ครั้ง J",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "SMI-V (1B030-33)ติตตาม 1 ครั้งและไม่ก่อความรุนแรงซ้ำภายในปีงบประมาณ) K",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "ร้อยละผู้ป่วยจิตเวชยาเสพติดก่อความรุนแรง (SMI-V) ในเขตสุขภาพเข้าถึงบริการต่อเนื่องและไม่ก่อความรุนแรงซ้ำ [K/I]*100 L",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "SMI-V (1B030-33) ติดตามอย่างน้อย 2 ครั้ง M",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "SMI-V (1B030-33)ติตตามอย่างน้อย 2 ครั้งและไม่ก่อความรุนแรงซ้ำภายในปีงบประมาณ N",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "ร้อยละผู้ป่วยจิตเวชยาเสพติดก่อความรุนแรง (SMI-V) ในเขตสุขภาพเข้าถึงบริการต่อเนื่องและไม่ก่อความรุนแรงซ้ำ [N/I]*100 O",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      }
+    ],
+    [
+      {
+        "text": "สตูล",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "167",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "118",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "285",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "25.79",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "244",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "6.15",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "212,059",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "1,105",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "109",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "102",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "9.23",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "72",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "68",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "6.15",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      }
+    ],
+    [
+      {
+        "text": "รวม",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "167",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "118",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "285",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "25.79",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "244",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "6.15",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "212,059",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "1,105",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "109",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "102",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "9.23",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "72",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "68",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "6.15",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      }
+    ]
+  ]
+]

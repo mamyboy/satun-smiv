@@ -1,0 +1,1053 @@
+{
+  "เมืองสตูล": {
+    "diagnoses": [
+      {
+        "code": "1B030",
+        "name": "SMI-V กลุ่ม 1",
+        "total": 1,
+        "f00_09": 0,
+        "f10_19": 0,
+        "f20_29": 0,
+        "f30_39": 1,
+        "f40_48": 0,
+        "f50_59": 0,
+        "f60_69": 0,
+        "f70_79": 0,
+        "f80_89": 0,
+        "f90_98": 0,
+        "other": 0,
+        "x60_84": 0
+      },
+      {
+        "code": "1B031",
+        "name": "SMI-V กลุ่ม 2",
+        "total": 27,
+        "f00_09": 4,
+        "f10_19": 22,
+        "f20_29": 21,
+        "f30_39": 7,
+        "f40_48": 1,
+        "f50_59": 0,
+        "f60_69": 0,
+        "f70_79": 1,
+        "f80_89": 0,
+        "f90_98": 1,
+        "other": 0,
+        "x60_84": 1
+      },
+      {
+        "code": "1B033",
+        "name": "SMI-V กลุ่มอื่นๆ",
+        "total": 1,
+        "f00_09": 0,
+        "f10_19": 1,
+        "f20_29": 1,
+        "f30_39": 0,
+        "f40_48": 0,
+        "f50_59": 0,
+        "f60_69": 0,
+        "f70_79": 0,
+        "f80_89": 0,
+        "f90_98": 0,
+        "other": 0,
+        "x60_84": 0
+      }
+    ],
+    "summary": {
+      "code": "TOTAL",
+      "name": "รวม",
+      "total": 29,
+      "f00_09": 4,
+      "f10_19": 23,
+      "f20_29": 22,
+      "f30_39": 8,
+      "f40_48": 1,
+      "f50_59": 0,
+      "f60_69": 0,
+      "f70_79": 1,
+      "f80_89": 0,
+      "f90_98": 1,
+      "other": 0,
+      "x60_84": 1
+    },
+    "headerRows": [
+      [
+        {
+          "text": "SMI-V ที่มารับบริการ",
+          "colSpan": 1,
+          "rowSpan": 2
+        },
+        {
+          "text": "รวมคนต่อสถานพยาบาล",
+          "colSpan": 1,
+          "rowSpan": 2
+        },
+        {
+          "text": "จำแนกตามการวินิจฉัย",
+          "colSpan": 12,
+          "rowSpan": 1
+        }
+      ],
+      [
+        {
+          "text": "F00.xx-F09.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F10.xx-F19.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F20.xx-F29.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F30.xx-F39.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F40.xx-F48.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F50.xx-F59.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F60.xx-F69.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F70.xx-F79.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F80.xx-F89.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F90.xx-F90.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "Other",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "X60.xx-X84.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        }
+      ]
+    ],
+    "processedDate": "29 สิงหาคม 2569",
+    "extractedAt": "2026-08-29T07:16:50.787Z"
+  },
+  "ควนโดน": {
+    "diagnoses": [
+      {
+        "code": "1B030",
+        "name": "SMI-V กลุ่ม 1",
+        "total": 9,
+        "f00_09": 0,
+        "f10_19": 1,
+        "f20_29": 0,
+        "f30_39": 7,
+        "f40_48": 1,
+        "f50_59": 1,
+        "f60_69": 0,
+        "f70_79": 0,
+        "f80_89": 0,
+        "f90_98": 0,
+        "other": 1,
+        "x60_84": 5
+      },
+      {
+        "code": "1B031",
+        "name": "SMI-V กลุ่ม 2",
+        "total": 5,
+        "f00_09": 0,
+        "f10_19": 5,
+        "f20_29": 2,
+        "f30_39": 0,
+        "f40_48": 0,
+        "f50_59": 1,
+        "f60_69": 0,
+        "f70_79": 0,
+        "f80_89": 0,
+        "f90_98": 0,
+        "other": 0,
+        "x60_84": 0
+      }
+    ],
+    "summary": {
+      "code": "TOTAL",
+      "name": "รวม",
+      "total": 14,
+      "f00_09": 0,
+      "f10_19": 6,
+      "f20_29": 2,
+      "f30_39": 7,
+      "f40_48": 1,
+      "f50_59": 2,
+      "f60_69": 0,
+      "f70_79": 0,
+      "f80_89": 0,
+      "f90_98": 0,
+      "other": 1,
+      "x60_84": 5
+    },
+    "headerRows": [
+      [
+        {
+          "text": "SMI-V ที่มารับบริการ",
+          "colSpan": 1,
+          "rowSpan": 2
+        },
+        {
+          "text": "รวมคนต่อสถานพยาบาล",
+          "colSpan": 1,
+          "rowSpan": 2
+        },
+        {
+          "text": "จำแนกตามการวินิจฉัย",
+          "colSpan": 12,
+          "rowSpan": 1
+        }
+      ],
+      [
+        {
+          "text": "F00.xx-F09.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F10.xx-F19.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F20.xx-F29.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F30.xx-F39.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F40.xx-F48.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F50.xx-F59.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F60.xx-F69.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F70.xx-F79.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F80.xx-F89.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F90.xx-F90.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "Other",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "X60.xx-X84.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        }
+      ]
+    ],
+    "processedDate": "29 สิงหาคม 2569",
+    "extractedAt": "2026-08-29T07:16:56.044Z"
+  },
+  "ควนกาหลง": {
+    "diagnoses": [
+      {
+        "code": "1B030",
+        "name": "SMI-V กลุ่ม 1",
+        "total": 3,
+        "f00_09": 0,
+        "f10_19": 3,
+        "f20_29": 2,
+        "f30_39": 1,
+        "f40_48": 0,
+        "f50_59": 0,
+        "f60_69": 0,
+        "f70_79": 0,
+        "f80_89": 0,
+        "f90_98": 0,
+        "other": 0,
+        "x60_84": 0
+      },
+      {
+        "code": "1B031",
+        "name": "SMI-V กลุ่ม 2",
+        "total": 26,
+        "f00_09": 2,
+        "f10_19": 19,
+        "f20_29": 20,
+        "f30_39": 7,
+        "f40_48": 1,
+        "f50_59": 1,
+        "f60_69": 0,
+        "f70_79": 0,
+        "f80_89": 0,
+        "f90_98": 0,
+        "other": 0,
+        "x60_84": 0
+      }
+    ],
+    "summary": {
+      "code": "TOTAL",
+      "name": "รวม",
+      "total": 29,
+      "f00_09": 2,
+      "f10_19": 22,
+      "f20_29": 22,
+      "f30_39": 8,
+      "f40_48": 1,
+      "f50_59": 1,
+      "f60_69": 0,
+      "f70_79": 0,
+      "f80_89": 0,
+      "f90_98": 0,
+      "other": 0,
+      "x60_84": 0
+    },
+    "headerRows": [
+      [
+        {
+          "text": "SMI-V ที่มารับบริการ",
+          "colSpan": 1,
+          "rowSpan": 2
+        },
+        {
+          "text": "รวมคนต่อสถานพยาบาล",
+          "colSpan": 1,
+          "rowSpan": 2
+        },
+        {
+          "text": "จำแนกตามการวินิจฉัย",
+          "colSpan": 12,
+          "rowSpan": 1
+        }
+      ],
+      [
+        {
+          "text": "F00.xx-F09.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F10.xx-F19.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F20.xx-F29.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F30.xx-F39.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F40.xx-F48.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F50.xx-F59.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F60.xx-F69.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F70.xx-F79.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F80.xx-F89.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F90.xx-F90.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "Other",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "X60.xx-X84.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        }
+      ]
+    ],
+    "processedDate": "29 สิงหาคม 2569",
+    "extractedAt": "2026-08-29T07:17:01.312Z"
+  },
+  "ท่าแพ": {
+    "diagnoses": [
+      {
+        "code": "1B032",
+        "name": "SMI-V กลุ่ม 3",
+        "total": 1,
+        "f00_09": 0,
+        "f10_19": 0,
+        "f20_29": 0,
+        "f30_39": 0,
+        "f40_48": 0,
+        "f50_59": 0,
+        "f60_69": 0,
+        "f70_79": 0,
+        "f80_89": 0,
+        "f90_98": 0,
+        "other": 1,
+        "x60_84": 0
+      }
+    ],
+    "summary": {
+      "code": "TOTAL",
+      "name": "รวม",
+      "total": 1,
+      "f00_09": 0,
+      "f10_19": 0,
+      "f20_29": 0,
+      "f30_39": 0,
+      "f40_48": 0,
+      "f50_59": 0,
+      "f60_69": 0,
+      "f70_79": 0,
+      "f80_89": 0,
+      "f90_98": 0,
+      "other": 1,
+      "x60_84": 0
+    },
+    "headerRows": [
+      [
+        {
+          "text": "SMI-V ที่มารับบริการ",
+          "colSpan": 1,
+          "rowSpan": 2
+        },
+        {
+          "text": "รวมคนต่อสถานพยาบาล",
+          "colSpan": 1,
+          "rowSpan": 2
+        },
+        {
+          "text": "จำแนกตามการวินิจฉัย",
+          "colSpan": 12,
+          "rowSpan": 1
+        }
+      ],
+      [
+        {
+          "text": "F00.xx-F09.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F10.xx-F19.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F20.xx-F29.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F30.xx-F39.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F40.xx-F48.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F50.xx-F59.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F60.xx-F69.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F70.xx-F79.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F80.xx-F89.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F90.xx-F90.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "Other",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "X60.xx-X84.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        }
+      ]
+    ],
+    "processedDate": "29 สิงหาคม 2569",
+    "extractedAt": "2026-08-29T07:17:06.599Z"
+  },
+  "ละงู": {
+    "diagnoses": [
+      {
+        "code": "1B030",
+        "name": "SMI-V กลุ่ม 1",
+        "total": 2,
+        "f00_09": 0,
+        "f10_19": 0,
+        "f20_29": 1,
+        "f30_39": 0,
+        "f40_48": 0,
+        "f50_59": 0,
+        "f60_69": 0,
+        "f70_79": 0,
+        "f80_89": 0,
+        "f90_98": 0,
+        "other": 1,
+        "x60_84": 0
+      },
+      {
+        "code": "1B031",
+        "name": "SMI-V กลุ่ม 2",
+        "total": 14,
+        "f00_09": 0,
+        "f10_19": 12,
+        "f20_29": 12,
+        "f30_39": 1,
+        "f40_48": 0,
+        "f50_59": 0,
+        "f60_69": 0,
+        "f70_79": 1,
+        "f80_89": 1,
+        "f90_98": 0,
+        "other": 0,
+        "x60_84": 0
+      },
+      {
+        "code": "1B032",
+        "name": "SMI-V กลุ่ม 3",
+        "total": 1,
+        "f00_09": 0,
+        "f10_19": 1,
+        "f20_29": 1,
+        "f30_39": 0,
+        "f40_48": 0,
+        "f50_59": 0,
+        "f60_69": 0,
+        "f70_79": 0,
+        "f80_89": 0,
+        "f90_98": 0,
+        "other": 0,
+        "x60_84": 0
+      },
+      {
+        "code": "1B033",
+        "name": "SMI-V กลุ่มอื่นๆ",
+        "total": 1561,
+        "f00_09": 0,
+        "f10_19": 29,
+        "f20_29": 22,
+        "f30_39": 42,
+        "f40_48": 5,
+        "f50_59": 1,
+        "f60_69": 0,
+        "f70_79": 3,
+        "f80_89": 0,
+        "f90_98": 1,
+        "other": 1473,
+        "x60_84": 6
+      }
+    ],
+    "summary": {
+      "code": "TOTAL",
+      "name": "รวม",
+      "total": 1578,
+      "f00_09": 0,
+      "f10_19": 42,
+      "f20_29": 36,
+      "f30_39": 43,
+      "f40_48": 5,
+      "f50_59": 1,
+      "f60_69": 0,
+      "f70_79": 4,
+      "f80_89": 1,
+      "f90_98": 1,
+      "other": 1474,
+      "x60_84": 6
+    },
+    "headerRows": [
+      [
+        {
+          "text": "SMI-V ที่มารับบริการ",
+          "colSpan": 1,
+          "rowSpan": 2
+        },
+        {
+          "text": "รวมคนต่อสถานพยาบาล",
+          "colSpan": 1,
+          "rowSpan": 2
+        },
+        {
+          "text": "จำแนกตามการวินิจฉัย",
+          "colSpan": 12,
+          "rowSpan": 1
+        }
+      ],
+      [
+        {
+          "text": "F00.xx-F09.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F10.xx-F19.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F20.xx-F29.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F30.xx-F39.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F40.xx-F48.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F50.xx-F59.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F60.xx-F69.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F70.xx-F79.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F80.xx-F89.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F90.xx-F90.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "Other",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "X60.xx-X84.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        }
+      ]
+    ],
+    "processedDate": "29 สิงหาคม 2569",
+    "extractedAt": "2026-08-29T07:17:11.866Z"
+  },
+  "ทุ่งหว้า": {
+    "diagnoses": [
+      {
+        "code": "1B030",
+        "name": "SMI-V กลุ่ม 1",
+        "total": 3,
+        "f00_09": 0,
+        "f10_19": 0,
+        "f20_29": 1,
+        "f30_39": 2,
+        "f40_48": 1,
+        "f50_59": 0,
+        "f60_69": 0,
+        "f70_79": 1,
+        "f80_89": 1,
+        "f90_98": 0,
+        "other": 0,
+        "x60_84": 2
+      },
+      {
+        "code": "1B031",
+        "name": "SMI-V กลุ่ม 2",
+        "total": 15,
+        "f00_09": 1,
+        "f10_19": 11,
+        "f20_29": 12,
+        "f30_39": 2,
+        "f40_48": 1,
+        "f50_59": 0,
+        "f60_69": 0,
+        "f70_79": 0,
+        "f80_89": 0,
+        "f90_98": 1,
+        "other": 0,
+        "x60_84": 2
+      },
+      {
+        "code": "1B032",
+        "name": "SMI-V กลุ่ม 3",
+        "total": 3,
+        "f00_09": 1,
+        "f10_19": 2,
+        "f20_29": 2,
+        "f30_39": 1,
+        "f40_48": 0,
+        "f50_59": 0,
+        "f60_69": 0,
+        "f70_79": 0,
+        "f80_89": 0,
+        "f90_98": 0,
+        "other": 0,
+        "x60_84": 1
+      },
+      {
+        "code": "1B033",
+        "name": "SMI-V กลุ่มอื่นๆ",
+        "total": 2,
+        "f00_09": 1,
+        "f10_19": 2,
+        "f20_29": 1,
+        "f30_39": 0,
+        "f40_48": 0,
+        "f50_59": 0,
+        "f60_69": 0,
+        "f70_79": 0,
+        "f80_89": 0,
+        "f90_98": 0,
+        "other": 0,
+        "x60_84": 1
+      }
+    ],
+    "summary": {
+      "code": "TOTAL",
+      "name": "รวม",
+      "total": 23,
+      "f00_09": 3,
+      "f10_19": 15,
+      "f20_29": 16,
+      "f30_39": 5,
+      "f40_48": 2,
+      "f50_59": 0,
+      "f60_69": 0,
+      "f70_79": 1,
+      "f80_89": 1,
+      "f90_98": 1,
+      "other": 0,
+      "x60_84": 6
+    },
+    "headerRows": [
+      [
+        {
+          "text": "SMI-V ที่มารับบริการ",
+          "colSpan": 1,
+          "rowSpan": 2
+        },
+        {
+          "text": "รวมคนต่อสถานพยาบาล",
+          "colSpan": 1,
+          "rowSpan": 2
+        },
+        {
+          "text": "จำแนกตามการวินิจฉัย",
+          "colSpan": 12,
+          "rowSpan": 1
+        }
+      ],
+      [
+        {
+          "text": "F00.xx-F09.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F10.xx-F19.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F20.xx-F29.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F30.xx-F39.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F40.xx-F48.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F50.xx-F59.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F60.xx-F69.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F70.xx-F79.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F80.xx-F89.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F90.xx-F90.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "Other",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "X60.xx-X84.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        }
+      ]
+    ],
+    "processedDate": "29 สิงหาคม 2569",
+    "extractedAt": "2026-08-29T07:17:17.133Z"
+  },
+  "มะนัง": {
+    "diagnoses": [
+      {
+        "code": "1B031",
+        "name": "SMI-V กลุ่ม 2",
+        "total": 12,
+        "f00_09": 1,
+        "f10_19": 7,
+        "f20_29": 10,
+        "f30_39": 2,
+        "f40_48": 1,
+        "f50_59": 1,
+        "f60_69": 0,
+        "f70_79": 0,
+        "f80_89": 0,
+        "f90_98": 0,
+        "other": 0,
+        "x60_84": 0
+      },
+      {
+        "code": "1B032",
+        "name": "SMI-V กลุ่ม 3",
+        "total": 2,
+        "f00_09": 0,
+        "f10_19": 2,
+        "f20_29": 1,
+        "f30_39": 0,
+        "f40_48": 0,
+        "f50_59": 0,
+        "f60_69": 0,
+        "f70_79": 0,
+        "f80_89": 0,
+        "f90_98": 0,
+        "other": 0,
+        "x60_84": 0
+      },
+      {
+        "code": "1B033",
+        "name": "SMI-V กลุ่มอื่นๆ",
+        "total": 1,
+        "f00_09": 0,
+        "f10_19": 1,
+        "f20_29": 1,
+        "f30_39": 0,
+        "f40_48": 0,
+        "f50_59": 0,
+        "f60_69": 0,
+        "f70_79": 0,
+        "f80_89": 0,
+        "f90_98": 0,
+        "other": 0,
+        "x60_84": 0
+      }
+    ],
+    "summary": {
+      "code": "TOTAL",
+      "name": "รวม",
+      "total": 15,
+      "f00_09": 1,
+      "f10_19": 10,
+      "f20_29": 12,
+      "f30_39": 2,
+      "f40_48": 1,
+      "f50_59": 1,
+      "f60_69": 0,
+      "f70_79": 0,
+      "f80_89": 0,
+      "f90_98": 0,
+      "other": 0,
+      "x60_84": 0
+    },
+    "headerRows": [
+      [
+        {
+          "text": "SMI-V ที่มารับบริการ",
+          "colSpan": 1,
+          "rowSpan": 2
+        },
+        {
+          "text": "รวมคนต่อสถานพยาบาล",
+          "colSpan": 1,
+          "rowSpan": 2
+        },
+        {
+          "text": "จำแนกตามการวินิจฉัย",
+          "colSpan": 12,
+          "rowSpan": 1
+        }
+      ],
+      [
+        {
+          "text": "F00.xx-F09.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F10.xx-F19.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F20.xx-F29.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F30.xx-F39.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F40.xx-F48.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F50.xx-F59.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F60.xx-F69.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F70.xx-F79.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F80.xx-F89.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "F90.xx-F90.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "Other",
+          "colSpan": 1,
+          "rowSpan": 1
+        },
+        {
+          "text": "X60.xx-X84.xx",
+          "colSpan": 1,
+          "rowSpan": 1
+        }
+      ]
+    ],
+    "processedDate": "29 สิงหาคม 2569",
+    "extractedAt": "2026-08-29T07:17:22.422Z"
+  }
+}
