@@ -3,6 +3,24 @@ import indicator2Raw from "../../amphoe-data/indicator2/data.json";
 import indicator3Raw from "../../amphoe-data/indicator3/data.json";
 import indicator4Raw from "../../amphoe-data/indicator4/data.json";
 import indicator5Raw from "../../amphoe-data/indicator5/data.json";
+import indicatorRelate14Raw from "../../amphoe-data/indicator_relate_14/data.json";
+import indicatorRelate15Raw from "../../amphoe-data/indicator_relate_15/data.json";
+import indicatorRelate16Raw from "../../amphoe-data/indicator_relate_16/data.json";
+import indicatorRelate21_2Raw from "../../amphoe-data/indicator_relate_21_2/data.json";
+import indicatorRelate21_6Raw from "../../amphoe-data/indicator_relate_21_6/data.json";
+import indicatorRelate21_1Raw from "../../amphoe-data/indicator_relate_21_1/data.json";
+import indicatorRelate21_4Raw from "../../amphoe-data/indicator_relate_21_4/data.json";
+import indicatorRelate21_7Raw from "../../amphoe-data/indicator_relate_21_7/data.json";
+import indicatorRelate22_1Raw from "../../amphoe-data/indicator_relate_22_1/data.json";
+import indicatorRelate22_2Raw from "../../amphoe-data/indicator_relate_22_2/data.json";
+import indicatorRelate22_3Raw from "../../amphoe-data/indicator_relate_22_3/data.json";
+import indicatorRelate22_4Raw from "../../amphoe-data/indicator_relate_22_4/data.json";
+import indicatorRelate22_5Raw from "../../amphoe-data/indicator_relate_22_5/data.json";
+import indicatorRelate22_6Raw from "../../amphoe-data/indicator_relate_22_6/data.json";
+import indicatorRelate22_7Raw from "../../amphoe-data/indicator_relate_22_7/data.json";
+import indicatorRelate23_4Raw from "../../amphoe-data/indicator_relate_23_4/data.json";
+import indicatorRelate23_5Raw from "../../amphoe-data/indicator_relate_23_5/data.json";
+import indicatorRelate23_6Raw from "../../amphoe-data/indicator_relate_23_6/data.json";
 import indicatorsConfig from "../../scripts/indicators.config.js";
 
 export type DiagnosisRow = {
@@ -68,6 +86,9 @@ type Indicator3Data = {
 
 const indicator3 = indicator3Raw as Indicator3Data;
 const indicator4 = indicator4Raw as Indicator2Data;
+const indicatorRelate14 = indicatorRelate14Raw as Indicator2Data;
+const indicatorRelate15 = indicatorRelate15Raw as Indicator2Data;
+const indicatorRelate16 = indicatorRelate16Raw as Indicator2Data;
 const indicator5 = indicator5Raw as Indicator3Data;
 
 /** ตัวชี้วัด 1 — จำนวนผู้ป่วย SMI-V แยกตามอำเภอ */
@@ -513,4 +534,523 @@ export const indicator5Insights = (() => {
   const fullyFollowedCount = sorted.filter((a) => a.followRate >= 100).length;
   return { highest, lowest, totalFacilities, avgRate, belowAvgCount, fullyFollowedCount };
 })();
+
+/**
+ * ตัวชี้วัด 14 — ร้อยละของผู้ป่วยโรคจิตเภทได้รับการรักษาต่อเนื่องภายใน 6 เดือน (ระดับจังหวัด, มุมมองรายพื้นที่)
+ * values[]: 0 total-current-year(C), 1 served-oct-feb(B), 2 followed-1x-6mo(A), 3 rate-A/B%, 4 rate-A/C%
+ */
+export const indicatorRelate14Name = indicatorRelate14.name;
+export const indicatorRelate14ExtractedAt = indicatorRelate14.extractedAt;
+export const indicatorRelate14ProcessedDate = indicatorRelate14.processedDate;
+export const indicatorRelate14SourceUrl = `${HDC_BASE_URL}/${indicatorRelate14.reportCode}`;
+export const indicatorRelate14TableColumns = indicatorRelate14.columns;
+export const indicatorRelate14TableHeaderRows = indicatorRelate14.headerRows;
+export const indicatorRelate14TableRows = indicatorRelate14.dataRows.map((r) => r.raw);
+
+export const indicatorRelate14AmphoeStats = indicatorRelate14.dataRows
+  .filter((r) => r.area.trim() !== "รวม")
+  .map((r) => ({
+    amphoe: r.area,
+    totalCurrentYear: r.values[0] ?? 0,
+    servedOctFeb: r.values[1] ?? 0,
+    followed1x: r.values[2] ?? 0,
+    rateAB: r.values[3] ?? 0,
+    rateAC: r.values[4] ?? 0,
+  }))
+  .sort((a, b) => b.rateAB - a.rateAB);
+
+export const indicatorRelate14Summary = indicatorRelate14.dataRows.find((r) => r.area === "รวม") ?? indicatorRelate14.dataRows[0];
+export const indicatorRelate14Metrics = indicatorRelate14Summary
+  ? {
+      totalCurrentYear: indicatorRelate14Summary.values[0] ?? 0,
+      servedOctFeb: indicatorRelate14Summary.values[1] ?? 0,
+      followed1x: indicatorRelate14Summary.values[2] ?? 0,
+      rateAB: indicatorRelate14Summary.values[3] ?? 0,
+      rateAC: indicatorRelate14Summary.values[4] ?? 0,
+    }
+  : null;
+
+/** insight สรุปอัตโนมัติจากทุกมิติของตัวชี้วัด 14 */
+export const indicatorRelate14Insights = (() => {
+  const sorted = indicatorRelate14AmphoeStats;
+  const highest = sorted[0];
+  const lowest = sorted[sorted.length - 1];
+  const avgRate = sorted.length > 0 ? Math.round((sorted.reduce((sum, a) => sum + a.rateAB, 0) / sorted.length) * 100) / 100 : 0;
+  const belowAvgCount = sorted.filter((a) => a.rateAB < avgRate).length;
+  return { highest, lowest, avgRate, belowAvgCount };
+})();
+
+/**
+ * ตัวชี้วัด 15 — ร้อยละของผู้ป่วยจิตเภทที่เข้าถึงบริการสะสมได้รับการดูแลต่อเนื่อง (ระดับจังหวัด, มุมมองรายพื้นที่)
+ * values[]: 0 cumulative-total, 1 served5yr[B], 2 self-follow1x, 3 other-follow1x, 4 total-follow1x[A1], 5 rate1x%,
+ *           6 self-follow2x, 7 other-follow2x, 8 total-follow2x[A2], 9 rate2x%
+ */
+export const indicatorRelate15Name = indicatorRelate15.name;
+export const indicatorRelate15ExtractedAt = indicatorRelate15.extractedAt;
+export const indicatorRelate15ProcessedDate = indicatorRelate15.processedDate;
+export const indicatorRelate15SourceUrl = `${HDC_BASE_URL}/${indicatorRelate15.reportCode}`;
+export const indicatorRelate15TableColumns = indicatorRelate15.columns;
+export const indicatorRelate15TableHeaderRows = indicatorRelate15.headerRows;
+export const indicatorRelate15TableRows = indicatorRelate15.dataRows.map((r) => r.raw);
+
+export const indicatorRelate15AmphoeStats = indicatorRelate15.dataRows
+  .filter((r) => r.area.trim() !== "รวม")
+  .map((r) => ({
+    amphoe: r.area,
+    cumulativeTotal: r.values[0] ?? 0,
+    served5yr: r.values[1] ?? 0,
+    followed1x: r.values[4] ?? 0,
+    rate1x: r.values[5] ?? 0,
+    followed2x: r.values[8] ?? 0,
+    rate2x: r.values[9] ?? 0,
+  }))
+  .sort((a, b) => b.rate2x - a.rate2x);
+
+export const indicatorRelate15Summary = indicatorRelate15.dataRows.find((r) => r.area === "รวม") ?? indicatorRelate15.dataRows[0];
+export const indicatorRelate15Metrics = indicatorRelate15Summary
+  ? {
+      cumulativeTotal: indicatorRelate15Summary.values[0] ?? 0,
+      served5yr: indicatorRelate15Summary.values[1] ?? 0,
+      followed1x: indicatorRelate15Summary.values[4] ?? 0,
+      rate1x: indicatorRelate15Summary.values[5] ?? 0,
+      followed2x: indicatorRelate15Summary.values[8] ?? 0,
+      rate2x: indicatorRelate15Summary.values[9] ?? 0,
+    }
+  : null;
+
+/** insight สรุปอัตโนมัติจากทุกมิติของตัวชี้วัด 15 */
+export const indicatorRelate15Insights = (() => {
+  const sorted = indicatorRelate15AmphoeStats;
+  const highest = sorted[0];
+  const lowest = sorted[sorted.length - 1];
+  const followUpGap = (indicatorRelate15Metrics?.followed1x ?? 0) - (indicatorRelate15Metrics?.followed2x ?? 0);
+  const rateDelta = Math.round(((indicatorRelate15Metrics?.rate2x ?? 0) - (indicatorRelate15Metrics?.rate1x ?? 0)) * 10) / 10;
+  return { highest, lowest, followUpGap, rateDelta };
+})();
+
+/**
+ * ตัวชี้วัด 16 — ร้อยละของผู้ป่วยโรคจิตเภทได้รับการรักษาต่อเนื่องภายใน 6 เดือน (Reverse) (ระดับจังหวัด, มุมมองรายพื้นที่)
+ * values[]: 0 total-current-year(B), 1 followed-1x-6mo(A), 2 rate-A/B%
+ */
+export const indicatorRelate16Name = indicatorRelate16.name;
+export const indicatorRelate16ExtractedAt = indicatorRelate16.extractedAt;
+export const indicatorRelate16ProcessedDate = indicatorRelate16.processedDate;
+export const indicatorRelate16SourceUrl = `${HDC_BASE_URL}/${indicatorRelate16.reportCode}`;
+export const indicatorRelate16TableColumns = indicatorRelate16.columns;
+export const indicatorRelate16TableHeaderRows = indicatorRelate16.headerRows;
+export const indicatorRelate16TableRows = indicatorRelate16.dataRows.map((r) => r.raw);
+
+export const indicatorRelate16AmphoeStats = indicatorRelate16.dataRows
+  .filter((r) => r.area.trim() !== "รวม")
+  .map((r) => ({
+    amphoe: r.area,
+    total: r.values[0] ?? 0,
+    followed: r.values[1] ?? 0,
+    rate: r.values[2] ?? 0,
+  }))
+  .sort((a, b) => b.rate - a.rate);
+
+export const indicatorRelate16Summary = indicatorRelate16.dataRows.find((r) => r.area === "รวม") ?? indicatorRelate16.dataRows[0];
+export const indicatorRelate16Metrics = indicatorRelate16Summary
+  ? {
+      total: indicatorRelate16Summary.values[0] ?? 0,
+      followed: indicatorRelate16Summary.values[1] ?? 0,
+      rate: indicatorRelate16Summary.values[2] ?? 0,
+    }
+  : null;
+
+/** insight สรุปอัตโนมัติจากทุกมิติของตัวชี้วัด 16 */
+export const indicatorRelate16Insights = (() => {
+  const sorted = indicatorRelate16AmphoeStats;
+  const highest = sorted[0];
+  const lowest = sorted[sorted.length - 1];
+  const avgRate = sorted.length > 0 ? Math.round((sorted.reduce((sum, a) => sum + a.rate, 0) / sorted.length) * 100) / 100 : 0;
+  const belowAvgCount = sorted.filter((a) => a.rate < avgRate).length;
+  return { highest, lowest, avgRate, belowAvgCount };
+})();
+
+const indicatorRelate21_2 = indicatorRelate21_2Raw as Indicator2Data;
+const indicatorRelate21_6 = indicatorRelate21_6Raw as Indicator2Data;
+
+/**
+ * ตัวชี้วัด 21.2 — ร้อยละของผู้ป่วยที่มีความผิดปกติทางจิตและพฤติกรรมที่เกิดจากการใช้สารออกฤทธิ์ต่อจิตประสาท จำแนกตามสถานพยาบาล (workload)
+ * values[]: 0 OPD-total(B1), 1 OPD-F10-19(A1), 2 OPD-rate%, 3 OPD-visits(C1), 4 IPD-total(B2), 5 IPD-F10-19(A2), 6 IPD-rate%, 7 IPD-days(C2)
+ */
+export const indicatorRelate21_2Name = indicatorRelate21_2.name;
+export const indicatorRelate21_2ExtractedAt = indicatorRelate21_2.extractedAt;
+export const indicatorRelate21_2ProcessedDate = indicatorRelate21_2.processedDate;
+export const indicatorRelate21_2SourceUrl = `${HDC_BASE_URL}/${indicatorRelate21_2.reportCode}`;
+export const indicatorRelate21_2TableColumns = indicatorRelate21_2.columns;
+export const indicatorRelate21_2TableHeaderRows = indicatorRelate21_2.headerRows;
+export const indicatorRelate21_2TableRows = indicatorRelate21_2.dataRows.map((r) => r.raw);
+
+export const indicatorRelate21_2AmphoeStats = indicatorRelate21_2.dataRows
+  .filter((r) => r.area.trim() !== "รวม")
+  .map((r) => ({
+    amphoe: r.area,
+    opdTotal: r.values[0] ?? 0,
+    opdF1019: r.values[1] ?? 0,
+    opdRate: r.values[2] ?? 0,
+    ipdTotal: r.values[4] ?? 0,
+    ipdF1019: r.values[5] ?? 0,
+    ipdRate: r.values[6] ?? 0,
+  }))
+  .sort((a, b) => b.opdRate - a.opdRate);
+
+export const indicatorRelate21_2Summary = indicatorRelate21_2.dataRows.find((r) => r.area === "รวม") ?? indicatorRelate21_2.dataRows[0];
+export const indicatorRelate21_2Metrics = indicatorRelate21_2Summary
+  ? {
+      opdTotal: indicatorRelate21_2Summary.values[0] ?? 0,
+      opdF1019: indicatorRelate21_2Summary.values[1] ?? 0,
+      opdRate: indicatorRelate21_2Summary.values[2] ?? 0,
+      ipdTotal: indicatorRelate21_2Summary.values[4] ?? 0,
+      ipdF1019: indicatorRelate21_2Summary.values[5] ?? 0,
+      ipdRate: indicatorRelate21_2Summary.values[6] ?? 0,
+    }
+  : null;
+
+export const indicatorRelate21_2Insights = (() => {
+  const sorted = indicatorRelate21_2AmphoeStats;
+  const highest = sorted[0];
+  const lowest = sorted[sorted.length - 1];
+  const avgRate = sorted.length > 0 ? Math.round((sorted.reduce((sum, a) => sum + a.opdRate, 0) / sorted.length) * 100) / 100 : 0;
+  const belowAvgCount = sorted.filter((a) => a.opdRate < avgRate).length;
+  return { highest, lowest, avgRate, belowAvgCount };
+})();
+
+/**
+ * ตัวชี้วัด 21.6 — Retention Rate ผู้ป่วยยาเสพติดที่เข้าสู่กระบวนการบำบัดรักษาได้รับการดูแลติดตามต่อเนื่อง
+ * values[]: index 8 = ผู้ป่วยจิตเวชทั้งหมดที่พ้นระยะ 1 ปี (คน), index 30-34 = Retention Rate % (5 กลุ่มโรค)
+ */
+export const indicatorRelate21_6Name = indicatorRelate21_6.name;
+export const indicatorRelate21_6ExtractedAt = indicatorRelate21_6.extractedAt;
+export const indicatorRelate21_6ProcessedDate = indicatorRelate21_6.processedDate;
+export const indicatorRelate21_6SourceUrl = `${HDC_BASE_URL}/${indicatorRelate21_6.reportCode}`;
+export const indicatorRelate21_6TableColumns = indicatorRelate21_6.columns;
+export const indicatorRelate21_6TableHeaderRows = indicatorRelate21_6.headerRows;
+export const indicatorRelate21_6TableRows = indicatorRelate21_6.dataRows.map((r) => r.raw);
+
+export const indicatorRelate21_6AmphoeStats = indicatorRelate21_6.dataRows
+  .filter((r) => r.area.trim() !== "รวม")
+  .map((r) => ({
+    amphoe: r.area,
+    totalPsychFromBsot: r.values[28] ?? 0,
+    retentionRateOverall: r.values[33] ?? 0,
+  }))
+  .sort((a, b) => b.retentionRateOverall - a.retentionRateOverall);
+
+export const indicatorRelate21_6Summary = indicatorRelate21_6.dataRows.find((r) => r.area === "รวม") ?? indicatorRelate21_6.dataRows[0];
+export const indicatorRelate21_6Metrics = indicatorRelate21_6Summary
+  ? {
+      totalPsychFromBsot: indicatorRelate21_6Summary.values[28] ?? 0,
+      retentionRateOverall: indicatorRelate21_6Summary.values[33] ?? 0,
+    }
+  : null;
+
+export const indicatorRelate21_6Insights = (() => {
+  const sorted = indicatorRelate21_6AmphoeStats;
+  const highest = sorted[0];
+  const lowest = sorted[sorted.length - 1];
+  const avgRate = sorted.length > 0 ? Math.round((sorted.reduce((sum, a) => sum + a.retentionRateOverall, 0) / sorted.length) * 100) / 100 : 0;
+  const belowAvgCount = sorted.filter((a) => a.retentionRateOverall < avgRate).length;
+  return { highest, lowest, avgRate, belowAvgCount };
+})();
+
+/** ตัวชี้วัดเพิ่มเติมระดับจังหวัด (ไม่มีมิติอำเภอ) — แสดงแบบการ์ด + ตาราง HDC ตรงต้นฉบับ */
+export type SimpleIndicatorKey =
+  | "21_1" | "21_4" | "21_7"
+  | "22_1" | "22_2" | "22_3" | "22_4" | "22_5" | "22_6" | "22_7"
+  | "23_4" | "23_5" | "23_6";
+
+const simpleIndicatorRaw: Record<SimpleIndicatorKey, unknown> = {
+  "21_1": indicatorRelate21_1Raw,
+  "21_4": indicatorRelate21_4Raw,
+  "21_7": indicatorRelate21_7Raw,
+  "22_1": indicatorRelate22_1Raw,
+  "22_2": indicatorRelate22_2Raw,
+  "22_3": indicatorRelate22_3Raw,
+  "22_4": indicatorRelate22_4Raw,
+  "22_5": indicatorRelate22_5Raw,
+  "22_6": indicatorRelate22_6Raw,
+  "22_7": indicatorRelate22_7Raw,
+  "23_4": indicatorRelate23_4Raw,
+  "23_5": indicatorRelate23_5Raw,
+  "23_6": indicatorRelate23_6Raw,
+};
+
+export type SimpleIndicatorData = {
+  name: string;
+  extractedAt?: string;
+  processedDate?: string;
+  sourceUrl: string;
+  columns: string[];
+  headerRows?: HdcHeaderCell[][];
+  rows: (string | number)[][];
+};
+
+export function getSimpleIndicator(key: SimpleIndicatorKey): SimpleIndicatorData {
+  const raw = simpleIndicatorRaw[key] as {
+    name: string;
+    extractedAt?: string;
+    processedDate?: string;
+    reportCode: string;
+    columns: string[];
+    headerRows?: HdcHeaderCell[][];
+    dataRows: { raw: (string | number)[] }[];
+  };
+  return {
+    name: raw.name,
+    extractedAt: raw.extractedAt,
+    processedDate: raw.processedDate,
+    sourceUrl: `${HDC_BASE_URL}/${raw.reportCode}`,
+    columns: raw.columns,
+    headerRows: raw.headerRows,
+    rows: raw.dataRows.map((r) => r.raw),
+  };
+}
+
+export const simpleIndicatorLabels: Record<SimpleIndicatorKey, string> = {
+  "21_1": "21.1",
+  "21_4": "21.4",
+  "21_7": "21.7",
+  "22_1": "22.1",
+  "22_2": "22.2",
+  "22_3": "22.3",
+  "22_4": "22.4",
+  "22_5": "22.5",
+  "22_6": "22.6",
+  "22_7": "22.7",
+  "23_4": "23.4",
+  "23_5": "23.5",
+  "23_6": "23.6",
+};
+
+/** วิเคราะห์มิติข้อมูลจากตารางของแต่ละตัวชี้วัด (สำหรับ Dashboard วิเคราะห์เหนือ Table) */
+export type SimpleAnalysisBar = { label: string; value: number };
+export type SimpleAnalysis =
+  | { kind: "monthly"; data: SimpleAnalysisBar[]; total: number; unit: string }
+  | { kind: "breakdown"; data: SimpleAnalysisBar[]; unit: string; axisLabel: string }
+  | { kind: "donut"; data: SimpleAnalysisBar[]; unit: string; axisLabel: string; total: number }
+  | { kind: "heatmap"; rows: string[]; cols: string[]; matrix: number[][]; unit: string; axisLabel: string }
+  | { kind: "metrics"; items: { label: string; value: number; unit: string; note?: string }[] }
+  | { kind: "zero"; note: string };
+
+const MONTH_LABELS = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+
+type RawIndicatorRow = { area: string; values: number[]; raw: (string | number)[] };
+type RawIndicatorData = { dataRows: RawIndicatorRow[] };
+
+function firstDataRow(key: SimpleIndicatorKey): RawIndicatorRow | undefined {
+  const raw = simpleIndicatorRaw[key] as unknown as RawIndicatorData;
+  return raw.dataRows[0];
+}
+
+function allDataRows(key: SimpleIndicatorKey): RawIndicatorRow[] {
+  const raw = simpleIndicatorRaw[key] as unknown as RawIndicatorData;
+  return raw.dataRows;
+}
+
+/**
+ * สร้าง heatmap matrix ทั่วไปจากตารางที่มีโครงสร้าง: แถว = กลุ่มอายุ,
+ * คอลัมน์กลุ่มแรก 3 คอลัมน์ = จำนวนผู้รับบริการรวม (ข้าม), หลังจากนั้นแบ่งเป็นกลุ่มละ 4 คอลัมน์
+ * (ชาย/หญิง/รวม/ร้อยละ) ต่อหมวดหมู่ (โรค/วิธี/สถานที่/ช่วงเวลา) — ใช้ค่า "รวม" (ตำแหน่งที่ 3 ในกลุ่ม) เป็นค่าตาราง
+ */
+function buildHeatmapFromGroupedColumns(
+  key: SimpleIndicatorKey,
+  opts: { skipFirstGroupCols?: number; maxCols?: number } = {}
+): { rows: string[]; cols: string[]; matrix: number[][] } {
+  const raw = simpleIndicatorRaw[key] as unknown as { headerRows?: HdcHeaderCell[][] };
+  const headerRow = raw.headerRows?.[0] ?? [];
+  const skip = opts.skipFirstGroupCols ?? 2; // ข้ามหัวคอลัมน์แรก (กลุ่มอายุ) และกลุ่ม "รวมทั้งหมด"
+  const groupHeaders = headerRow.slice(skip); // แต่ละหัวคือหมวดหมู่ (โรค/วิธี/สถานที่ ฯลฯ) กว้าง 4 คอลัมน์
+  const dataRows = allDataRows(key).filter((r) => r.area.trim() !== "รวม" && r.area.trim() !== "คำนวนอายุไม่ได้");
+
+  // ตำแหน่งเริ่มต้นของแต่ละกลุ่มใน values[] คือหลังจากคอลัมน์ของกลุ่มก่อนหน้าทั้งหมด (ซึ่งกลุ่มแรกกว้าง 3 คอลัมน์ ไม่มี "ร้อยละ")
+  const firstGroupWidth = 3;
+  let cols = groupHeaders.map((h) => h.text.replace(/^\d+[.．]\s*/, ""));
+  const colOffsets = groupHeaders.map((_, i) => firstGroupWidth + i * 4);
+
+  let matrix = dataRows.map((r) => colOffsets.map((offset) => r.values[offset + 2] ?? 0)); // ตำแหน่งที่ 3 ในกลุ่ม = "รวม"
+
+  if (opts.maxCols && cols.length > opts.maxCols) {
+    const totals = colOffsets.map((_, ci) => matrix.reduce((s, row) => s + row[ci], 0));
+    const order = totals.map((t, i) => i).sort((a, b) => totals[b] - totals[a]).slice(0, opts.maxCols);
+    order.sort((a, b) => a - b);
+    cols = order.map((i) => cols[i]);
+    matrix = matrix.map((row) => order.map((i) => row[i]));
+  }
+
+  return { rows: dataRows.map((r) => r.area), cols, matrix };
+}
+
+/** ค่า % เด่นของตัวชี้วัด สำหรับแสดงในการ์ดหน้า hub (ดึงจากคอลัมน์ร้อยละ/อัตราหลักของแต่ละตัวชี้วัด) */
+export type SimpleIndicatorHeadline = { value: number; label: string; unit: string } | null;
+
+export function getSimpleIndicatorHeadline(key: SimpleIndicatorKey): SimpleIndicatorHeadline {
+  const row = allDataRows(key).find((r) => r.area.trim() === "รวม" || r.area.trim() === "สตูล") ?? firstDataRow(key);
+  if (!row) return null;
+  switch (key) {
+    case "21_1":
+      return { value: row.values[2] ?? 0, label: "ร้อยละสารเสพติดสะสม", unit: "%" };
+    case "21_4":
+      return { value: row.values[3] ?? 0, label: "ร้อยละมีโรคร่วมทางจิต (F20.xx)", unit: "%" };
+    case "21_7":
+      return { value: row.values[4] ?? 0, label: "อัตราเข้าถึงบริการ", unit: "%" };
+    case "22_1":
+    case "22_2": {
+      const percents = [6, 10, 14, 18, 22, 26, 30, 34, 38, 42, 46, 50, 54].map((i) => row.values[i] ?? 0);
+      const max = Math.max(...percents);
+      return { value: Math.round(max * 100) / 100, label: "ร้อยละกลุ่มโรคสูงสุด", unit: "%" };
+    }
+    case "22_3": {
+      const total = row.values[4] ?? 0;
+      return { value: total, label: "รวมผู้รับบริการ", unit: "คน" };
+    }
+    case "22_4":
+      return { value: row.values[0] ?? 0, label: "จำนวนตั้งใจทำร้ายตนเอง", unit: "คน" };
+    case "22_5":
+    case "22_6":
+    case "22_7": {
+      const percents: number[] = [];
+      for (let i = 6; i < row.values.length; i += 4) percents.push(row.values[i] ?? 0);
+      const max = percents.length > 0 ? Math.max(...percents) : 0;
+      return { value: Math.round(max * 100) / 100, label: "ร้อยละสูงสุดของวิธี/สถานที่/ช่วงเวลา", unit: "%" };
+    }
+    case "23_4":
+    case "23_5":
+    case "23_6":
+      return { value: row.values[5] ?? 0, label: "ความชุกร้อยละประชากร", unit: "%" };
+    default:
+      return null;
+  }
+}
+
+export function getSimpleIndicatorAnalysis(key: SimpleIndicatorKey): SimpleAnalysis {
+  switch (key) {
+    case "21_1": {
+      const row = firstDataRow(key);
+      if (!row) return { kind: "zero", note: "ไม่พบข้อมูลในช่วงเวลานี้" };
+      const codes = ["F10.xx", "F11.xx", "F12.xx", "F13.xx", "F14.xx", "F15.xx", "F16.xx", "F17.xx", "F18.xx", "F19.xx"];
+      const data = codes
+        .map((code, i) => ({ label: code, value: (row.values[4 + i * 2] ?? 0) + (row.values[5 + i * 2] ?? 0) }))
+        .filter((d) => d.value > 0)
+        .sort((a, b) => b.value - a.value);
+      const total = data.reduce((s, d) => s + d.value, 0);
+      return { kind: "donut", data, unit: "คน", axisLabel: "สัดส่วนตามรหัสโรค (สารเสพติด)", total };
+    }
+    case "21_4": {
+      const rows = allDataRows(key).filter((r) => r.area.trim() !== "รวม");
+      const byDisease = new Map<string, number>();
+      for (const r of rows) {
+        const name = r.area.trim();
+        byDisease.set(name, (byDisease.get(name) ?? 0) + (r.values[1] ?? 0));
+      }
+      const shorten = (name: string) => {
+        // ดึงชื่อสารที่แตกต่างกัน เช่น "...เกิดจากการเสพสุรา(F10.xx)" -> "สุรา (F10.xx)"
+        const match = name.match(/เสพ(.+?)\(([^)]+)\)/);
+        if (match) return `${match[1]} (${match[2]})`;
+        return name.length > 28 ? name.slice(0, 26) + "…" : name;
+      };
+      const data = Array.from(byDisease.entries())
+        .map(([label, value]) => ({ label: shorten(label), value }))
+        .filter((d) => d.value > 0)
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 8);
+      const total = data.reduce((s, d) => s + d.value, 0);
+      return { kind: "donut", data, unit: "คน", axisLabel: "สัดส่วนตามกลุ่มโรคร่วมทางจิต (Top 8)", total };
+    }
+    case "21_7": {
+      const row = firstDataRow(key);
+      if (!row) return { kind: "zero", note: "ไม่พบข้อมูลในช่วงเวลานี้" };
+      return {
+        kind: "metrics",
+        items: [
+          { label: "อัตราเข้าถึงบริการ (รับบริการในจังหวัด)", value: row.values[4] ?? 0, unit: "%", note: "เทียบผู้ป่วยคาดประมาณจากความชุก" },
+          { label: "อัตราเข้าถึงบริการ (มีทะเบียนบ้านในจังหวัด)", value: row.values[8] ?? 0, unit: "%", note: "เทียบผู้ป่วยคาดประมาณจากความชุก" },
+          { label: "ร้อยละความชุกของโรค", value: row.values[0] ?? 0, unit: "%" },
+        ],
+      };
+    }
+    case "22_1": {
+      const { rows, cols, matrix } = buildHeatmapFromGroupedColumns(key, { maxCols: 8 });
+      return { kind: "heatmap", rows, cols, matrix, unit: "คน", axisLabel: "จำนวนผู้รับบริการ: กลุ่มอายุ × กลุ่มโรค (Top 8)" };
+    }
+    case "22_5":
+    case "22_6":
+    case "22_7": {
+      const { rows, cols, matrix } = buildHeatmapFromGroupedColumns(key, { maxCols: 9 });
+      const dimLabel = key === "22_5" ? "วิธีทำร้ายตนเอง" : key === "22_6" ? "สถานที่เกิดเหตุ" : "ช่วงเวลาเกิดเหตุ";
+      return { kind: "heatmap", rows, cols, matrix, unit: "ครั้ง", axisLabel: `จำนวนครั้ง: กลุ่มอายุ × ${dimLabel}` };
+    }
+    case "22_2": {
+      const row = firstDataRow(key);
+      if (!row) return { kind: "zero", note: "ไม่พบข้อมูลในช่วงเวลานี้" };
+      const categories = [
+        "F00-F09", "F10-F19", "F20-F29", "F30-F39", "F40-F48", "F50-F59",
+        "F60-F69", "F70-F79", "F80-F89", "F90-F98", "F99", "X60-X84", "X85-Y09",
+      ];
+      const data = categories
+        .map((label, i) => ({ label, value: row.values[3 + i * 4 + 2] ?? 0 }))
+        .filter((d) => d.value > 0)
+        .sort((a, b) => b.value - a.value);
+      const total = data.reduce((s, d) => s + d.value, 0);
+      return { kind: "donut", data, unit: "คน", axisLabel: "สัดส่วนตามกลุ่มโรค (ICD-10)", total };
+    }
+    case "22_3": {
+      const rows = allDataRows(key).filter((r) => String(r.raw[0]).trim() !== "รวม");
+      const data = rows
+        .map((r) => ({ label: String(r.raw[2] ?? r.area).slice(0, 30), value: r.values[4] ?? 0 }))
+        .filter((d) => d.value > 0)
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 10);
+      return { kind: "breakdown", data, unit: "คน", axisLabel: "จำแนกตามกลุ่มโรค/รายโรค (Top 10)" };
+    }
+    case "22_4":
+    case "23_4":
+    case "23_5":
+    case "23_6": {
+      const row = firstDataRow(key);
+      if (!row) return { kind: "zero", note: "ไม่พบข้อมูลในช่วงเวลานี้" };
+      const monthly = row.values.slice(-12);
+      const total = monthly.reduce((s, v) => s + v, 0);
+      const data = MONTH_LABELS.map((label, i) => ({ label, value: monthly[i] ?? 0 }));
+      return { kind: "monthly", data, total, unit: key === "22_4" ? "ครั้ง" : "คน" };
+    }
+    default:
+      return { kind: "zero", note: "ไม่พบข้อมูลในช่วงเวลานี้" };
+  }
+}
+
+/**
+ * ===== เปรียบเทียบข้ามตัวชี้วัด (Cross-indicator comparison) — เฉพาะหน้าแรก (Overview) =====
+ * ตัวชี้วัดที่มีมิติ "รายอำเภอ" ร่วมกัน (7 อำเภอเดียวกัน) ใช้ชื่ออำเภอเป็นคีย์เชื่อมโยง
+ * เพื่อเปรียบเทียบอัตราการรักษาต่อเนื่อง/เข้าถึงบริการ ระหว่างตัวชี้วัดต่างกลุ่มในอำเภอเดียวกัน
+ */
+export type AmphoeCompareRow = {
+  amphoe: string;
+  smiVTotal: number; // ตัวชี้วัด 1: จำนวนผู้ป่วย SMI-V
+  repeatRate3: number | null; // ตัวชี้วัด 3: อัตราก่อความรุนแรงซ้ำ
+  schizoRetention14: number | null; // ตัวชี้วัด 14: อัตรารักษาต่อเนื่องจิตเภท
+  schizoRetention16: number | null; // ตัวชี้วัด 16: อัตรารักษาต่อเนื่องจิตเภท (อีกเกณฑ์)
+  substanceOpdRate21_2: number | null; // ตัวชี้วัด 21.2: ร้อยละสารเสพติด OPD
+  substanceRetention21_6: number | null; // ตัวชี้วัด 21.6: Retention Rate สารเสพติด
+};
+
+export const amphoeCompareRows: AmphoeCompareRow[] = amphoeList.map((amphoe) => {
+  const smiV = amphoeStats.find((a) => a.amphoe === amphoe);
+  const rep3 = indicator3AmphoeStats.find((a) => a.amphoe === amphoe);
+  const r14 = indicatorRelate14AmphoeStats.find((a) => a.amphoe === amphoe);
+  const r16 = indicatorRelate16AmphoeStats.find((a) => a.amphoe === amphoe);
+  const r212 = indicatorRelate21_2AmphoeStats.find((a) => a.amphoe === amphoe);
+  const r216 = indicatorRelate21_6AmphoeStats.find((a) => a.amphoe === amphoe);
+  return {
+    amphoe,
+    smiVTotal: smiV?.total ?? 0,
+    repeatRate3: rep3?.repeatRate ?? null,
+    schizoRetention14: r14?.rateAB ?? null,
+    schizoRetention16: r16?.rate ?? null,
+    substanceOpdRate21_2: r212?.opdRate ?? null,
+    substanceRetention21_6: r216?.retentionRateOverall ?? null,
+  };
+});
 

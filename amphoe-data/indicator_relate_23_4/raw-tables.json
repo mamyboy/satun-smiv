@@ -1,0 +1,480 @@
+[
+  [
+    [
+      {
+        "text": "จังหวัด",
+        "colspan": 1,
+        "rowspan": 2,
+        "tag": "th"
+      },
+      {
+        "text": "ประชากรทั้งหมด",
+        "colspan": 6,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "ประชากร อายุ 15 ปีขึ้นไป",
+        "colspan": 6,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วยใหม่ อายุตั้งแต่  15 ปีขึ้นไป จำแนกรายเดือน ในปี พ.ศ.2569",
+        "colspan": 12,
+        "rowspan": 1,
+        "tag": "th"
+      }
+    ],
+    [
+      {
+        "text": "จำนวนประชากร  (B)",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วยสะสมก่อนปี2569 (C)",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วยรายใหม่ในปี2569 (A)",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "อัตราป่วยรายใหม่ต่อแสนประชากรA/(B-C)*100,000",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วยเก่าและใหม่ในปี2569 (D)",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "ความชุกร้อยละประชากรD/B*100",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนประชากร (B1)",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วยสะสมก่อนปี2569 (C1)",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วยรายใหม่ในปี2569 (A1)",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "อัตราป่วยรายใหม่ต่อแสนประชากร A1/(B1-C1)*100,000",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "จำนวนผู้ป่วยเก่าและใหม่ในปี2569 (D1)",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "ความชุกร้อยละประชากรD1/B1*100",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "มค.",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "กพ.",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "มีค.",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "เมย.",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "พค.",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "มิย.",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "กค.",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "สค.",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "กย.",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "ตค.",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "พย.",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      },
+      {
+        "text": "ธค.",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "th"
+      }
+    ],
+    [
+      {
+        "text": "สตูล",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "322,886",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "2,428",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "112",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "34.95",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "2,540",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0.79",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "4,891",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "2,427",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "112",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "4,545.45",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "2,539",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "51.91",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "21",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "21",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "10",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "14",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "26",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "10",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "9",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "1",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      }
+    ],
+    [
+      {
+        "text": "รวม",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "322,886",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "2,428",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "112",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "34.95",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "2,540",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0.79",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "4,891",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "2,427",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "112",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "4,545.45",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "2,539",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "51.91",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "21",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "21",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "10",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "14",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "26",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "10",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "9",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "1",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      }
+    ]
+  ]
+]

@@ -3,29 +3,55 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
   Activity,
-  ArrowUpRight,
+  ArrowDown,
+  ArrowUp,
   Bell,
+  Building2,
+  Brain,
+  CalendarClock,
+  ChartNoAxesCombined,
   ChevronRight,
+  ClipboardList,
+  Clock,
   Command,
   Download,
   ExternalLink,
+  Funnel,
+  Gauge,
+  HeartCrack,
+  HeartPulse,
+  Hospital,
   Layers,
+  ListChecks,
+  MapPin,
   MapPinned,
   Menu,
   PawPrint,
+  Percent,
+  Pill,
+  PieChart as PieChartIcon,
+  Repeat2,
   Search,
+  ShieldCheck,
   Sparkles,
+  Star,
   Stethoscope,
   Target,
   TrendingDown,
   TrendingUp,
+  UserPlus,
   Users,
+  Users2,
+  Waves,
   X,
+  Zap,
 } from "lucide-react";
-import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, Cell, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { mainNavItems, utilityItems } from "@/lib/dashboard-data";
 import {
   amphoeDiagnosisMatrix,
@@ -42,7 +68,6 @@ import {
   indicator1ProcessedDate,
   indicator1SourceUrl,
   indicator1TableColumns,
-  indicator2ExtractedAt,
   indicator2Insights,
   indicator2Metrics,
   indicator2Name,
@@ -86,7 +111,62 @@ import {
   indicator5ProcessedDate,
   indicator5SourceUrl,
   getIndicator5FacilityTable,
-  overviewInsights,
+  indicatorRelate14AmphoeStats,
+  indicatorRelate14ExtractedAt,
+  indicatorRelate14Insights,
+  indicatorRelate14Metrics,
+  indicatorRelate14Name,
+  indicatorRelate14ProcessedDate,
+  indicatorRelate14SourceUrl,
+  indicatorRelate14TableColumns,
+  indicatorRelate14TableHeaderRows,
+  indicatorRelate14TableRows,
+  indicatorRelate15AmphoeStats,
+  indicatorRelate15ExtractedAt,
+  indicatorRelate15Insights,
+  indicatorRelate15Metrics,
+  indicatorRelate15Name,
+  indicatorRelate15ProcessedDate,
+  indicatorRelate15SourceUrl,
+  indicatorRelate15TableColumns,
+  indicatorRelate15TableHeaderRows,
+  indicatorRelate15TableRows,
+  indicatorRelate16AmphoeStats,
+  indicatorRelate16ExtractedAt,
+  indicatorRelate16Insights,
+  indicatorRelate16Metrics,
+  indicatorRelate16Name,
+  indicatorRelate16ProcessedDate,
+  indicatorRelate16SourceUrl,
+  indicatorRelate16TableColumns,
+  indicatorRelate16TableHeaderRows,
+  indicatorRelate16TableRows,
+  indicatorRelate21_2AmphoeStats,
+  indicatorRelate21_2ExtractedAt,
+  indicatorRelate21_2Insights,
+  indicatorRelate21_2Metrics,
+  indicatorRelate21_2Name,
+  indicatorRelate21_2ProcessedDate,
+  indicatorRelate21_2SourceUrl,
+  indicatorRelate21_2TableColumns,
+  indicatorRelate21_2TableHeaderRows,
+  indicatorRelate21_2TableRows,
+  indicatorRelate21_6AmphoeStats,
+  indicatorRelate21_6ExtractedAt,
+  indicatorRelate21_6Insights,
+  indicatorRelate21_6Metrics,
+  indicatorRelate21_6Name,
+  indicatorRelate21_6ProcessedDate,
+  indicatorRelate21_6SourceUrl,
+  indicatorRelate21_6TableColumns,
+  indicatorRelate21_6TableHeaderRows,
+  indicatorRelate21_6TableRows,
+  getSimpleIndicator,
+  getSimpleIndicatorAnalysis,
+  getSimpleIndicatorHeadline,
+  simpleIndicatorLabels,
+  type SimpleIndicatorKey,
+  type SimpleAnalysis,
   provinceTotal,
 } from "@/lib/hdc-data";
 
@@ -96,6 +176,16 @@ function formatDate(iso?: string) {
   if (!iso) return "-";
   const d = new Date(iso);
   return d.toLocaleDateString("th-TH", { year: "numeric", month: "long", day: "numeric" });
+}
+
+/** ข้อความเชื่อมโยงกับตัวชี้วัด SMI-V สำหรับตัวชี้วัดที่เกี่ยวข้อง */
+function SmiVNote({ text }: { text: string }) {
+  return (
+    <div className="smi-v-note">
+      <span className="smi-v-note-icon"><Stethoscope size={14} /></span>
+      <span><strong>เกี่ยวข้องกับ SMI-V:</strong> {text}</span>
+    </div>
+  );
 }
 
 function Logo() {
@@ -179,17 +269,21 @@ function Header({ onMenu, onSearch }: { onMenu: () => void; onSearch: () => void
   );
 }
 
-function StatCard({ label, value, note, index, featured = false }: { label: string; value: string; note: string; index: number; featured?: boolean }) {
+function StatCard({ label, value, note, index, featured = false, icon: Icon, tone = "indigo" }: { label: string; value: string; note: string; index: number; featured?: boolean; icon?: React.ComponentType<{ size?: number; strokeWidth?: number }>; tone?: "blue" | "teal" | "green" | "rose" | "purple" | "indigo" | "amber" }) {
+  const valueSizeClass = value.length > 14 ? "is-long" : value.length > 8 ? "is-medium" : "";
   return (
     <motion.article
-      className={`stat-card ${featured ? "featured" : ""}`}
+      className={`stat-card tone-${tone} ${featured ? "featured" : ""}`}
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.55, delay: index * 0.07, ease }}
       whileHover={{ y: -4 }}
     >
-      <div className="stat-head"><span>{label}</span><button aria-label={`เปิด ${label}`}><ArrowUpRight size={17} /></button></div>
-      <strong className="stat-value">{value}</strong>
+      {Icon && <span className="stat-card-icon" aria-hidden="true"><Icon size={30} strokeWidth={1.6} /></span>}
+      <div className={`stat-head ${Icon ? "has-icon" : ""}`}>
+        <span className="stat-head-label">{label}</span>
+      </div>
+      <strong className={`stat-value ${valueSizeClass}`}>{value}</strong>
       <small>{note}</small>
     </motion.article>
   );
@@ -206,8 +300,8 @@ function AmphoeChartCard() {
       <div className="chart-wrap chart-wrap-tall" aria-label="กราฟจำนวนผู้ป่วย SMI-V แยกตามอำเภอ">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
-            <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#78827e", fontSize: 11 }} />
-            <YAxis dataKey="amphoe" type="category" axisLine={false} tickLine={false} width={78} tick={{ fill: "#3a4440", fontSize: 12 }} />
+            <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+            <YAxis dataKey="amphoe" type="category" axisLine={false} tickLine={false} width={78} tick={{ fill: "#475569", fontSize: 12 }} />
             <Tooltip
               cursor={{ fill: "rgba(20, 105, 72, .04)" }}
               content={({ active, payload }) =>
@@ -221,7 +315,7 @@ function AmphoeChartCard() {
             />
             <Bar dataKey="total" radius={[0, 12, 12, 0]} animationDuration={850}>
               {chartData.map((entry, index) => (
-                <Cell key={entry.amphoe} fill={index === 0 ? "#0b5238" : index < 3 ? "#21845c" : "#8da19a"} />
+                <Cell key={entry.amphoe} fill={index === 0 ? "#3730a3" : index < 3 ? "#4f46e5" : "#94a3b8"} />
               ))}
             </Bar>
           </BarChart>
@@ -301,7 +395,7 @@ function Indicator1InsightsCard() {
   );
 }
 
-const heatmapColors = ["#f4f7f5", "#d9ecdf", "#a9d8bb", "#63b98a", "#21845c", "#0b5238"];
+const heatmapColors = ["#f4f7f5", "#d9ecdf", "#a9d8bb", "#63b98a", "#4f46e5", "#3730a3"];
 function heatColor(value: number, max: number) {
   if (max <= 0 || value <= 0) return heatmapColors[0];
   const ratio = value / max;
@@ -389,7 +483,7 @@ function AmphoeTableCard() {
           const diagCount = detail?.diagnoses?.length ?? 0;
           return (
             <button className="project-row" key={item.amphoe}>
-              <span className="project-symbol" style={{ "--symbol": "#146948" } as React.CSSProperties}><span /></span>
+              <span className="project-symbol" style={{ "--symbol": "#4338ca" } as React.CSSProperties}><span /></span>
               <span><strong>{item.amphoe}</strong><small>{diagCount} กลุ่มวินิจฉัย · รวม {item.total.toLocaleString()} ราย</small></span>
               <ChevronRight size={15} />
             </button>
@@ -584,42 +678,6 @@ function Indicator2RateCompareCard() {
   );
 }
 
-function Indicator2Card() {
-  if (!indicator2Metrics) return null;
-  return (
-    <section className="panel team-card indicator2-card">
-      <div className="panel-title-row">
-        <div><p className="eyebrow">ตัวชี้วัดที่ 2</p><h2>การเข้าถึงบริการต่อเนื่อง</h2></div>
-      </div>
-      <p className="indicator2-name">{indicator2Name}</p>
-      <div className="team-list indicator2-metrics">
-        <div className="team-row">
-          <span className="team-avatar"><Stethoscope size={16} /></span>
-          <span className="team-copy"><strong>ผู้ป่วย SMI-V ทั้งหมด</strong><small>{indicator2Metrics.area}</small></span>
-          <span className="status success">{indicator2Metrics.totalPatients.toLocaleString()} คน</span>
-        </div>
-        <div className="team-row">
-          <span className="team-avatar"><Activity size={16} /></span>
-          <span className="team-copy"><strong>อัตราการเข้าถึงบริการ</strong><small>Accessibility Rate</small></span>
-          <span className="status warning">{indicator2Metrics.accessRate}%</span>
-        </div>
-        <div className="team-row">
-          <span className="team-avatar"><Users size={16} /></span>
-          <span className="team-copy"><strong>ไม่ก่อความรุนแรงซ้ำ</strong><small>ผู้ป่วยสะสม</small></span>
-          <span className="status success">{indicator2Metrics.noRepeatViolence.toLocaleString()} คน</span>
-        </div>
-        <div className="team-row">
-          <span className="team-avatar"><MapPinned size={16} /></span>
-          <span className="team-copy"><strong>ดูแลต่อเนื่องและไม่ก่อซ้ำ</strong><small>อย่างน้อย 2 ครั้ง</small></span>
-          <span className="status success">{indicator2Metrics.continuousCareRate}%</span>
-        </div>
-      </div>
-      <p className="indicator2-updated">อัปเดตล่าสุด {formatDate(indicator2ExtractedAt)}</p>
-      {indicator2ProcessedDate && <p className="report-info-processed"><span>วันที่ประมวลผล</span><strong>{indicator2ProcessedDate}</strong></p>}
-    </section>
-  );
-}
-
 function ProvinceGaugeCard() {
   const highest = amphoeStats[0];
   const pct = highest && provinceTotal > 0 ? highest.total / provinceTotal : 0;
@@ -669,7 +727,7 @@ function SearchDialog({ open, onClose }: { open: boolean; onClose: () => void })
           <div className="dialog-input"><Search size={19} /><input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="ค้นหาอำเภอ..." /><kbd>ESC</kbd></div>
           <div className="dialog-results">
             <p>อำเภอ</p>
-            {results.length ? results.map((item) => <button key={item.amphoe}><span style={{ background: "#146948" }} /><strong>{item.amphoe}</strong><ChevronRight size={16} /></button>) : <div className="empty-result">ไม่พบอำเภอที่ค้นหา</div>}
+            {results.length ? results.map((item) => <button key={item.amphoe}><span style={{ background: "#4338ca" }} /><strong>{item.amphoe}</strong><ChevronRight size={16} /></button>) : <div className="empty-result">ไม่พบอำเภอที่ค้นหา</div>}
           </div>
         </motion.div>
       </motion.div>}
@@ -677,165 +735,522 @@ function SearchDialog({ open, onClose }: { open: boolean; onClose: () => void })
   );
 }
 
-export type ViewKey = "overview" | "indicators" | "indicator1" | "indicator2" | "indicator3" | "indicator4" | "indicator5" | "hippo-hdc";
+export type ViewKey =
+  | "overview" | "indicators"
+  | "indicator1" | "indicator2" | "indicator3" | "indicator4" | "indicator5"
+  | "indicator_relate_14" | "indicator_relate_15" | "indicator_relate_16"
+  | "indicator_relate_21_1" | "indicator_relate_21_2" | "indicator_relate_21_4"
+  | "indicator_relate_21_6" | "indicator_relate_21_7"
+  | "indicator_relate_22_1" | "indicator_relate_22_2" | "indicator_relate_22_3" | "indicator_relate_22_4"
+  | "indicator_relate_22_5" | "indicator_relate_22_6" | "indicator_relate_22_7"
+  | "indicator_relate_23_4" | "indicator_relate_23_5" | "indicator_relate_23_6"
+  | "hippo-hdc" | "blank";
+
+type IndicatorRow = {
+  code: string;
+  sortKey: number;
+  group: "main" | "schizo" | "treatment" | "epidemiology" | "violence";
+  name: string;
+  href: string;
+  sourceUrl: string;
+  processedDate: string;
+  value: number | null;
+  unit: string;
+  valueLabel: string;
+  starred?: boolean;
+};
+
+const indicatorGroupMeta: Record<IndicatorRow["group"], { title: string; dot: string }> = {
+  main: { title: "ตัวชี้วัดหลัก SMI-V", dot: "main" },
+  schizo: { title: "จิตเภท (Schizophrenia)", dot: "schizo" },
+  treatment: { title: "อัตรารักษา/เข้าถึงบริการ", dot: "treatment" },
+  epidemiology: { title: "อุบัติการณ์/ความชุก", dot: "epidemiology" },
+  violence: { title: "ความรุนแรง/ทำร้ายตนเอง", dot: "violence" },
+};
+
+function buildIndicatorRows(): IndicatorRow[] {
+  return [
+    { code: "1", sortKey: 1, group: "main", name: indicator1Name, href: "/indicator-1", sourceUrl: indicator1SourceUrl, processedDate: indicator1ProcessedDate ?? "-", value: provinceTotal, unit: " คน", valueLabel: "ผู้ป่วยทั้งจังหวัด" },
+    { code: "2", sortKey: 2, group: "main", name: indicator2Name, href: "/indicator-2", sourceUrl: indicator2SourceUrl, processedDate: indicator2ProcessedDate ?? "-", value: indicator2Metrics?.accessRate ?? null, unit: "%", valueLabel: "อัตราการเข้าถึงบริการ", starred: true },
+    { code: "3", sortKey: 3, group: "main", name: indicator3Name, href: "/indicator-3", sourceUrl: indicator3SourceUrl, processedDate: indicator3ProcessedDate ?? "-", value: indicator3RepeatRate ?? null, unit: "%", valueLabel: "ก่อความรุนแรงซ้ำ" },
+    { code: "4", sortKey: 4, group: "main", name: indicator4Name, href: "/indicator-4", sourceUrl: indicator4SourceUrl, processedDate: indicator4ProcessedDate ?? "-", value: indicator4RepeatRate ?? null, unit: "%", valueLabel: "ก่อความรุนแรงซ้ำ" },
+    { code: "5", sortKey: 5, group: "main", name: indicator5Name, href: "/indicator-5", sourceUrl: indicator5SourceUrl, processedDate: indicator5ProcessedDate ?? "-", value: indicator5FollowRate ?? null, unit: "%", valueLabel: "ติดตามตามเกณฑ์" },
+    { code: "14", sortKey: 14, group: "schizo", name: indicatorRelate14Name, href: "/indicator-relate-14", sourceUrl: indicatorRelate14SourceUrl, processedDate: indicatorRelate14ProcessedDate ?? "-", value: indicatorRelate14Metrics?.rateAB ?? null, unit: "%", valueLabel: "อัตรารักษาต่อเนื่อง" },
+    { code: "15", sortKey: 15, group: "schizo", name: indicatorRelate15Name, href: "/indicator-relate-15", sourceUrl: indicatorRelate15SourceUrl, processedDate: indicatorRelate15ProcessedDate ?? "-", value: indicatorRelate15Metrics?.rate2x ?? null, unit: "%", valueLabel: "ติดตามครั้งที่ 2" },
+    { code: "16", sortKey: 16, group: "schizo", name: indicatorRelate16Name, href: "/indicator-relate-16", sourceUrl: indicatorRelate16SourceUrl, processedDate: indicatorRelate16ProcessedDate ?? "-", value: indicatorRelate16Metrics?.rate ?? null, unit: "%", valueLabel: "อัตรารักษาต่อเนื่อง" },
+    { code: "21.1", sortKey: 21.1, group: "treatment", name: getSimpleIndicator("21_1").name, href: "/indicator-relate-21-1", sourceUrl: getSimpleIndicator("21_1").sourceUrl, processedDate: getSimpleIndicator("21_1").processedDate ?? "-", value: getSimpleIndicatorHeadline("21_1")?.value ?? null, unit: getSimpleIndicatorHeadline("21_1")?.unit ?? "", valueLabel: getSimpleIndicatorHeadline("21_1")?.label ?? "" },
+    { code: "21.2", sortKey: 21.2, group: "treatment", name: indicatorRelate21_2Name, href: "/indicator-relate-21-2", sourceUrl: indicatorRelate21_2SourceUrl, processedDate: indicatorRelate21_2ProcessedDate ?? "-", value: indicatorRelate21_2Metrics?.opdRate ?? null, unit: "%", valueLabel: "ร้อยละสารเสพติด OPD เฉลี่ย" },
+    { code: "21.6", sortKey: 21.6, group: "treatment", name: indicatorRelate21_6Name, href: "/indicator-relate-21-6", sourceUrl: indicatorRelate21_6SourceUrl, processedDate: indicatorRelate21_6ProcessedDate ?? "-", value: indicatorRelate21_6Metrics?.retentionRateOverall ?? null, unit: "%", valueLabel: "Retention Rate เฉลี่ย" },
+    { code: "21.7", sortKey: 21.7, group: "treatment", name: getSimpleIndicator("21_7").name, href: "/indicator-relate-21-7", sourceUrl: getSimpleIndicator("21_7").sourceUrl, processedDate: getSimpleIndicator("21_7").processedDate ?? "-", value: getSimpleIndicatorHeadline("21_7")?.value ?? null, unit: getSimpleIndicatorHeadline("21_7")?.unit ?? "", valueLabel: getSimpleIndicatorHeadline("21_7")?.label ?? "" },
+    { code: "21.4", sortKey: 21.4, group: "epidemiology", name: getSimpleIndicator("21_4").name, href: "/indicator-relate-21-4", sourceUrl: getSimpleIndicator("21_4").sourceUrl, processedDate: getSimpleIndicator("21_4").processedDate ?? "-", value: getSimpleIndicatorHeadline("21_4")?.value ?? null, unit: getSimpleIndicatorHeadline("21_4")?.unit ?? "", valueLabel: getSimpleIndicatorHeadline("21_4")?.label ?? "" },
+    { code: "23.4", sortKey: 23.4, group: "epidemiology", name: getSimpleIndicator("23_4").name, href: "/indicator-relate-23-4", sourceUrl: getSimpleIndicator("23_4").sourceUrl, processedDate: getSimpleIndicator("23_4").processedDate ?? "-", value: getSimpleIndicatorHeadline("23_4")?.value ?? null, unit: getSimpleIndicatorHeadline("23_4")?.unit ?? "", valueLabel: getSimpleIndicatorHeadline("23_4")?.label ?? "" },
+    { code: "23.5", sortKey: 23.5, group: "epidemiology", name: getSimpleIndicator("23_5").name, href: "/indicator-relate-23-5", sourceUrl: getSimpleIndicator("23_5").sourceUrl, processedDate: getSimpleIndicator("23_5").processedDate ?? "-", value: getSimpleIndicatorHeadline("23_5")?.value ?? null, unit: getSimpleIndicatorHeadline("23_5")?.unit ?? "", valueLabel: getSimpleIndicatorHeadline("23_5")?.label ?? "" },
+    { code: "23.6", sortKey: 23.6, group: "epidemiology", name: getSimpleIndicator("23_6").name, href: "/indicator-relate-23-6", sourceUrl: getSimpleIndicator("23_6").sourceUrl, processedDate: getSimpleIndicator("23_6").processedDate ?? "-", value: getSimpleIndicatorHeadline("23_6")?.value ?? null, unit: getSimpleIndicatorHeadline("23_6")?.unit ?? "", valueLabel: getSimpleIndicatorHeadline("23_6")?.label ?? "" },
+    { code: "22.1", sortKey: 22.1, group: "violence", name: getSimpleIndicator("22_1").name, href: "/indicator-relate-22-1", sourceUrl: getSimpleIndicator("22_1").sourceUrl, processedDate: getSimpleIndicator("22_1").processedDate ?? "-", value: getSimpleIndicatorHeadline("22_1")?.value ?? null, unit: getSimpleIndicatorHeadline("22_1")?.unit ?? "", valueLabel: getSimpleIndicatorHeadline("22_1")?.label ?? "" },
+    { code: "22.2", sortKey: 22.2, group: "violence", name: getSimpleIndicator("22_2").name, href: "/indicator-relate-22-2", sourceUrl: getSimpleIndicator("22_2").sourceUrl, processedDate: getSimpleIndicator("22_2").processedDate ?? "-", value: getSimpleIndicatorHeadline("22_2")?.value ?? null, unit: getSimpleIndicatorHeadline("22_2")?.unit ?? "", valueLabel: getSimpleIndicatorHeadline("22_2")?.label ?? "" },
+    { code: "22.3", sortKey: 22.3, group: "violence", name: getSimpleIndicator("22_3").name, href: "/indicator-relate-22-3", sourceUrl: getSimpleIndicator("22_3").sourceUrl, processedDate: getSimpleIndicator("22_3").processedDate ?? "-", value: getSimpleIndicatorHeadline("22_3")?.value ?? null, unit: getSimpleIndicatorHeadline("22_3")?.unit ?? "", valueLabel: getSimpleIndicatorHeadline("22_3")?.label ?? "" },
+    { code: "22.4", sortKey: 22.4, group: "violence", name: getSimpleIndicator("22_4").name, href: "/indicator-relate-22-4", sourceUrl: getSimpleIndicator("22_4").sourceUrl, processedDate: getSimpleIndicator("22_4").processedDate ?? "-", value: getSimpleIndicatorHeadline("22_4")?.value ?? null, unit: getSimpleIndicatorHeadline("22_4")?.unit ?? "", valueLabel: getSimpleIndicatorHeadline("22_4")?.label ?? "" },
+    { code: "22.5", sortKey: 22.5, group: "violence", name: getSimpleIndicator("22_5").name, href: "/indicator-relate-22-5", sourceUrl: getSimpleIndicator("22_5").sourceUrl, processedDate: getSimpleIndicator("22_5").processedDate ?? "-", value: getSimpleIndicatorHeadline("22_5")?.value ?? null, unit: getSimpleIndicatorHeadline("22_5")?.unit ?? "", valueLabel: getSimpleIndicatorHeadline("22_5")?.label ?? "" },
+    { code: "22.6", sortKey: 22.6, group: "violence", name: getSimpleIndicator("22_6").name, href: "/indicator-relate-22-6", sourceUrl: getSimpleIndicator("22_6").sourceUrl, processedDate: getSimpleIndicator("22_6").processedDate ?? "-", value: getSimpleIndicatorHeadline("22_6")?.value ?? null, unit: getSimpleIndicatorHeadline("22_6")?.unit ?? "", valueLabel: getSimpleIndicatorHeadline("22_6")?.label ?? "" },
+    { code: "22.7", sortKey: 22.7, group: "violence", name: getSimpleIndicator("22_7").name, href: "/indicator-relate-22-7", sourceUrl: getSimpleIndicator("22_7").sourceUrl, processedDate: getSimpleIndicator("22_7").processedDate ?? "-", value: getSimpleIndicatorHeadline("22_7")?.value ?? null, unit: getSimpleIndicatorHeadline("22_7")?.unit ?? "", valueLabel: getSimpleIndicatorHeadline("22_7")?.label ?? "" },
+  ];
+}
 
 function IndicatorsHubSection() {
   const router = useRouter();
+  const [query, setQuery] = useState("");
+  const [activeGroup, setActiveGroup] = useState<IndicatorRow["group"] | "all">("all");
+  const [sortBy, setSortBy] = useState<"code" | "value">("code");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+
+  const rows: IndicatorRow[] = buildIndicatorRows();
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    let list = rows.filter((r) => (activeGroup === "all" || r.group === activeGroup) && (q === "" || r.code.toLowerCase().includes(q) || r.name.toLowerCase().includes(q) || indicatorGroupMeta[r.group].title.toLowerCase().includes(q)));
+    list = [...list].sort((a, b) => {
+      const dir = sortDir === "asc" ? 1 : -1;
+      if (sortBy === "code") return (a.sortKey - b.sortKey) * dir;
+      const av = a.value ?? -Infinity;
+      const bv = b.value ?? -Infinity;
+      return (av - bv) * dir;
+    });
+    return list;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, activeGroup, sortBy, sortDir]);
+
+  const toggleSort = (col: "code" | "value") => {
+    if (sortBy === col) setSortDir(sortDir === "asc" ? "desc" : "asc");
+    else { setSortBy(col); setSortDir("asc"); }
+  };
+
+  const groupCounts = rows.reduce<Record<string, number>>((acc, r) => { acc[r.group] = (acc[r.group] ?? 0) + 1; return acc; }, {});
+
   return (
     <motion.div className="indicator-group" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45, ease }}>
       <div className="indicator-group-head">
         <span className="indicator-badge indicator-badge-overview">ตัวชี้วัด</span>
         <h2>เลือกตัวชี้วัดที่ต้องการดู</h2>
-        <p>เลือกดูรายละเอียดแต่ละตัวชี้วัด SMI-V แยกทีละหน้า</p>
+        <p>ตัวชี้วัด SMI-V ทั้งหมด {rows.length} รายการ — ค้นหา กรอง และเรียงลำดับได้</p>
       </div>
 
-      <div className="indicator-hub-grid">
-        <div
-          className="indicator-hub-card"
-          role="link"
-          tabIndex={0}
-          onClick={() => router.push("/indicator-1")}
-          onKeyDown={(e) => { if (e.key === "Enter") router.push("/indicator-1"); }}
-        >
-          <div className="indicator-hub-card-top">
-            <span className="indicator-badge indicator-badge-1">ตัวชี้วัด 1</span>
-            <a href={indicator1SourceUrl} target="_blank" rel="noopener noreferrer" className="source-link" title="เปิดหน้ารายงานต้นฉบับบน HDC" onClick={(e) => e.stopPropagation()}>
-              <ExternalLink size={13} /> HDC
-            </a>
-          </div>
-          <h3>{indicator1Name}</h3>
-          <p>ข้อมูล 7 อำเภอ ดึงโดย automate ผ่าน dropdown จริงบนหน้าเว็บ HDC</p>
-          <div className="indicator-hub-stat"><strong>{provinceTotal.toLocaleString()}</strong><span>ผู้ป่วยทั้งจังหวัด</span></div>
-          {indicator1ProcessedDate && <div className="indicator-hub-processed"><span>วันที่ประมวลผล</span><strong>{indicator1ProcessedDate}</strong></div>}
-          <span className="indicator-hub-cta">ดูรายละเอียด <ChevronRight size={15} /></span>
+      <div className="indicator-table-toolbar">
+        <div className="indicator-table-search">
+          <Search size={15} />
+          <input
+            type="text"
+            placeholder="ค้นหารหัสหรือชื่อตัวชี้วัด เช่น 21.4, จิตเภท, ทำร้ายตนเอง..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          {query && <button type="button" onClick={() => setQuery("")} aria-label="ล้างคำค้นหา"><X size={14} /></button>}
         </div>
+        <div className="indicator-table-filters">
+          <button type="button" className={activeGroup === "all" ? "active" : ""} onClick={() => setActiveGroup("all")}>
+            ทั้งหมด <b>{rows.length}</b>
+          </button>
+          {(Object.keys(indicatorGroupMeta) as IndicatorRow["group"][]).map((g) => (
+            <button key={g} type="button" className={activeGroup === g ? "active" : ""} onClick={() => setActiveGroup(g)}>
+              <span className={`indicator-jumpnav-dot indicator-jumpnav-dot-${indicatorGroupMeta[g].dot}`} />
+              {indicatorGroupMeta[g].title} <b>{groupCounts[g] ?? 0}</b>
+            </button>
+          ))}
+        </div>
+      </div>
 
-        <div
-          className="indicator-hub-card"
-          role="link"
-          tabIndex={0}
-          onClick={() => router.push("/indicator-2")}
-          onKeyDown={(e) => { if (e.key === "Enter") router.push("/indicator-2"); }}
-        >
-          <div className="indicator-hub-card-top">
-            <span className="indicator-badge indicator-badge-2">ตัวชี้วัด 2</span>
-            <a href={indicator2SourceUrl} target="_blank" rel="noopener noreferrer" className="source-link" title="เปิดหน้ารายงานต้นฉบับบน HDC" onClick={(e) => e.stopPropagation()}>
-              <ExternalLink size={13} /> HDC
-            </a>
-          </div>
-          <h3>{indicator2Name}</h3>
-          <p>ข้อมูลระดับจังหวัด ไม่ได้กรองรายอำเภอ (province-level report)</p>
-          <div className="indicator-hub-stat"><strong>{indicator2Metrics?.accessRate ?? "-"}%</strong><span>อัตราการเข้าถึงบริการ</span></div>
-          {indicator2ProcessedDate && <div className="indicator-hub-processed"><span>วันที่ประมวลผล</span><strong>{indicator2ProcessedDate}</strong></div>}
-          <span className="indicator-hub-cta">ดูรายละเอียด <ChevronRight size={15} /></span>
-        </div>
-
-        <div
-          className="indicator-hub-card"
-          role="link"
-          tabIndex={0}
-          onClick={() => router.push("/indicator-3")}
-          onKeyDown={(e) => { if (e.key === "Enter") router.push("/indicator-3"); }}
-        >
-          <div className="indicator-hub-card-top">
-            <span className="indicator-badge indicator-badge-3">ตัวชี้วัด 3</span>
-            <a href={indicator3SourceUrl} target="_blank" rel="noopener noreferrer" className="source-link" title="เปิดหน้ารายงานต้นฉบับบน HDC" onClick={(e) => e.stopPropagation()}>
-              <ExternalLink size={13} /> HDC
-            </a>
-          </div>
-          <h3>{indicator3Name}</h3>
-          <p>ข้อมูลรายหน่วยบริการ แยกตามอำเภอ ดึงโดย automate ผ่าน dropdown จริงบนหน้าเว็บ HDC</p>
-          <div className="indicator-hub-stat"><strong>{indicator3RepeatRate ?? "-"}%</strong><span>ก่อความรุนแรงซ้ำ (ทั้งจังหวัด)</span></div>
-          {indicator3ProcessedDate && <div className="indicator-hub-processed"><span>วันที่ประมวลผล</span><strong>{indicator3ProcessedDate}</strong></div>}
-          <span className="indicator-hub-cta">ดูรายละเอียด <ChevronRight size={15} /></span>
-        </div>
-
-        <div
-          className="indicator-hub-card"
-          role="link"
-          tabIndex={0}
-          onClick={() => router.push("/indicator-4")}
-          onKeyDown={(e) => { if (e.key === "Enter") router.push("/indicator-4"); }}
-        >
-          <div className="indicator-hub-card-top">
-            <span className="indicator-badge indicator-badge-4">ตัวชี้วัด 4</span>
-            <a href={indicator4SourceUrl} target="_blank" rel="noopener noreferrer" className="source-link" title="เปิดหน้ารายงานต้นฉบับบน HDC" onClick={(e) => e.stopPropagation()}>
-              <ExternalLink size={13} /> HDC
-            </a>
-          </div>
-          <h3>{indicator4Name}</h3>
-          <p>ข้อมูลระดับจังหวัด มุมมองรายพื้นที่ (เขตพื้นที่) ดึงโดย automate จากหน้าเว็บ HDC</p>
-          <div className="indicator-hub-stat"><strong>{indicator4RepeatRate ?? "-"}%</strong><span>ก่อความรุนแรงซ้ำ (ทั้งจังหวัด)</span></div>
-          {indicator4ProcessedDate && <div className="indicator-hub-processed"><span>วันที่ประมวลผล</span><strong>{indicator4ProcessedDate}</strong></div>}
-          <span className="indicator-hub-cta">ดูรายละเอียด <ChevronRight size={15} /></span>
-        </div>
-
-        <div
-          className="indicator-hub-card"
-          role="link"
-          tabIndex={0}
-          onClick={() => router.push("/indicator-5")}
-          onKeyDown={(e) => { if (e.key === "Enter") router.push("/indicator-5"); }}
-        >
-          <div className="indicator-hub-card-top">
-            <span className="indicator-badge indicator-badge-5">ตัวชี้วัด 5</span>
-            <a href={indicator5SourceUrl} target="_blank" rel="noopener noreferrer" className="source-link" title="เปิดหน้ารายงานต้นฉบับบน HDC" onClick={(e) => e.stopPropagation()}>
-              <ExternalLink size={13} /> HDC
-            </a>
-          </div>
-          <h3>{indicator5Name}</h3>
-          <p>ข้อมูลรายหน่วยบริการ แยกตามอำเภอ ดึงโดย automate ผ่าน dropdown จริงบนหน้าเว็บ HDC</p>
-          <div className="indicator-hub-stat"><strong>{indicator5FollowRate ?? "-"}%</strong><span>ติดตามตามเกณฑ์ (ทั้งจังหวัด)</span></div>
-          {indicator5ProcessedDate && <div className="indicator-hub-processed"><span>วันที่ประมวลผล</span><strong>{indicator5ProcessedDate}</strong></div>}
-          <span className="indicator-hub-cta">ดูรายละเอียด <ChevronRight size={15} /></span>
-        </div>
+      <div className="indicator-table-wrap">
+        <table className="indicator-table">
+          <thead>
+            <tr>
+              <th className="sortable" onClick={() => toggleSort("code")}>
+                รหัส {sortBy === "code" && (sortDir === "asc" ? <ArrowUp size={12} /> : <ArrowDown size={12} />)}
+              </th>
+              <th>ชื่อตัวชี้วัด</th>
+              <th>หมวด</th>
+              <th className="sortable num" onClick={() => toggleSort("value")}>
+                ค่าเด่น {sortBy === "value" && (sortDir === "asc" ? <ArrowUp size={12} /> : <ArrowDown size={12} />)}
+              </th>
+              <th>วันที่ประมวลผล</th>
+              <th aria-label="การกระทำ" />
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((r) => (
+              <tr key={r.code} onClick={() => router.push(r.href)} tabIndex={0} role="link" onKeyDown={(e) => { if (e.key === "Enter") router.push(r.href); }} className={r.starred ? "indicator-table-starred" : ""}>
+                <td className="indicator-table-code">
+                  {r.starred && <Star size={13} className="indicator-star-icon" fill="currentColor" />}
+                  {r.code}
+                </td>
+                <td className="indicator-table-name">
+                  <span>{r.name}</span>
+                  <a href={r.sourceUrl} target="_blank" rel="noopener noreferrer" className="source-link" title="เปิดหน้ารายงานต้นฉบับบน HDC" onClick={(e) => e.stopPropagation()}>
+                    <ExternalLink size={12} /> HDC
+                  </a>
+                </td>
+                <td>
+                  <span className={`indicator-table-group indicator-table-group-${indicatorGroupMeta[r.group].dot}`}>
+                    <span className={`indicator-jumpnav-dot indicator-jumpnav-dot-${indicatorGroupMeta[r.group].dot}`} />
+                    {indicatorGroupMeta[r.group].title}
+                  </span>
+                </td>
+                <td className="indicator-table-value num">
+                  {r.value !== null ? <><strong>{r.value.toLocaleString("th-TH")}{r.unit}</strong><span>{r.valueLabel}</span></> : <span className="indicator-table-empty">-</span>}
+                </td>
+                <td className="indicator-table-date">{r.processedDate}</td>
+                <td className="indicator-table-cta"><ChevronRight size={15} /></td>
+              </tr>
+            ))}
+            {filtered.length === 0 && (
+              <tr className="indicator-table-noresult">
+                <td colSpan={6}>ไม่พบตัวชี้วัดที่ตรงกับคำค้นหา &quot;{query}&quot;</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
     </motion.div>
   );
 }
 
+/** จัดกลุ่มอายุ 21+ ช่วงย่อย (0-4, 5-9, ... 100+) ให้เหลือ 6 กลุ่มใหญ่ อ่านง่ายในโดนัท/legend */
+function bucketAgeGroups(rows: string[], rowTotals: number[]): { label: string; value: number }[] {
+  const buckets = [
+    { label: "0-14 ปี", max: 14, value: 0 },
+    { label: "15-29 ปี", max: 29, value: 0 },
+    { label: "30-44 ปี", max: 44, value: 0 },
+    { label: "45-59 ปี", max: 59, value: 0 },
+    { label: "60-74 ปี", max: 74, value: 0 },
+    { label: "75 ปีขึ้นไป", max: Infinity, value: 0 },
+  ];
+  rows.forEach((label, i) => {
+    const match = label.match(/(\d+)/);
+    const startAge = match ? parseInt(match[1], 10) : Infinity;
+    const bucket = buckets.find((b) => startAge <= b.max) ?? buckets[buckets.length - 1];
+    bucket.value += rowTotals[i] ?? 0;
+  });
+  return buckets.filter((b) => b.value > 0).map((b) => ({ label: b.label, value: b.value }));
+}
+
+function CompositionDonutCard({
+  total,
+  segments,
+}: {
+  total: number;
+  segments: { name: string; value: number; color: string; glow: string; icon: React.ComponentType<{ size?: number }> }[];
+}) {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const active = activeIndex !== null ? segments[activeIndex] : null;
+  const activePct = active && total ? Math.round((active.value / total) * 1000) / 10 : null;
+
+  return (
+    <section className="panel analytics-card donut-card-v2">
+      <div className="panel-heading">
+        <div><p className="eyebrow"><PieChartIcon size={12} /> องค์ประกอบผู้ป่วย</p><h2>รายเก่า vs รายใหม่</h2></div>
+      </div>
+      <div className="donut-card-body">
+        <div className="chart-wrap chart-wrap-donut" aria-label="กราฟวงกลมสัดส่วนผู้ป่วยรายเก่าเทียบรายใหม่">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <defs>
+                {segments.map((s, i) => (
+                  <linearGradient id={`donutGrad-${i}`} key={s.name} x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor={s.glow} />
+                    <stop offset="100%" stopColor={s.color} />
+                  </linearGradient>
+                ))}
+              </defs>
+              <Pie
+                data={segments}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                innerRadius="62%"
+                outerRadius="92%"
+                paddingAngle={3}
+                cornerRadius={7}
+                animationDuration={850}
+                onMouseEnter={(_, i) => setActiveIndex(i)}
+                onMouseLeave={() => setActiveIndex(null)}
+              >
+                {segments.map((s, i) => (
+                  <Cell
+                    key={s.name}
+                    fill={`url(#donutGrad-${i})`}
+                    stroke="var(--card, #fff)"
+                    strokeWidth={2}
+                    opacity={activeIndex === null || activeIndex === i ? 1 : 0.35}
+                    style={{ transition: "opacity .2s ease" }}
+                  />
+                ))}
+              </Pie>
+              <Tooltip
+                content={({ active: hovering, payload }) =>
+                  hovering && payload?.[0] ? (
+                    <div className="chart-tooltip">
+                      <b>{payload[0].value?.toLocaleString()} คน</b>
+                      <span>{payload[0].name}</span>
+                    </div>
+                  ) : null
+                }
+              />
+            </PieChart>
+          </ResponsiveContainer>
+          <div className="donut-center-label">
+            {active ? (
+              <>
+                <strong>{active.value.toLocaleString()}</strong>
+                <span>{active.name} · {activePct}%</span>
+              </>
+            ) : (
+              <>
+                <strong>{total.toLocaleString()}</strong>
+                <span>ผู้ป่วยรวม</span>
+              </>
+            )}
+          </div>
+        </div>
+        <ul className="donut-legend donut-legend-v2">
+          {segments.map((d, i) => {
+            const pct = total ? Math.round((d.value / total) * 1000) / 10 : 0;
+            return (
+              <li
+                key={d.name}
+                className={activeIndex === i ? "is-active" : ""}
+                onMouseEnter={() => setActiveIndex(i)}
+                onMouseLeave={() => setActiveIndex(null)}
+              >
+                <div className="donut-legend-v2-top">
+                  <span className="donut-legend-label"><d.icon size={13} /> {d.name}</span>
+                  <span className="donut-legend-value">{pct}%</span>
+                </div>
+                <div className="donut-legend-bar-track">
+                  <motion.div
+                    className="donut-legend-bar-fill"
+                    style={{ background: `linear-gradient(90deg, ${d.glow}, ${d.color})` }}
+                    initial={{ width: 0 }}
+                    animate={{ width: `${pct}%` }}
+                    transition={{ duration: 0.7, delay: i * 0.08, ease }}
+                  />
+                </div>
+                <span className="donut-legend-count">{d.value.toLocaleString()} คน</span>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 function OverviewSection() {
-  const chartData = amphoeStats.map((item) => ({ amphoe: item.amphoe, total: item.total }));
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    gsap.registerPlugin(ScrollTrigger);
+    const links = gsap.utils.toArray<HTMLElement>(".indicator-title-link");
+    const ctx = gsap.context(() => {
+      links.forEach((el) => {
+        gsap.fromTo(
+          el,
+          { opacity: 0, y: 16, scale: 0.97 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.6,
+            ease: "power3.out",
+            scrollTrigger: { trigger: el, start: "top 92%", once: true },
+          }
+        );
+      });
+    });
+    return () => ctx.revert();
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const links = gsap.utils.toArray<HTMLElement>(".indicator-title-link");
+    const cleanups: Array<() => void> = [];
+    links.forEach((el) => {
+      const shimmer = el.querySelector<HTMLElement>(".indicator-title-shimmer");
+      const icon = el.querySelector<HTMLElement>(".indicator-title-link-icon");
+      if (!shimmer) return;
+      const onEnter = () => {
+        gsap.fromTo(shimmer, { xPercent: -130 }, { xPercent: 130, duration: 0.7, ease: "power2.out" });
+        if (icon) gsap.to(icon, { rotate: 12, duration: 0.3, ease: "back.out(3)" });
+      };
+      const onLeave = () => {
+        if (icon) gsap.to(icon, { rotate: 0, duration: 0.3, ease: "power2.out" });
+      };
+      el.addEventListener("mouseenter", onEnter);
+      el.addEventListener("mouseleave", onLeave);
+      cleanups.push(() => {
+        el.removeEventListener("mouseenter", onEnter);
+        el.removeEventListener("mouseleave", onLeave);
+      });
+    });
+    return () => cleanups.forEach((fn) => fn());
+  }, []);
+
   return (
     <motion.div className="indicator-group" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45, ease }}>
       <div className="indicator-group-head">
-        <span className="indicator-badge indicator-badge-overview">ภาพรวม</span>
-        <h2>วิเคราะห์ภาพรวมจากทุกตัวชี้วัด</h2>
-        <p>ผสานข้อมูลตัวชี้วัด 1 (รายอำเภอ) และตัวชี้วัด 2 (การเข้าถึงบริการต่อเนื่อง) เพื่อดูภาพรวมทั้งจังหวัด</p>
+        <span className="indicator-badge indicator-badge-2"><ShieldCheck size={13} /> Section 1 · ตัวชี้วัด 2</span>
+        <h2><Link href="/indicator-2" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{indicator2Name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
       </div>
 
-      <section className="stats-grid" aria-label="สถิติภาพรวม">
-        <StatCard label="ผู้ป่วย SMI-V ทั้งจังหวัด" value={provinceTotal.toLocaleString()} note="ตัวชี้วัด 1 · รวมทุกอำเภอ" index={0} featured />
-        <StatCard label="เข้าถึงบริการต่อเนื่อง" value={`${indicator2Metrics?.accessRate ?? "-"}%`} note={`${indicator2Metrics?.totalPatients.toLocaleString() ?? "-"} คน จากตัวชี้วัด 2`} index={1} />
-        <StatCard label="สัดส่วนครอบคลุม" value={`${overviewInsights?.coverageRate ?? "-"}%`} note="ตัวชี้วัด 2 เทียบตัวชี้วัด 1" index={2} />
-        <StatCard label="อำเภอเสี่ยงสูงสุด" value={amphoeStats[0]?.amphoe ?? "-"} note={`สัดส่วน ${overviewInsights?.topAmphoeShare ?? 0}% ของจังหวัด`} index={3} />
+      {/* ===== SECTION: Key Stats ===== */}
+      <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่ 2">
+        <StatCard icon={Users} tone="blue" label="ผู้ป่วย SMI-V ทั้งหมด" value={`${indicator2Metrics?.totalPatients.toLocaleString() ?? "-"}`} note={indicator2Metrics?.area ?? ""} index={0} featured />
+        <StatCard icon={Gauge} tone="teal" label="อัตราการเข้าถึงบริการ" value={`${indicator2Metrics?.accessRate ?? "-"}%`} note="Accessibility Rate (E)" index={1} />
+        <StatCard icon={ShieldCheck} tone="green" label="ไม่ก่อความรุนแรงซ้ำ" value={`${indicator2Metrics?.noRepeatViolence.toLocaleString() ?? "-"}`} note="ผู้ป่วยสะสม (F)" index={2} />
+        <StatCard icon={Activity} tone="teal" label="ดูแลต่อเนื่อง ≥2 ครั้ง" value={`${indicator2Metrics?.continuousCareRate ?? "-"}%`} note="ไม่ก่อซ้ำในปีงบประมาณ (O)" index={3} />
       </section>
 
-      <div className="dashboard-grid indicator1-grid">
+      {/* ===== SECTION: Composition & Follow-up ===== */}
+      <div className="overview-two-col">
+        {/* Composition Donut */}
+        <CompositionDonutCard
+          total={indicator2Metrics?.totalPatients ?? 0}
+          segments={[
+            { name: "รายเก่า", value: indicator2Metrics?.oldPatients ?? 0, color: "#4338ca", glow: "#6366f1", icon: Users },
+            { name: "รายใหม่", value: indicator2Metrics?.newPatients ?? 0, color: "#22d3ee", glow: "#67e8f9", icon: UserPlus },
+          ]}
+        />
+
+        {/* Follow-up Comparison Grouped Bar */}
         <section className="panel analytics-card">
           <div className="panel-heading">
-            <div><p className="eyebrow">วิเคราะห์รวม</p><h2>สัดส่วนผู้ป่วยรายอำเภอ เทียบอัตราเข้าถึงบริการ</h2></div>
-            <span className="live-pill"><i /> ข้อมูลจริงจาก HDC</span>
+            <div><p className="eyebrow"><ChartNoAxesCombined size={12} /> เปรียบเทียบการติดตาม</p><h2>ติดตาม 1 ครั้ง เทียบ ≥2 ครั้ง</h2></div>
+          </div>
+          <div className="chart-wrap chart-wrap-tall" aria-label="กราฟแท่งเปรียบเทียบจำนวนผู้ป่วยติดตาม 1 ครั้ง และ 2 ครั้งขึ้นไป">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={[
+                  { label: "ติดตาม 1 ครั้ง", ติดตามทั้งหมด: indicator2Metrics?.followUp1x ?? 0, ไม่ก่อซ้ำ: indicator2Metrics?.followUp1xNoRepeat ?? 0 },
+                  { label: "ติดตาม ≥2 ครั้ง", ติดตามทั้งหมด: indicator2Metrics?.followUp2xPlus ?? 0, ไม่ก่อซ้ำ: indicator2Metrics?.followUp2xPlusNoRepeat ?? 0 },
+                ]}
+                margin={{ top: 8, right: 16, left: 0, bottom: 4 }}
+              >
+                <XAxis dataKey="label" tick={{ fill: "#475569", fontSize: 11.5 }} axisLine={{ stroke: "#e2e8f0" }} tickLine={false} />
+                <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
+                <Tooltip
+                  content={({ active, payload, label }) =>
+                    active && payload?.length ? (
+                      <div className="chart-tooltip">
+                        <b>{label}</b>
+                        {payload.map((p) => (
+                          <span key={p.dataKey as string}>{p.name}: {(p.value as number).toLocaleString()} คน</span>
+                        ))}
+                      </div>
+                    ) : null
+                  }
+                />
+                <Legend wrapperStyle={{ fontSize: 11 }} />
+                <Bar dataKey="ติดตามทั้งหมด" fill="#a5b4fc" radius={[6, 6, 0, 0]} maxBarSize={54} animationDuration={750} />
+                <Bar dataKey="ไม่ก่อซ้ำ" fill="#4338ca" radius={[6, 6, 0, 0]} maxBarSize={54} animationDuration={750} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+      </div>
+
+      {/* ===== SECTION: Care Pathway & Rates ===== */}
+      <div className="overview-two-col">
+        {/* Funnel */}
+        <section className="panel funnel-card">
+          <div className="panel-heading">
+            <div><p className="eyebrow"><Funnel size={12} /> เส้นทางการดูแล</p><h2>จากประมาณการสู่การติดตามต่อเนื่อง</h2></div>
+          </div>
+          <div className="funnel-list">
+            {[
+              { label: "ประมาณการผู้ป่วย SMI-V", value: indicator2Metrics?.estimate ?? 0 },
+              { label: "ผู้ป่วยทั้งหมดถึงปัจจุบัน", value: indicator2Metrics?.totalPatients ?? 0 },
+              { label: "ติดตามอย่างน้อย 1 ครั้ง", value: indicator2Metrics?.followUp1x ?? 0 },
+              { label: "ติดตามอย่างน้อย 2 ครั้ง", value: indicator2Metrics?.followUp2xPlus ?? 0 },
+              { label: "ติดตาม ≥2 ครั้ง ไม่ก่อซ้ำ", value: indicator2Metrics?.followUp2xPlusNoRepeat ?? 0 },
+            ].map((step, i) => {
+              const maxVal = Math.max(1, indicator2Metrics?.estimate ?? 1);
+              const pct = maxVal > 0 ? Math.round((step.value / maxVal) * 100) : 0;
+              return (
+                <div className="funnel-row" key={step.label}>
+                  <span className="funnel-label">{step.label}</span>
+                  <span className="funnel-bar-track">
+                    <motion.span
+                      className="funnel-bar-fill"
+                      style={{ opacity: 1 - i * 0.12 }}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${Math.max(pct, 4)}%` }}
+                      transition={{ duration: 0.7, delay: i * 0.06, ease }}
+                    />
+                  </span>
+                  <span className="funnel-value">{step.value.toLocaleString()}</span>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Rate Compare */}
+        <section className="panel rate-compare-card">
+          <div className="panel-heading">
+            <div><p className="eyebrow"><Gauge size={12} /> เปรียบเทียบอัตรา</p><h2>อัตราร้อยละตามเกณฑ์ HDC</h2></div>
+          </div>
+          <div className="rate-compare-list">
+            {[
+              { label: "เข้าถึงบริการสะสม (E)", value: indicator2Metrics?.accessRate ?? 0, icon: Activity },
+              { label: "ติดตาม 1 ครั้ง ไม่ก่อซ้ำ (L)", value: indicator2Metrics?.followUp1xRate ?? 0, icon: ShieldCheck },
+              { label: "ติดตาม ≥2 ครั้ง ไม่ก่อซ้ำ (O)", value: indicator2Metrics?.continuousCareRate ?? 0, icon: ShieldCheck },
+            ].map((r) => (
+              <div className="rate-compare-item" key={r.label}>
+                <div className="rate-compare-ring" style={{ "--pct": `${Math.min(r.value, 100)}%` } as React.CSSProperties}>
+                  <span>{r.value}%</span>
+                </div>
+                <p><r.icon size={13} /> {r.label}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      {/* ===== SECTION 2: ตัวชี้วัดที่ 1 — SMI-V แยกตามอำเภอ ===== */}
+      <div className="indicator-group-head indicator-group-head-sub">
+        <span className="indicator-badge indicator-badge-1"><MapPinned size={13} /> Section 2 · ตัวชี้วัด 1</span>
+        <h2><Link href="/indicator-1" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{indicator1Name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
+      </div>
+
+      <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่ 1">
+        <StatCard icon={Users} tone="blue" label="ผู้ป่วยทั้งจังหวัด" value={provinceTotal.toLocaleString()} note="รวมทุกอำเภอ" index={0} featured />
+        <StatCard icon={MapPin} tone="blue" label="จำนวนอำเภอ" value={String(amphoeList.length)} note="มีข้อมูลครบทุกอำเภอ" index={1} />
+        <StatCard icon={ClipboardList} tone="purple" label="กลุ่มวินิจฉัย" value={String(diagnosisBreakdown.length)} note="1B030 – 1B033" index={2} />
+        <StatCard icon={Building2} tone="amber" label="อำเภอสูงสุด" value={amphoeStats[0]?.amphoe ?? "-"} note={`${amphoeStats[0]?.total.toLocaleString() ?? 0} ราย`} index={3} />
+      </section>
+
+      <div className="overview-two-col">
+        {/* Top Amphoe Bar */}
+        <section className="panel analytics-card">
+          <div className="panel-heading">
+            <div><p className="eyebrow"><ChartNoAxesCombined size={12} /> เปรียบเทียบอำเภอ</p><h2>SMI-V แยกตามอำเภอ</h2></div>
           </div>
           <div className="chart-wrap chart-wrap-tall" aria-label="กราฟจำนวนผู้ป่วย SMI-V แยกตามอำเภอ">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
-                <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#78827e", fontSize: 11 }} />
-                <YAxis dataKey="amphoe" type="category" axisLine={false} tickLine={false} width={78} tick={{ fill: "#3a4440", fontSize: 12 }} />
+              <BarChart data={amphoeStats} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
+                <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                <YAxis dataKey="amphoe" type="category" axisLine={false} tickLine={false} width={78} tick={{ fill: "#475569", fontSize: 12 }} />
                 <Tooltip
-                  cursor={{ fill: "rgba(20, 105, 72, .04)" }}
+                  cursor={{ fill: "rgba(67,56,202,.05)" }}
                   content={({ active, payload }) =>
                     active && payload?.[0] ? (
                       <div className="chart-tooltip">
-                        <b>{payload[0].value} ราย</b>
+                        <b>{payload[0].value?.toLocaleString()} ราย</b>
                         <span>{payload[0].payload.amphoe}</span>
                       </div>
                     ) : null
                   }
                 />
                 <Bar dataKey="total" radius={[0, 12, 12, 0]} animationDuration={850}>
-                  {chartData.map((entry, index) => (
-                    <Cell key={entry.amphoe} fill={index === 0 ? "#0b5238" : index < 3 ? "#21845c" : "#8da19a"} />
+                  {amphoeStats.map((entry, index) => (
+                    <Cell key={entry.amphoe} fill={index === 0 ? "#3730a3" : index < 3 ? "#4f46e5" : "#a5b4fc"} />
                   ))}
                 </Bar>
               </BarChart>
@@ -843,45 +1258,1325 @@ function OverviewSection() {
           </div>
         </section>
 
-        <section className="panel reminder-card diagnosis-card">
-          <p className="eyebrow">ข้อสังเกตจากการวิเคราะห์</p>
-          <h2>สรุปเชิงลึก<br />ระดับจังหวัด</h2>
-          <div className="insight-list">
-            <div className="insight-row">
-              <span className="insight-dot" />
-              <p>ผู้ป่วย SMI-V ทั้งจังหวัด <strong>{provinceTotal.toLocaleString()}</strong> ราย โดยกลุ่มวินิจฉัยที่พบมากสุดคือ <strong>{overviewInsights?.dominantDiagnosis?.name}</strong> ({overviewInsights?.dominantDiagnosis?.total.toLocaleString()} ราย)</p>
-            </div>
-            <div className="insight-row">
-              <span className="insight-dot" />
-              <p>มีผู้ป่วยที่เข้าถึงบริการต่อเนื่อง (ตัวชี้วัด 2) เพียง <strong>{indicator2Metrics?.totalPatients.toLocaleString()}</strong> คน คิดเป็น <strong>{overviewInsights?.coverageRate}%</strong> ของผู้ป่วยทั้งหมดในตัวชี้วัด 1 — อาจบ่งชี้ช่องว่างการติดตามดูแล</p>
-            </div>
-            <div className="insight-row">
-              <span className="insight-dot" />
-              <p>อำเภอ <strong>{amphoeStats[0]?.amphoe}</strong> มีสัดส่วนผู้ป่วยสูงสุดถึง <strong>{overviewInsights?.topAmphoeShare}%</strong> ของทั้งจังหวัด ควรให้ความสำคัญเป็นลำดับแรก</p>
-            </div>
-          </div>
-        </section>
-
-        <section className="panel projects-card amphoe-table-card">
-          <div className="panel-title-row"><h2>รายชื่ออำเภอ</h2><span className="soft-button" style={{ pointerEvents: "none" }}><MapPinned size={14} /> {amphoeList.length} อำเภอ</span></div>
-          <div className="project-list">
-            {amphoeStats.map((item) => {
-              const detail = getAmphoeDetail(item.amphoe);
-              const diagCount = detail?.diagnoses?.length ?? 0;
-              return (
-                <button className="project-row" key={item.amphoe}>
-                  <span className="project-symbol" style={{ "--symbol": "#146948" } as React.CSSProperties}><span /></span>
-                  <span><strong>{item.amphoe}</strong><small>{diagCount} กลุ่มวินิจฉัย · รวม {item.total.toLocaleString()} ราย</small></span>
-                  <ChevronRight size={15} />
-                </button>
-              );
-            })}
-          </div>
-        </section>
-
-        <ProvinceGaugeCard />
-        <ReportInfoCard />
+        {/* Diagnosis Group Composition Donut */}
+        <CompositionDonutCard
+          total={diagnosisBreakdown.reduce((sum, d) => sum + d.total, 0)}
+          segments={diagnosisBreakdown.map((d, i) => ({
+            name: d.name,
+            value: d.total,
+            color: ["#4338ca", "#6366f1", "#22d3ee", "#a5b4fc"][i % 4],
+            glow: ["#818cf8", "#a5b4fc", "#67e8f9", "#e0e7ff"][i % 4],
+            icon: ClipboardList,
+          }))}
+        />
       </div>
+
+      {/* ICD Category Breakdown */}
+      <IcdCategoryCard />
+
+      {/* ===== SECTION 3: ตัวชี้วัดที่ 3 — ก่อความรุนแรงซ้ำ ===== */}
+      <div className="indicator-group-head indicator-group-head-sub">
+        <span className="indicator-badge indicator-badge-3"><Repeat2 size={13} /> Section 3 · ตัวชี้วัด 3</span>
+        <h2><Link href="/indicator-3" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{indicator3Name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
+      </div>
+
+      <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่ 3">
+        <StatCard icon={Users} tone="blue" label="สะสมทั้งจังหวัด" value={`${indicator3Metrics.cumulative.toLocaleString()}`} note="ปีงบ 2559-2568" index={0} featured />
+        <StatCard icon={UserPlus} tone="blue" label="รายใหม่ปีงบปัจจุบัน" value={`${indicator3Metrics.newCases.toLocaleString()}`} note="ปีงบประมาณ 2569" index={1} />
+        <StatCard icon={Repeat2} tone="rose" label="ก่อความรุนแรงซ้ำ" value={`${indicator3Metrics.repeatViolence.toLocaleString()}`} note="คนเดิมที่สะสมถึงปัจจุบัน" index={2} />
+        <StatCard icon={Percent} tone="rose" label="ร้อยละก่อซ้ำ" value={`${indicator3RepeatRate}%`} note="[3/(1+2)]*100" index={3} />
+      </section>
+
+      <div className="overview-two-col">
+        {/* Repeat Rate by Amphoe */}
+        <section className="panel analytics-card">
+          <div className="panel-heading">
+            <div><p className="eyebrow"><ChartNoAxesCombined size={12} /> เปรียบเทียบอำเภอ</p><h2>ร้อยละก่อความรุนแรงซ้ำ แยกตามอำเภอ</h2></div>
+          </div>
+          <div className="chart-wrap chart-wrap-tall" aria-label="กราฟร้อยละก่อความรุนแรงซ้ำแยกตามอำเภอ">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={indicator3AmphoeStats} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
+                <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                <YAxis dataKey="amphoe" type="category" axisLine={false} tickLine={false} width={78} tick={{ fill: "#475569", fontSize: 12 }} />
+                <Tooltip
+                  cursor={{ fill: "rgba(67,56,202,.05)" }}
+                  content={({ active, payload }) =>
+                    active && payload?.[0] ? (
+                      <div className="chart-tooltip">
+                        <b>{payload[0].value}%</b>
+                        <span>{payload[0].payload.amphoe}</span>
+                      </div>
+                    ) : null
+                  }
+                />
+                <Bar dataKey="repeatRate" radius={[0, 12, 12, 0]} animationDuration={850}>
+                  {indicator3AmphoeStats.map((entry) => (
+                    <Cell key={entry.amphoe} fill={entry.repeatRate > indicator3Insights.avgRate ? "#a03d68" : "#4338ca"} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+
+        {/* Risk Tier Composition Donut */}
+        <CompositionDonutCard
+          total={indicator3AmphoeStats.length}
+          segments={[
+            { name: `ความเสี่ยงสูง (>${indicator3Insights.avgRate}%)`, value: indicator3AmphoeStats.filter((a) => a.repeatRate > indicator3Insights.avgRate).length, color: "#a03d68", glow: "#f472b6", icon: TrendingUp },
+            { name: `ความเสี่ยงต่ำ (≤${indicator3Insights.avgRate}%)`, value: indicator3AmphoeStats.filter((a) => a.repeatRate <= indicator3Insights.avgRate).length, color: "#4338ca", glow: "#818cf8", icon: TrendingDown },
+          ]}
+        />
+      </div>
+
+      {/* ===== SECTION 4: ตัวชี้วัดที่ 4 — จำแนกตามความรุนแรง SMI-V1–V4 ===== */}
+      <div className="indicator-group-head indicator-group-head-sub">
+        <span className="indicator-badge indicator-badge-4"><Layers size={13} /> Section 4 · ตัวชี้วัด 4</span>
+        <h2><Link href="/indicator-4" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{indicator4Name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
+      </div>
+
+      <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่ 4">
+        <StatCard icon={Users} tone="blue" label="ผู้ป่วย SMI-V ทั้งหมดถึงปัจจุบัน" value={`${indicator4Metrics?.totalToDate.toLocaleString() ?? "-"}`} note="สะสมทั้งจังหวัด" index={0} featured />
+        <StatCard icon={CalendarClock} tone="teal" label="มารักษาในปีงบประมาณปัจจุบัน" value={`${indicator4Metrics?.treatedCurrentYear.toLocaleString() ?? "-"}`} note="ปีงบประมาณปัจจุบัน" index={1} />
+        <StatCard icon={ShieldCheck} tone="green" label="ไม่ก่อความรุนแรงซ้ำ" value={`${indicator4Metrics?.noRepeatViolence.toLocaleString() ?? "-"}`} note="เข้าเกณฑ์ SMI-V Low Risk" index={2} />
+        <StatCard icon={Repeat2} tone="rose" label="ก่อความรุนแรงซ้ำ" value={`${indicator4RepeatRate}%`} note={`${indicator4Metrics?.repeatViolenceCurrentYear.toLocaleString() ?? "-"} คน ในปีงบประมาณปัจจุบัน`} index={3} />
+      </section>
+
+      <div className="overview-two-col">
+        {/* Severity Group Grouped Bar */}
+        <section className="panel analytics-card">
+          <div className="panel-heading">
+            <div><p className="eyebrow"><ChartNoAxesCombined size={12} /> จำแนกตามความรุนแรง</p><h2>SMI-V1–V4: มารักษา / ขาดการรักษา / ก่อซ้ำ</h2></div>
+          </div>
+          <div className="chart-wrap chart-wrap-tall" aria-label="กราฟแท่งเปรียบเทียบกลุ่มความรุนแรง SMI-V1 ถึง V4">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={indicator4SeverityBreakdown.map((g) => ({ group: g.group, มารักษา: g.treated, ขาดการรักษา: g.defaulted, ก่อซ้ำ: g.repeatViolence }))}
+                margin={{ top: 8, right: 16, left: 0, bottom: 4 }}
+              >
+                <XAxis dataKey="group" tick={{ fill: "#475569", fontSize: 11.5 }} axisLine={{ stroke: "#e2e8f0" }} tickLine={false} />
+                <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
+                <Tooltip
+                  content={({ active, payload, label }) =>
+                    active && payload?.length ? (
+                      <div className="chart-tooltip">
+                        <b>{label}</b>
+                        {payload.map((p) => (
+                          <span key={p.dataKey as string}>{p.name}: {(p.value as number).toLocaleString()} คน</span>
+                        ))}
+                      </div>
+                    ) : null
+                  }
+                />
+                <Legend wrapperStyle={{ fontSize: 11 }} />
+                <Bar dataKey="มารักษา" fill="#a5b4fc" radius={[6, 6, 0, 0]} maxBarSize={40} animationDuration={750} />
+                <Bar dataKey="ขาดการรักษา" fill="#f59e0b" radius={[6, 6, 0, 0]} maxBarSize={40} animationDuration={750} />
+                <Bar dataKey="ก่อซ้ำ" fill="#a03d68" radius={[6, 6, 0, 0]} maxBarSize={40} animationDuration={750} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+
+        {/* Residence Composition Donut */}
+        <CompositionDonutCard
+          total={indicator4SeverityBreakdown.reduce((sum, g) => sum + g.type1.count + g.type3.count + g.other.count, 0)}
+          segments={[
+            {
+              name: "ตัวอยู่ ทะเบียนบ้านอยู่",
+              value: indicator4SeverityBreakdown.reduce((sum, g) => sum + g.type1.count, 0),
+              color: "#4338ca", glow: "#818cf8", icon: HeartPulse,
+            },
+            {
+              name: "ตัวอยู่ ทะเบียนบ้านไม่อยู่",
+              value: indicator4SeverityBreakdown.reduce((sum, g) => sum + g.type3.count, 0),
+              color: "#3a6fb0", glow: "#7dd3fc", icon: MapPin,
+            },
+            {
+              name: "อื่นๆ ตาม Last visit",
+              value: indicator4SeverityBreakdown.reduce((sum, g) => sum + g.other.count, 0),
+              color: "#a03d68", glow: "#f472b6", icon: ClipboardList,
+            },
+          ]}
+        />
+      </div>
+
+      {/* ===== SECTION 5: ตัวชี้วัดที่ 5 — ร้อยละติดตามตามเกณฑ์ ===== */}
+      <div className="indicator-group-head indicator-group-head-sub">
+        <span className="indicator-badge indicator-badge-5"><ListChecks size={13} /> Section 5 · ตัวชี้วัด 5</span>
+        <h2><Link href="/indicator-5" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{indicator5Name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
+      </div>
+
+      <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่ 5">
+        <StatCard icon={Users} tone="blue" label="ผู้ป่วยทั้งหมด (B)" value={`${indicator5Metrics.total.toLocaleString()}`} note="มารับบริการในปีงบประมาณ" index={0} featured />
+        <StatCard icon={ListChecks} tone="teal" label="ได้รับการติดตามตามเกณฑ์ (A)" value={`${indicator5Metrics.followed.toLocaleString()}`} note="ติดตามครบตามเกณฑ์" index={1} />
+        <StatCard icon={Percent} tone="teal" label="ร้อยละติดตาม" value={`${indicator5FollowRate}%`} note="[A/B]x100" index={2} />
+        <StatCard icon={MapPin} tone="blue" label="จำนวนอำเภอ" value={`${indicator5AmphoeList.length}`} note="ครบทุกอำเภอ" index={3} />
+      </section>
+
+      <div className="overview-two-col">
+        {/* Follow Rate by Amphoe */}
+        <section className="panel analytics-card">
+          <div className="panel-heading">
+            <div><p className="eyebrow"><ChartNoAxesCombined size={12} /> เปรียบเทียบอำเภอ</p><h2>ร้อยละติดตามตามเกณฑ์ แยกตามอำเภอ</h2></div>
+          </div>
+          <div className="chart-wrap chart-wrap-tall" aria-label="กราฟร้อยละติดตามตามเกณฑ์แยกตามอำเภอ">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={indicator5AmphoeStats} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
+                <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                <YAxis dataKey="amphoe" type="category" axisLine={false} tickLine={false} width={78} tick={{ fill: "#475569", fontSize: 12 }} />
+                <Tooltip
+                  cursor={{ fill: "rgba(67,56,202,.05)" }}
+                  content={({ active, payload }) =>
+                    active && payload?.[0] ? (
+                      <div className="chart-tooltip">
+                        <b>{payload[0].value}%</b>
+                        <span>{payload[0].payload.amphoe}</span>
+                      </div>
+                    ) : null
+                  }
+                />
+                <Bar dataKey="followRate" radius={[0, 12, 12, 0]} animationDuration={850}>
+                  {indicator5AmphoeStats.map((entry, i) => (
+                    <Cell key={entry.amphoe} fill={i === 0 ? "#3730a3" : i < 3 ? "#4f46e5" : "#a5b4fc"} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+
+        {/* New vs Old Patient Composition Donut */}
+        <CompositionDonutCard
+          total={indicator5NewOldBreakdown.newTotal + indicator5NewOldBreakdown.oldTotal}
+          segments={[
+            { name: "ผู้ป่วยรายใหม่", value: indicator5NewOldBreakdown.newTotal, color: "#3a6fb0", glow: "#7dd3fc", icon: UserPlus },
+            { name: "ผู้ป่วยรายเก่า", value: indicator5NewOldBreakdown.oldTotal, color: "#4338ca", glow: "#818cf8", icon: Users },
+          ]}
+        />
+      </div>
+
+      {/* ===== SECTION 6: ตัวชี้วัดที่เกี่ยวข้อง 14 — อัตรารักษาต่อเนื่อง (F20-F29) ===== */}
+      <div className="indicator-group-head indicator-group-head-sub">
+        <span className="indicator-badge indicator-badge-14"><HeartPulse size={13} /> Section 6 · ตัวชี้วัดที่เกี่ยวข้อง 14</span>
+        <h2><Link href="/indicator-relate-14" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{indicatorRelate14Name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
+      </div>
+
+      <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่เกี่ยวข้อง 14">
+        <StatCard icon={Users} tone="blue" label="มารับบริการทั้งหมด (B)" value={`${indicatorRelate14Metrics?.servedOctFeb.toLocaleString() ?? "-"}`} note="ในปีงบประมาณ" index={0} featured />
+        <StatCard icon={ListChecks} tone="teal" label="ติดตามต่อเนื่อง (A)" value={`${indicatorRelate14Metrics?.followed1x.toLocaleString() ?? "-"}`} note="อย่างน้อย 1 ครั้งภายใน 6 เดือน" index={1} />
+        <StatCard icon={Percent} tone="teal" label="อัตราการรักษาต่อเนื่อง" value={`${indicatorRelate14Metrics?.rateAB ?? "-"}%`} note="(A/B) x 100" index={2} />
+        <StatCard icon={HeartPulse} tone="purple" label="รวมทั้งปี (C)" value={`${indicatorRelate14Metrics?.totalCurrentYear.toLocaleString() ?? "-"}`} note="ผู้ป่วยจิตเภทสะสม" index={3} />
+      </section>
+
+      <div className="overview-two-col">
+        {/* Continuous Treatment Rate by Amphoe */}
+        <section className="panel analytics-card">
+          <div className="panel-heading">
+            <div><p className="eyebrow"><ChartNoAxesCombined size={12} /> เปรียบเทียบอำเภอ</p><h2>อัตรารักษาต่อเนื่องภายใน 6 เดือน แยกตามอำเภอ</h2></div>
+          </div>
+          <div className="chart-wrap chart-wrap-tall" aria-label="กราฟอัตรารักษาต่อเนื่องแยกตามอำเภอ">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={indicatorRelate14AmphoeStats} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
+                <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                <YAxis dataKey="amphoe" type="category" axisLine={false} tickLine={false} width={78} tick={{ fill: "#475569", fontSize: 12 }} />
+                <Tooltip
+                  cursor={{ fill: "rgba(181,38,95,.05)" }}
+                  content={({ active, payload }) =>
+                    active && payload?.[0] ? (
+                      <div className="chart-tooltip">
+                        <b>{payload[0].value}%</b>
+                        <span>{payload[0].payload.amphoe}</span>
+                      </div>
+                    ) : null
+                  }
+                />
+                <Bar dataKey="rateAB" radius={[0, 12, 12, 0]} animationDuration={850}>
+                  {indicatorRelate14AmphoeStats.map((entry) => (
+                    <Cell key={entry.amphoe} fill={entry.rateAB >= indicatorRelate14Insights.avgRate ? "#4338ca" : "#b5265f"} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+
+        {/* Compliance Tier Donut */}
+        <CompositionDonutCard
+          total={indicatorRelate14AmphoeStats.length}
+          segments={[
+            { name: `ผ่านเกณฑ์ (≥${indicatorRelate14Insights.avgRate}%)`, value: indicatorRelate14AmphoeStats.filter((a) => a.rateAB >= indicatorRelate14Insights.avgRate).length, color: "#4338ca", glow: "#818cf8", icon: ShieldCheck },
+            { name: `ต่ำกว่าเกณฑ์ (<${indicatorRelate14Insights.avgRate}%)`, value: indicatorRelate14Insights.belowAvgCount, color: "#b5265f", glow: "#f472b6", icon: TrendingDown },
+          ]}
+        />
+      </div>
+
+      {/* ===== SECTION 15: ตัวชี้วัดที่เกี่ยวข้อง 15 — ติดตามครั้งที่ 1 vs 2 (F20-F29) ===== */}
+      <div className="indicator-group-head indicator-group-head-sub">
+        <span className="indicator-badge indicator-badge-15"><Repeat2 size={13} /> Section ที่ 7 · ตัวชี้วัดที่เกี่ยวข้อง 15</span>
+        <h2><Link href="/indicator-relate-15" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{indicatorRelate15Name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
+      </div>
+
+      <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่เกี่ยวข้อง 15">
+        <StatCard icon={HeartPulse} tone="purple" label="สะสมทั้งหมด" value={`${indicatorRelate15Metrics?.cumulativeTotal.toLocaleString() ?? "-"}`} note="ผู้ป่วยจิตเภทสะสม" index={0} featured />
+        <StatCard icon={Users} tone="blue" label="เข้าถึงบริการ 5 ปีย้อนหลัง (B)" value={`${indicatorRelate15Metrics?.served5yr.toLocaleString() ?? "-"}`} note="ปีงบ 2565-2569" index={1} />
+        <StatCard icon={ListChecks} tone="teal" label="ติดตามครั้งที่ 1 (A1)" value={`${indicatorRelate15Metrics?.followed1x.toLocaleString() ?? "-"}`} note={`${indicatorRelate15Metrics?.rate1x ?? "-"}%`} index={2} />
+        <StatCard icon={Repeat2} tone="teal" label="ติดตามครั้งที่ 2 (A2)" value={`${indicatorRelate15Metrics?.followed2x.toLocaleString() ?? "-"}`} note={`${indicatorRelate15Metrics?.rate2x ?? "-"}%`} index={3} />
+      </section>
+
+      <div className="overview-two-col">
+        {/* Follow-up Rate 1x vs 2x by Amphoe */}
+        <section className="panel analytics-card">
+          <div className="panel-heading">
+            <div><p className="eyebrow"><ChartNoAxesCombined size={12} /> เปรียบเทียบอำเภอ</p><h2>อัตราการดูแลต่อเนื่อง ครั้งที่ 1 vs ครั้งที่ 2</h2></div>
+          </div>
+          <div className="chart-wrap chart-wrap-tall" aria-label="กราฟอัตราติดตามครั้งที่ 1 และ 2 แยกตามอำเภอ">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={indicatorRelate15AmphoeStats} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
+                <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                <YAxis dataKey="amphoe" type="category" axisLine={false} tickLine={false} width={78} tick={{ fill: "#475569", fontSize: 12 }} />
+                <Tooltip
+                  cursor={{ fill: "rgba(67,56,202,.05)" }}
+                  content={({ active, payload }) =>
+                    active && payload?.length ? (
+                      <div className="chart-tooltip">
+                        <b>ครั้งที่ 1: {payload.find((p) => p.dataKey === "rate1x")?.value ?? 0}%</b>
+                        <b>ครั้งที่ 2: {payload.find((p) => p.dataKey === "rate2x")?.value ?? 0}%</b>
+                        <span>{payload[0].payload.amphoe}</span>
+                      </div>
+                    ) : null
+                  }
+                />
+                <Bar dataKey="rate1x" radius={[0, 6, 6, 0]} animationDuration={850} fill="#c7d2fe" />
+                <Bar dataKey="rate2x" radius={[0, 6, 6, 0]} animationDuration={850} fill="#4338ca" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="facility-compare-legend">
+            <span><i className="facility-dot" style={{ background: "#c7d2fe" }} /> ติดตามครั้งที่ 1</span>
+            <span><i className="facility-dot" style={{ background: "#4338ca" }} /> ติดตามครั้งที่ 2</span>
+          </div>
+        </section>
+
+        {/* Follow-up Attrition Donut */}
+        <CompositionDonutCard
+          total={indicatorRelate15Metrics?.followed1x ?? 0}
+          segments={[
+            { name: "ติดตามครบครั้งที่ 2", value: indicatorRelate15Metrics?.followed2x ?? 0, color: "#4338ca", glow: "#818cf8", icon: ShieldCheck },
+            { name: "หลุดหลังครั้งที่ 1", value: Math.max((indicatorRelate15Metrics?.followed1x ?? 0) - (indicatorRelate15Metrics?.followed2x ?? 0), 0), color: "#f59e0b", glow: "#fcd34d", icon: TrendingDown },
+          ]}
+        />
+      </div>
+
+      {/* ===== SECTION 8: ตัวชี้วัดที่เกี่ยวข้อง 16 — อัตรารักษาต่อเนื่อง ===== */}
+      <div className="indicator-group-head indicator-group-head-sub">
+        <span className="indicator-badge indicator-badge-16"><Percent size={13} /> Section ที่ 8 · ตัวชี้วัดที่เกี่ยวข้อง 16</span>
+        <h2><Link href="/indicator-relate-16" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{indicatorRelate16Name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
+      </div>
+
+      <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่เกี่ยวข้อง 16">
+        <StatCard icon={Users} tone="blue" label="ผู้ป่วยทั้งหมด (B)" value={`${indicatorRelate16Metrics?.total.toLocaleString() ?? "-"}`} note="ในปีงบประมาณ" index={0} featured />
+        <StatCard icon={ListChecks} tone="teal" label="ติดตามต่อเนื่อง (A)" value={`${indicatorRelate16Metrics?.followed.toLocaleString() ?? "-"}`} note="ภายใน 6 เดือน" index={1} />
+        <StatCard icon={Percent} tone="teal" label="อัตราการรักษาต่อเนื่อง" value={`${indicatorRelate16Metrics?.rate ?? "-"}%`} note="(A/B) x 100" index={2} />
+      </section>
+
+      <div className="overview-two-col">
+        {/* Rate by Amphoe */}
+        <section className="panel analytics-card">
+          <div className="panel-heading">
+            <div><p className="eyebrow"><ChartNoAxesCombined size={12} /> เปรียบเทียบอำเภอ</p><h2>อัตราการรักษาต่อเนื่อง แยกตามอำเภอ</h2></div>
+          </div>
+          <div className="chart-wrap chart-wrap-tall" aria-label="กราฟอัตรารักษาต่อเนื่องแยกตามอำเภอ">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={indicatorRelate16AmphoeStats} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
+                <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                <YAxis dataKey="amphoe" type="category" axisLine={false} tickLine={false} width={78} tick={{ fill: "#475569", fontSize: 12 }} />
+                <Tooltip
+                  cursor={{ fill: "rgba(67,56,202,.05)" }}
+                  content={({ active, payload }) =>
+                    active && payload?.[0] ? (
+                      <div className="chart-tooltip">
+                        <b>{payload[0].value}%</b>
+                        <span>{payload[0].payload.amphoe}</span>
+                      </div>
+                    ) : null
+                  }
+                />
+                <Bar dataKey="rate" radius={[0, 12, 12, 0]} animationDuration={850}>
+                  {indicatorRelate16AmphoeStats.map((entry) => (
+                    <Cell key={entry.amphoe} fill={entry.rate >= indicatorRelate16Insights.avgRate ? "#4338ca" : "#f59e0b"} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+
+        {/* Compliance Tier Donut */}
+        <CompositionDonutCard
+          total={indicatorRelate16AmphoeStats.length}
+          segments={[
+            { name: `ผ่านเกณฑ์ (≥${indicatorRelate16Insights.avgRate}%)`, value: indicatorRelate16AmphoeStats.filter((a) => a.rate >= indicatorRelate16Insights.avgRate).length, color: "#4338ca", glow: "#818cf8", icon: ShieldCheck },
+            { name: `ต่ำกว่าเกณฑ์ (<${indicatorRelate16Insights.avgRate}%)`, value: indicatorRelate16Insights.belowAvgCount, color: "#f59e0b", glow: "#fcd34d", icon: TrendingDown },
+          ]}
+        />
+      </div>
+
+      {/* ===== SECTION 9: ตัวชี้วัดที่เกี่ยวข้อง 21.1 — สารเสพติด (F10-F19) ===== */}
+      <div className="indicator-group-head indicator-group-head-sub">
+        <span className="indicator-badge indicator-badge-14"><Pill size={13} /> Section ที่ 9 · ตัวชี้วัดที่เกี่ยวข้อง 21.1</span>
+        <h2><Link href="/indicator-relate-21-1" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{getSimpleIndicator("21_1").name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
+      </div>
+
+      {(() => {
+        const analysis21_1 = getSimpleIndicatorAnalysis("21_1");
+        const substanceData = analysis21_1.kind === "donut" ? analysis21_1.data : [];
+        const substanceTotal = analysis21_1.kind === "donut" ? analysis21_1.total : 0;
+        const top = substanceData[0];
+        return (
+          <>
+            <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่เกี่ยวข้อง 21.1">
+              <StatCard
+                icon={Pill}
+                tone="purple"
+                label={getSimpleIndicatorHeadline("21_1")?.label ?? "ผู้ป่วยสารเสพติดรวม"}
+                value={`${getSimpleIndicatorHeadline("21_1")?.value?.toLocaleString() ?? "-"}${getSimpleIndicatorHeadline("21_1")?.unit ?? ""}`}
+                note="ทั้งจังหวัด"
+                index={0}
+                featured
+              />
+              <StatCard icon={ClipboardList} tone="purple" label="รหัสโรคเด่นสุด" value={top?.label ?? "-"} note={`${top?.value.toLocaleString() ?? 0} คน`} index={1} />
+              <StatCard icon={Users} tone="purple" label="รวมทุกรหัสโรค" value={substanceTotal.toLocaleString()} note="F10.xx – F19.xx" index={2} />
+              <StatCard icon={Percent} tone="purple" label="สัดส่วนรหัสเด่นสุด" value={`${substanceTotal > 0 && top ? Math.round((top.value / substanceTotal) * 100) : 0}%`} note="ของผู้ป่วยสารเสพติดทั้งหมด" index={3} />
+            </section>
+
+            <div className="overview-two-col">
+              {/* Substance Code Bar */}
+              <section className="panel analytics-card">
+                <div className="panel-heading">
+                  <div><p className="eyebrow"><ChartNoAxesCombined size={12} /> จำแนกตามรหัสโรค</p><h2>สัดส่วนตามรหัสโรคสารเสพติด</h2></div>
+                </div>
+                <div className="chart-wrap chart-wrap-tall" aria-label="กราฟสัดส่วนผู้ป่วยตามรหัสโรคสารเสพติด">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={substanceData} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
+                      <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                      <YAxis dataKey="label" type="category" axisLine={false} tickLine={false} width={78} tick={{ fill: "#475569", fontSize: 12 }} />
+                      <Tooltip
+                        cursor={{ fill: "rgba(67,56,202,.05)" }}
+                        content={({ active, payload }) =>
+                          active && payload?.[0] ? (
+                            <div className="chart-tooltip">
+                              <b>{payload[0].value?.toLocaleString()} คน</b>
+                              <span>{payload[0].payload.label}</span>
+                            </div>
+                          ) : null
+                        }
+                      />
+                      <Bar dataKey="value" radius={[0, 12, 12, 0]} animationDuration={850}>
+                        {substanceData.map((entry, i) => (
+                          <Cell key={`${entry.label}-${i}`} fill={i === 0 ? "#3730a3" : i < 3 ? "#4f46e5" : "#a5b4fc"} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </section>
+
+              {/* Substance Code Composition Donut */}
+              <CompositionDonutCard
+                total={substanceTotal}
+                segments={substanceData.slice(0, 4).map((d, i) => ({
+                  name: d.label,
+                  value: d.value,
+                  color: ["#4338ca", "#6366f1", "#22d3ee", "#a5b4fc"][i % 4],
+                  glow: ["#818cf8", "#a5b4fc", "#67e8f9", "#e0e7ff"][i % 4],
+                  icon: Pill,
+                }))}
+              />
+            </div>
+          </>
+        );
+      })()}
+
+      {/* ===== SECTION 10: ตัวชี้วัดที่เกี่ยวข้อง 21.2 — OPD/IPD สารเสพติด ===== */}
+      <div className="indicator-group-head indicator-group-head-sub">
+        <span className="indicator-badge indicator-badge-14"><Stethoscope size={13} /> Section ที่ 10 · ตัวชี้วัดที่เกี่ยวข้อง 21.2</span>
+        <h2><Link href="/indicator-relate-21-2" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{indicatorRelate21_2Name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
+      </div>
+
+      <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่เกี่ยวข้อง 21.2">
+        <StatCard icon={Stethoscope} tone="blue" label="ผู้ป่วยนอกทั้งหมด (B1)" value={`${indicatorRelate21_2Metrics?.opdTotal.toLocaleString() ?? "-"}`} note="F00-F99 ทั้งจังหวัด" index={0} featured />
+        <StatCard icon={Pill} tone="purple" label="ผู้ป่วยนอกสารเสพติด (A1)" value={`${indicatorRelate21_2Metrics?.opdF1019.toLocaleString() ?? "-"}`} note={`${indicatorRelate21_2Metrics?.opdRate ?? "-"}% ของผู้ป่วยนอกทั้งหมด`} index={1} />
+        <StatCard icon={Hospital} tone="blue" label="ผู้ป่วยในทั้งหมด (B2)" value={`${indicatorRelate21_2Metrics?.ipdTotal.toLocaleString() ?? "-"}`} note="F00-F99 ทั้งจังหวัด" index={2} />
+        <StatCard icon={Pill} tone="purple" label="ผู้ป่วยในสารเสพติด (A2)" value={`${indicatorRelate21_2Metrics?.ipdF1019.toLocaleString() ?? "-"}`} note={`${indicatorRelate21_2Metrics?.ipdRate ?? "-"}% ของผู้ป่วยในทั้งหมด`} index={3} />
+      </section>
+
+      <div className="overview-two-col">
+        {/* OPD Substance Rate by Amphoe */}
+        <section className="panel analytics-card">
+          <div className="panel-heading">
+            <div><p className="eyebrow"><ChartNoAxesCombined size={12} /> เปรียบเทียบอำเภอ</p><h2>ร้อยละผู้ป่วยนอกสารเสพติด แยกตามอำเภอ</h2></div>
+          </div>
+          <div className="chart-wrap chart-wrap-tall" aria-label="กราฟร้อยละผู้ป่วยนอกสารเสพติดแยกตามอำเภอ">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={indicatorRelate21_2AmphoeStats} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
+                <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                <YAxis dataKey="amphoe" type="category" axisLine={false} tickLine={false} width={78} tick={{ fill: "#475569", fontSize: 12 }} />
+                <Tooltip
+                  cursor={{ fill: "rgba(67,56,202,.05)" }}
+                  content={({ active, payload }) =>
+                    active && payload?.[0] ? (
+                      <div className="chart-tooltip">
+                        <b>{payload[0].value}%</b>
+                        <span>{payload[0].payload.amphoe}</span>
+                      </div>
+                    ) : null
+                  }
+                />
+                <Bar dataKey="opdRate" radius={[0, 12, 12, 0]} animationDuration={850}>
+                  {indicatorRelate21_2AmphoeStats.map((entry) => (
+                    <Cell key={entry.amphoe} fill={entry.opdRate >= indicatorRelate21_2Insights.avgRate ? "#4338ca" : "#f59e0b"} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+
+        {/* OPD vs IPD Composition Donut */}
+        <CompositionDonutCard
+          total={(indicatorRelate21_2Metrics?.opdF1019 ?? 0) + (indicatorRelate21_2Metrics?.ipdF1019 ?? 0)}
+          segments={[
+            { name: "ผู้ป่วยนอกสารเสพติด (OPD)", value: indicatorRelate21_2Metrics?.opdF1019 ?? 0, color: "#4338ca", glow: "#818cf8", icon: Stethoscope },
+            { name: "ผู้ป่วยในสารเสพติด (IPD)", value: indicatorRelate21_2Metrics?.ipdF1019 ?? 0, color: "#a03d68", glow: "#f472b6", icon: Hospital },
+          ]}
+        />
+      </div>
+
+      {/* ===== SECTION 11: ตัวชี้วัดที่เกี่ยวข้อง 21.4 — กลุ่มโรคร่วมทางจิต ===== */}
+      <div className="indicator-group-head indicator-group-head-sub">
+        <span className="indicator-badge indicator-badge-14"><HeartPulse size={13} /> Section ที่ 11 · ตัวชี้วัดที่เกี่ยวข้อง 21.4</span>
+        <h2><Link href="/indicator-relate-21-4" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{getSimpleIndicator("21_4").name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
+      </div>
+
+      {(() => {
+        const analysis21_4 = getSimpleIndicatorAnalysis("21_4");
+        const comorbidData = analysis21_4.kind === "donut" ? analysis21_4.data : [];
+        const comorbidTotal = analysis21_4.kind === "donut" ? analysis21_4.total : 0;
+        const top = comorbidData[0];
+        return (
+          <>
+            <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่เกี่ยวข้อง 21.4">
+              <StatCard
+                icon={HeartPulse}
+                tone="purple"
+                label={getSimpleIndicatorHeadline("21_4")?.label ?? "ผู้ป่วยโรคร่วมทางจิตรวม"}
+                value={`${getSimpleIndicatorHeadline("21_4")?.value?.toLocaleString() ?? "-"}${getSimpleIndicatorHeadline("21_4")?.unit ?? ""}`}
+                note="ทั้งจังหวัด"
+                index={0}
+                featured
+              />
+              <StatCard icon={ClipboardList} tone="purple" label="กลุ่มโรคเด่นสุด" value={top?.label ?? "-"} note={`${top?.value.toLocaleString() ?? 0} คน`} index={1} />
+              <StatCard icon={Users} tone="purple" label="รวมทุกกลุ่มโรค" value={comorbidTotal.toLocaleString()} note="Top 8 กลุ่มโรคร่วม" index={2} />
+              <StatCard icon={Percent} tone="purple" label="สัดส่วนกลุ่มเด่นสุด" value={`${comorbidTotal > 0 && top ? Math.round((top.value / comorbidTotal) * 100) : 0}%`} note="ของผู้ป่วยโรคร่วมทั้งหมด" index={3} />
+            </section>
+
+            <div className="overview-two-col">
+              {/* Comorbid Disease Bar */}
+              <section className="panel analytics-card">
+                <div className="panel-heading">
+                  <div><p className="eyebrow"><ChartNoAxesCombined size={12} /> จำแนกตามกลุ่มโรค</p><h2>สัดส่วนตามกลุ่มโรคร่วมทางจิต (Top 8)</h2></div>
+                </div>
+                <div className="chart-wrap chart-wrap-tall" aria-label="กราฟสัดส่วนผู้ป่วยตามกลุ่มโรคร่วมทางจิต">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={comorbidData} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
+                      <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                      <YAxis dataKey="label" type="category" axisLine={false} tickLine={false} width={100} tick={{ fill: "#475569", fontSize: 11 }} />
+                      <Tooltip
+                        cursor={{ fill: "rgba(67,56,202,.05)" }}
+                        content={({ active, payload }) =>
+                          active && payload?.[0] ? (
+                            <div className="chart-tooltip">
+                              <b>{payload[0].value?.toLocaleString()} คน</b>
+                              <span>{payload[0].payload.label}</span>
+                            </div>
+                          ) : null
+                        }
+                      />
+                      <Bar dataKey="value" radius={[0, 12, 12, 0]} animationDuration={850}>
+                        {comorbidData.map((entry, i) => (
+                          <Cell key={`${entry.label}-${i}`} fill={i === 0 ? "#3730a3" : i < 3 ? "#4f46e5" : "#a5b4fc"} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </section>
+
+              {/* Comorbid Disease Composition Donut */}
+              <CompositionDonutCard
+                total={comorbidTotal}
+                segments={comorbidData.slice(0, 4).map((d, i) => ({
+                  name: d.label,
+                  value: d.value,
+                  color: ["#4338ca", "#6366f1", "#22d3ee", "#a5b4fc"][i % 4],
+                  glow: ["#818cf8", "#a5b4fc", "#67e8f9", "#e0e7ff"][i % 4],
+                  icon: HeartPulse,
+                }))}
+              />
+            </div>
+          </>
+        );
+      })()}
+
+      {/* ===== SECTION 12: ตัวชี้วัดที่เกี่ยวข้อง 21.6 — Retention Rate หลังบำบัดยาเสพติด ===== */}
+      <div className="indicator-group-head indicator-group-head-sub">
+        <span className="indicator-badge indicator-badge-14"><ShieldCheck size={13} /> Section ที่ 12 · ตัวชี้วัดที่เกี่ยวข้อง 21.6</span>
+        <h2><Link href="/indicator-relate-21-6" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{indicatorRelate21_6Name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
+      </div>
+
+      <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่เกี่ยวข้อง 21.6">
+        <StatCard icon={HeartPulse} tone="blue" label="ผู้ป่วยจิตเวชจาก บสต. ทั้งหมด" value={`${indicatorRelate21_6Metrics?.totalPsychFromBsot.toLocaleString() ?? "-"}`} note="ทั้งหมดในกลุ่มโรคจิตเวช" index={0} featured />
+        <StatCard icon={Percent} tone="teal" label="Retention Rate เฉลี่ยจังหวัด" value={`${indicatorRelate21_6Metrics?.retentionRateOverall ?? "-"}%`} note="ติดตามดูแลหลังบำบัดต่อเนื่อง" index={1} />
+      </section>
+
+      <div className="overview-two-col">
+        {/* Retention Rate by Amphoe */}
+        <section className="panel analytics-card">
+          <div className="panel-heading">
+            <div><p className="eyebrow"><ChartNoAxesCombined size={12} /> เปรียบเทียบอำเภอ</p><h2>Retention Rate หลังบำบัด แยกตามอำเภอ</h2></div>
+          </div>
+          <div className="chart-wrap chart-wrap-tall" aria-label="กราฟ Retention Rate แยกตามอำเภอ">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={indicatorRelate21_6AmphoeStats} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
+                <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                <YAxis dataKey="amphoe" type="category" axisLine={false} tickLine={false} width={78} tick={{ fill: "#475569", fontSize: 12 }} />
+                <Tooltip
+                  cursor={{ fill: "rgba(67,56,202,.05)" }}
+                  content={({ active, payload }) =>
+                    active && payload?.[0] ? (
+                      <div className="chart-tooltip">
+                        <b>{payload[0].value}%</b>
+                        <span>{payload[0].payload.amphoe}</span>
+                      </div>
+                    ) : null
+                  }
+                />
+                <Bar dataKey="retentionRateOverall" radius={[0, 12, 12, 0]} animationDuration={850}>
+                  {indicatorRelate21_6AmphoeStats.map((entry) => (
+                    <Cell key={entry.amphoe} fill={entry.retentionRateOverall >= indicatorRelate21_6Insights.avgRate ? "#4338ca" : "#f59e0b"} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+
+        {/* Compliance Tier Donut */}
+        <CompositionDonutCard
+          total={indicatorRelate21_6AmphoeStats.length}
+          segments={[
+            { name: `ผ่านเกณฑ์ (≥${indicatorRelate21_6Insights.avgRate}%)`, value: indicatorRelate21_6AmphoeStats.filter((a) => a.retentionRateOverall >= indicatorRelate21_6Insights.avgRate).length, color: "#4338ca", glow: "#818cf8", icon: ShieldCheck },
+            { name: `ต่ำกว่าเกณฑ์ (<${indicatorRelate21_6Insights.avgRate}%)`, value: indicatorRelate21_6Insights.belowAvgCount, color: "#f59e0b", glow: "#fcd34d", icon: TrendingDown },
+          ]}
+        />
+      </div>
+
+      {/* ===== SECTION 13: ตัวชี้วัดที่เกี่ยวข้อง 21.7 — อัตราเข้าถึงบริการ/ความชุกโรค ===== */}
+      <div className="indicator-group-head indicator-group-head-sub">
+        <span className="indicator-badge indicator-badge-14"><Gauge size={13} /> Section ที่ 13 · ตัวชี้วัดที่เกี่ยวข้อง 21.7</span>
+        <h2><Link href="/indicator-relate-21-7" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{getSimpleIndicator("21_7").name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
+      </div>
+
+      {(() => {
+        const analysis21_7 = getSimpleIndicatorAnalysis("21_7");
+        const items = analysis21_7.kind === "metrics" ? analysis21_7.items : [];
+        const icons = [Users, MapPin, ClipboardList];
+        return (
+          <section className="panel rate-compare-card">
+            <div className="panel-heading">
+              <div><p className="eyebrow"><Gauge size={12} /> ระดับจังหวัด</p><h2>อัตราเข้าถึงบริการ และร้อยละความชุกของโรค</h2></div>
+            </div>
+            <div className="rate-compare-list">
+              {items.map((r, i) => {
+                const Icon = icons[i % icons.length];
+                return (
+                  <div className="rate-compare-item" key={r.label}>
+                    <div className="rate-compare-ring" style={{ "--pct": `${Math.min(r.value, 100)}%` } as React.CSSProperties}>
+                      <span>{r.value}%</span>
+                    </div>
+                    <p><Icon size={13} /> {r.label}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        );
+      })()}
+
+      {/* ===== SECTION 14: ตัวชี้วัดที่เกี่ยวข้อง 22.1 — จำแนกตามกลุ่มอายุ x กลุ่มโรค ===== */}
+      <div className="indicator-group-head indicator-group-head-sub">
+        <span className="indicator-badge indicator-badge-14"><Users2 size={13} /> Section ที่ 14 · ตัวชี้วัดที่เกี่ยวข้อง 22.1</span>
+        <h2><Link href="/indicator-relate-22-1" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{getSimpleIndicator("22_1").name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
+      </div>
+
+      {(() => {
+        const analysis22_1 = getSimpleIndicatorAnalysis("22_1");
+        if (analysis22_1.kind !== "heatmap" || analysis22_1.matrix.length === 0) return null;
+        const { rows, cols, matrix } = analysis22_1;
+        const colTotals = cols.map((_, ci) => matrix.reduce((s, row) => s + (row[ci] ?? 0), 0));
+        const rowTotals = rows.map((_, ri) => matrix[ri].reduce((s, v) => s + v, 0));
+        const grandTotal = colTotals.reduce((s, v) => s + v, 0);
+        const topColIdx = colTotals.reduce((best, v, i) => (v > colTotals[best] ? i : best), 0);
+        const topRowIdx = rowTotals.reduce((best, v, i) => (v > rowTotals[best] ? i : best), 0);
+        const diseaseBarData = cols.map((label, i) => ({ label, value: colTotals[i] })).sort((a, b) => b.value - a.value);
+
+        return (
+          <>
+            <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่เกี่ยวข้อง 22.1">
+              <StatCard icon={Users2} tone="blue" label="ผู้รับบริการรวมทั้งหมด" value={grandTotal.toLocaleString()} note="กลุ่มโรคจิตเวช/พยายามทำร้ายตนเอง" index={0} featured />
+              <StatCard icon={ClipboardList} tone="purple" label="กลุ่มโรคเด่นสุด" value={cols[topColIdx] ?? "-"} note={`${colTotals[topColIdx]?.toLocaleString() ?? 0} คน`} index={1} />
+              <StatCard icon={CalendarClock} tone="teal" label="กลุ่มอายุเด่นสุด" value={rows[topRowIdx] ?? "-"} note={`${rowTotals[topRowIdx]?.toLocaleString() ?? 0} คน`} index={2} />
+              <StatCard icon={Percent} tone="amber" label="สัดส่วนกลุ่มโรคเด่นสุด" value={`${grandTotal > 0 ? Math.round((colTotals[topColIdx] / grandTotal) * 100) : 0}%`} note="ของผู้รับบริการทั้งหมด" index={3} />
+            </section>
+
+            <div className="overview-two-col">
+              {/* Disease Group Bar */}
+              <section className="panel analytics-card">
+                <div className="panel-heading">
+                  <div><p className="eyebrow"><ChartNoAxesCombined size={12} /> จำแนกตามกลุ่มโรค</p><h2>จำนวนผู้รับบริการตามกลุ่มโรค (Top 8)</h2></div>
+                </div>
+                <div className="chart-wrap chart-wrap-tall" aria-label="กราฟจำนวนผู้รับบริการตามกลุ่มโรค">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={diseaseBarData} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
+                      <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                      <YAxis dataKey="label" type="category" axisLine={false} tickLine={false} width={100} tick={{ fill: "#475569", fontSize: 11 }} />
+                      <Tooltip
+                        cursor={{ fill: "rgba(67,56,202,.05)" }}
+                        content={({ active, payload }) =>
+                          active && payload?.[0] ? (
+                            <div className="chart-tooltip">
+                              <b>{payload[0].value?.toLocaleString()} คน</b>
+                              <span>{payload[0].payload.label}</span>
+                            </div>
+                          ) : null
+                        }
+                      />
+                      <Bar dataKey="value" radius={[0, 12, 12, 0]} animationDuration={850}>
+                        {diseaseBarData.map((entry, i) => (
+                          <Cell key={`${entry.label}-${i}`} fill={i === 0 ? "#3730a3" : i < 3 ? "#4f46e5" : "#a5b4fc"} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </section>
+
+              {/* Age Group Composition Donut (จัดกลุ่มอายุให้เหลือ 6 ช่วง อ่านง่าย) */}
+              <CompositionDonutCard
+                total={grandTotal}
+                segments={bucketAgeGroups(rows, rowTotals).map((b, i) => ({
+                  name: b.label,
+                  value: b.value,
+                  color: ["#4338ca", "#6366f1", "#22d3ee", "#a5b4fc", "#818cf8", "#c7d2fe"][i % 6],
+                  glow: ["#818cf8", "#a5b4fc", "#67e8f9", "#e0e7ff", "#c7d2fe", "#eef2ff"][i % 6],
+                  icon: CalendarClock,
+                }))}
+              />
+            </div>
+          </>
+        );
+      })()}
+
+      {/* ===== SECTION 15: ตัวชี้วัดที่เกี่ยวข้อง 22.2 — สัดส่วนตามกลุ่มโรค ICD-10 ===== */}
+      <div className="indicator-group-head indicator-group-head-sub">
+        <span className="indicator-badge indicator-badge-14"><ClipboardList size={13} /> Section ที่ 15 · ตัวชี้วัดที่เกี่ยวข้อง 22.2</span>
+        <h2><Link href="/indicator-relate-22-2" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{getSimpleIndicator("22_2").name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
+      </div>
+
+      {(() => {
+        const analysis22_2 = getSimpleIndicatorAnalysis("22_2");
+        const icdData = analysis22_2.kind === "donut" ? analysis22_2.data : [];
+        const icdTotal = analysis22_2.kind === "donut" ? analysis22_2.total : 0;
+        const top = icdData[0];
+        return (
+          <>
+            <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่เกี่ยวข้อง 22.2">
+              <StatCard
+                icon={ClipboardList}
+                tone="blue"
+                label={getSimpleIndicatorHeadline("22_2")?.label ?? "ร้อยละกลุ่มโรคสูงสุด"}
+                value={`${getSimpleIndicatorHeadline("22_2")?.value?.toLocaleString() ?? "-"}${getSimpleIndicatorHeadline("22_2")?.unit ?? ""}`}
+                note="ทั้งจังหวัด"
+                index={0}
+                featured
+              />
+              <StatCard icon={HeartPulse} tone="purple" label="กลุ่มโรคเด่นสุด" value={top?.label ?? "-"} note={`${top?.value.toLocaleString() ?? 0} คน`} index={1} />
+              <StatCard icon={Users} tone="teal" label="รวมทุกกลุ่มโรค" value={icdTotal.toLocaleString()} note="ICD-10 ที่พบทั้งหมด" index={2} />
+              <StatCard icon={Percent} tone="amber" label="สัดส่วนกลุ่มเด่นสุด" value={`${icdTotal > 0 && top ? Math.round((top.value / icdTotal) * 100) : 0}%`} note="ของผู้ป่วยทั้งหมด" index={3} />
+            </section>
+
+            <div className="overview-two-col">
+              {/* ICD-10 Group Bar */}
+              <section className="panel analytics-card">
+                <div className="panel-heading">
+                  <div><p className="eyebrow"><ChartNoAxesCombined size={12} /> จำแนกตามรหัสโรค</p><h2>สัดส่วนตามกลุ่มโรค ICD-10</h2></div>
+                </div>
+                <div className="chart-wrap chart-wrap-tall" aria-label="กราฟสัดส่วนผู้ป่วยตามกลุ่มโรค ICD-10">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={icdData} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
+                      <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                      <YAxis dataKey="label" type="category" axisLine={false} tickLine={false} width={90} tick={{ fill: "#475569", fontSize: 11 }} />
+                      <Tooltip
+                        cursor={{ fill: "rgba(67,56,202,.05)" }}
+                        content={({ active, payload }) =>
+                          active && payload?.[0] ? (
+                            <div className="chart-tooltip">
+                              <b>{payload[0].value?.toLocaleString()} คน</b>
+                              <span>{payload[0].payload.label}</span>
+                            </div>
+                          ) : null
+                        }
+                      />
+                      <Bar dataKey="value" radius={[0, 12, 12, 0]} animationDuration={850}>
+                        {icdData.map((entry, i) => (
+                          <Cell key={`${entry.label}-${i}`} fill={i === 0 ? "#3730a3" : i < 3 ? "#4f46e5" : "#a5b4fc"} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </section>
+
+              {/* ICD-10 Composition Donut */}
+              <CompositionDonutCard
+                total={icdTotal}
+                segments={icdData.slice(0, 4).map((d, i) => ({
+                  name: d.label,
+                  value: d.value,
+                  color: ["#4338ca", "#6366f1", "#22d3ee", "#a5b4fc"][i % 4],
+                  glow: ["#818cf8", "#a5b4fc", "#67e8f9", "#e0e7ff"][i % 4],
+                  icon: HeartPulse,
+                }))}
+              />
+            </div>
+          </>
+        );
+      })()}
+
+      {/* ===== SECTION 16: ตัวชี้วัดที่เกี่ยวข้อง 22.3 — จำแนกตามกลุ่มโรค/รายโรค (Top 10) ===== */}
+      <div className="indicator-group-head indicator-group-head-sub">
+        <span className="indicator-badge indicator-badge-14"><ListChecks size={13} /> Section ที่ 16 · ตัวชี้วัดที่เกี่ยวข้อง 22.3</span>
+        <h2><Link href="/indicator-relate-22-3" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{getSimpleIndicator("22_3").name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
+      </div>
+
+      {(() => {
+        const analysis22_3 = getSimpleIndicatorAnalysis("22_3");
+        const diseaseData = analysis22_3.kind === "breakdown" ? analysis22_3.data : [];
+        const total22_3 = diseaseData.reduce((s, d) => s + d.value, 0);
+        const top = diseaseData[0];
+        return (
+          <>
+            <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่เกี่ยวข้อง 22.3">
+              <StatCard
+                icon={ListChecks}
+                tone="blue"
+                label={getSimpleIndicatorHeadline("22_3")?.label ?? "รวมผู้รับบริการ"}
+                value={`${getSimpleIndicatorHeadline("22_3")?.value?.toLocaleString() ?? "-"}${getSimpleIndicatorHeadline("22_3")?.unit ?? ""}`}
+                note="ทั้งจังหวัด"
+                index={0}
+                featured
+              />
+              <StatCard icon={HeartPulse} tone="purple" label="รายโรคเด่นสุด" value={top?.label ?? "-"} note={`${top?.value.toLocaleString() ?? 0} คน`} index={1} />
+              <StatCard icon={Users} tone="teal" label="รวม Top 10 รายโรค" value={total22_3.toLocaleString()} note="เรียงจากมากไปน้อย" index={2} />
+              <StatCard icon={Percent} tone="amber" label="สัดส่วนรายโรคเด่นสุด" value={`${total22_3 > 0 && top ? Math.round((top.value / total22_3) * 100) : 0}%`} note="ของ Top 10 รายโรค" index={3} />
+            </section>
+
+            <section className="panel analytics-card">
+              <div className="panel-heading">
+                <div><p className="eyebrow"><ChartNoAxesCombined size={12} /> จำแนกตามรายโรค</p><h2>จำแนกตามกลุ่มโรค/รายโรค (Top 10)</h2></div>
+              </div>
+              <div className="chart-wrap chart-wrap-tall" aria-label="กราฟจำแนกตามกลุ่มโรค/รายโรค Top 10">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={diseaseData} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
+                    <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                    <YAxis dataKey="label" type="category" axisLine={false} tickLine={false} width={140} tick={{ fill: "#475569", fontSize: 10.5 }} />
+                    <Tooltip
+                      cursor={{ fill: "rgba(67,56,202,.05)" }}
+                      content={({ active, payload }) =>
+                        active && payload?.[0] ? (
+                          <div className="chart-tooltip">
+                            <b>{payload[0].value?.toLocaleString()} คน</b>
+                            <span>{payload[0].payload.label}</span>
+                          </div>
+                        ) : null
+                      }
+                    />
+                    <Bar dataKey="value" radius={[0, 12, 12, 0]} animationDuration={850}>
+                      {diseaseData.map((entry, i) => (
+                        <Cell key={`${entry.label}-${i}`} fill={i === 0 ? "#3730a3" : i < 3 ? "#4f46e5" : "#a5b4fc"} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </section>
+          </>
+        );
+      })()}
+
+      {/* ===== SECTION 17: ตัวชี้วัดที่เกี่ยวข้อง 22.4 — แนวโน้มรายเดือน (ทำร้ายตนเอง) ===== */}
+      <div className="indicator-group-head indicator-group-head-sub">
+        <span className="indicator-badge indicator-badge-14"><TrendingUp size={13} /> Section ที่ 17 · ตัวชี้วัดที่เกี่ยวข้อง 22.4</span>
+        <h2><Link href="/indicator-relate-22-4" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{getSimpleIndicator("22_4").name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
+      </div>
+
+      {(() => {
+        const analysis22_4 = getSimpleIndicatorAnalysis("22_4");
+        const monthlyData = analysis22_4.kind === "monthly" ? analysis22_4.data : [];
+        const total22_4 = analysis22_4.kind === "monthly" ? analysis22_4.total : 0;
+        const peak = monthlyData.reduce((best, m) => (m.value > (best?.value ?? -1) ? m : best), monthlyData[0]);
+        const avgMonthly = monthlyData.length > 0 ? Math.round((total22_4 / monthlyData.length) * 10) / 10 : 0;
+        return (
+          <>
+            <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่เกี่ยวข้อง 22.4">
+              <StatCard
+                icon={TrendingUp}
+                tone="rose"
+                label={getSimpleIndicatorHeadline("22_4")?.label ?? "จำนวนตั้งใจทำร้ายตนเอง"}
+                value={`${getSimpleIndicatorHeadline("22_4")?.value?.toLocaleString() ?? "-"}${getSimpleIndicatorHeadline("22_4")?.unit ?? ""}`}
+                note="ทั้งจังหวัด"
+                index={0}
+                featured
+              />
+              <StatCard icon={CalendarClock} tone="amber" label="เดือนที่สูงสุด" value={peak?.label ?? "-"} note={`${peak?.value.toLocaleString() ?? 0} ครั้ง`} index={1} />
+              <StatCard icon={Users} tone="teal" label="รวมทั้งปี" value={total22_4.toLocaleString()} note="12 เดือนย้อนหลัง" index={2} />
+              <StatCard icon={Percent} tone="blue" label="เฉลี่ยต่อเดือน" value={`${avgMonthly}`} note="ครั้ง/เดือน" index={3} />
+            </section>
+
+            <section className="panel analytics-card">
+              <div className="panel-heading">
+                <div><p className="eyebrow"><ChartNoAxesCombined size={12} /> แนวโน้มรายเดือน</p><h2>จำนวนครั้งที่ตั้งใจทำร้ายตนเอง รายเดือน</h2></div>
+              </div>
+              <div className="chart-wrap chart-wrap-tall" aria-label="กราฟแนวโน้มจำนวนครั้งทำร้ายตนเองรายเดือน">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={monthlyData} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
+                    <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                    <Tooltip
+                      cursor={{ stroke: "rgba(190,18,60,.2)", strokeWidth: 24 }}
+                      content={({ active, payload }) =>
+                        active && payload?.[0] ? (
+                          <div className="chart-tooltip">
+                            <b>{payload[0].value?.toLocaleString()} ครั้ง</b>
+                            <span>{payload[0].payload.label}</span>
+                          </div>
+                        ) : null
+                      }
+                    />
+                    <Line type="monotone" dataKey="value" stroke="#be123c" strokeWidth={2.5} dot={{ r: 3, fill: "#be123c" }} activeDot={{ r: 5 }} animationDuration={850} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </section>
+          </>
+        );
+      })()}
+
+      {/* ===== SECTION 18: ตัวชี้วัดที่เกี่ยวข้อง 22.5 — จำแนกตามกลุ่มอายุ x วิธีทำร้ายตนเอง ===== */}
+      <div className="indicator-group-head indicator-group-head-sub">
+        <span className="indicator-badge indicator-badge-14"><Zap size={13} /> Section ที่ 18 · ตัวชี้วัดที่เกี่ยวข้อง 22.5</span>
+        <h2><Link href="/indicator-relate-22-5" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{getSimpleIndicator("22_5").name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
+      </div>
+
+      {(() => {
+        const analysis22_5 = getSimpleIndicatorAnalysis("22_5");
+        if (analysis22_5.kind !== "heatmap" || analysis22_5.matrix.length === 0) return null;
+        const { rows, cols, matrix } = analysis22_5;
+        const colTotals = cols.map((_, ci) => matrix.reduce((s, row) => s + (row[ci] ?? 0), 0));
+        const rowTotals = rows.map((_, ri) => matrix[ri].reduce((s, v) => s + v, 0));
+        const grandTotal = colTotals.reduce((s, v) => s + v, 0);
+        const topColIdx = colTotals.reduce((best, v, i) => (v > colTotals[best] ? i : best), 0);
+        const topRowIdx = rowTotals.reduce((best, v, i) => (v > rowTotals[best] ? i : best), 0);
+        const methodBarData = cols.map((label, i) => ({ label, value: colTotals[i] })).sort((a, b) => b.value - a.value);
+
+        return (
+          <>
+            <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่เกี่ยวข้อง 22.5">
+              <StatCard icon={Zap} tone="rose" label="รวมครั้งทั้งหมด" value={grandTotal.toLocaleString()} note="ทำร้ายตนเอง ทุกวิธี" index={0} featured />
+              <StatCard icon={ClipboardList} tone="purple" label="วิธีเด่นสุด" value={cols[topColIdx] ?? "-"} note={`${colTotals[topColIdx]?.toLocaleString() ?? 0} ครั้ง`} index={1} />
+              <StatCard icon={CalendarClock} tone="teal" label="กลุ่มอายุเด่นสุด" value={rows[topRowIdx] ?? "-"} note={`${rowTotals[topRowIdx]?.toLocaleString() ?? 0} ครั้ง`} index={2} />
+              <StatCard icon={Percent} tone="amber" label="สัดส่วนวิธีเด่นสุด" value={`${grandTotal > 0 ? Math.round((colTotals[topColIdx] / grandTotal) * 100) : 0}%`} note="ของทุกวิธีรวมกัน" index={3} />
+            </section>
+
+            <div className="overview-two-col">
+              {/* Method Bar */}
+              <section className="panel analytics-card">
+                <div className="panel-heading">
+                  <div><p className="eyebrow"><ChartNoAxesCombined size={12} /> จำแนกตามวิธี</p><h2>จำนวนครั้งตามวิธีทำร้ายตนเอง (Top 9)</h2></div>
+                </div>
+                <div className="chart-wrap chart-wrap-tall" aria-label="กราฟจำนวนครั้งตามวิธีทำร้ายตนเอง">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={methodBarData} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
+                      <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                      <YAxis dataKey="label" type="category" axisLine={false} tickLine={false} width={100} tick={{ fill: "#475569", fontSize: 11 }} />
+                      <Tooltip
+                        cursor={{ fill: "rgba(190,18,60,.05)" }}
+                        content={({ active, payload }) =>
+                          active && payload?.[0] ? (
+                            <div className="chart-tooltip">
+                              <b>{payload[0].value?.toLocaleString()} ครั้ง</b>
+                              <span>{payload[0].payload.label}</span>
+                            </div>
+                          ) : null
+                        }
+                      />
+                      <Bar dataKey="value" radius={[0, 12, 12, 0]} animationDuration={850}>
+                        {methodBarData.map((entry, i) => (
+                          <Cell key={`${entry.label}-${i}`} fill={i === 0 ? "#7f1d3a" : i < 3 ? "#be123c" : "#fda4af"} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </section>
+
+              {/* Age Group Composition Donut (จัดกลุ่มอายุให้เหลือ 6 ช่วง อ่านง่าย) */}
+              <CompositionDonutCard
+                total={grandTotal}
+                segments={bucketAgeGroups(rows, rowTotals).map((b, i) => ({
+                  name: b.label,
+                  value: b.value,
+                  color: ["#be123c", "#e11d48", "#fb7185", "#fda4af", "#f43f5e", "#fecdd3"][i % 6],
+                  glow: ["#fda4af", "#fecdd3", "#fecaca", "#ffe4e6", "#fca5a5", "#fee2e2"][i % 6],
+                  icon: Zap,
+                }))}
+              />
+            </div>
+          </>
+        );
+      })()}
+
+      {/* ===== SECTION 19: ตัวชี้วัดที่เกี่ยวข้อง 22.6 — จำแนกตามกลุ่มอายุ x สถานที่เกิดเหตุ ===== */}
+      <div className="indicator-group-head indicator-group-head-sub">
+        <span className="indicator-badge indicator-badge-14"><MapPin size={13} /> Section ที่ 19 · ตัวชี้วัดที่เกี่ยวข้อง 22.6</span>
+        <h2><Link href="/indicator-relate-22-6" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{getSimpleIndicator("22_6").name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
+      </div>
+
+      {(() => {
+        const analysis22_6 = getSimpleIndicatorAnalysis("22_6");
+        if (analysis22_6.kind !== "heatmap" || analysis22_6.matrix.length === 0) return null;
+        const { rows, cols, matrix } = analysis22_6;
+        const colTotals = cols.map((_, ci) => matrix.reduce((s, row) => s + (row[ci] ?? 0), 0));
+        const rowTotals = rows.map((_, ri) => matrix[ri].reduce((s, v) => s + v, 0));
+        const grandTotal = colTotals.reduce((s, v) => s + v, 0);
+        const topColIdx = colTotals.reduce((best, v, i) => (v > colTotals[best] ? i : best), 0);
+        const topRowIdx = rowTotals.reduce((best, v, i) => (v > rowTotals[best] ? i : best), 0);
+        const placeBarData = cols.map((label, i) => ({ label, value: colTotals[i] })).sort((a, b) => b.value - a.value);
+
+        return (
+          <>
+            <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่เกี่ยวข้อง 22.6">
+              <StatCard icon={MapPin} tone="rose" label="รวมครั้งทั้งหมด" value={grandTotal.toLocaleString()} note="ทำร้ายตนเอง ทุกสถานที่" index={0} featured />
+              <StatCard icon={ClipboardList} tone="purple" label="สถานที่เด่นสุด" value={cols[topColIdx] ?? "-"} note={`${colTotals[topColIdx]?.toLocaleString() ?? 0} ครั้ง`} index={1} />
+              <StatCard icon={CalendarClock} tone="teal" label="กลุ่มอายุเด่นสุด" value={rows[topRowIdx] ?? "-"} note={`${rowTotals[topRowIdx]?.toLocaleString() ?? 0} ครั้ง`} index={2} />
+              <StatCard icon={Percent} tone="amber" label="สัดส่วนสถานที่เด่นสุด" value={`${grandTotal > 0 ? Math.round((colTotals[topColIdx] / grandTotal) * 100) : 0}%`} note="ของทุกสถานที่รวมกัน" index={3} />
+            </section>
+
+            <div className="overview-two-col">
+              {/* Place Bar */}
+              <section className="panel analytics-card">
+                <div className="panel-heading">
+                  <div><p className="eyebrow"><ChartNoAxesCombined size={12} /> จำแนกตามสถานที่</p><h2>จำนวนครั้งตามสถานที่เกิดเหตุ</h2></div>
+                </div>
+                <div className="chart-wrap chart-wrap-tall" aria-label="กราฟจำนวนครั้งตามสถานที่เกิดเหตุ">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={placeBarData} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
+                      <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                      <YAxis dataKey="label" type="category" axisLine={false} tickLine={false} width={100} tick={{ fill: "#475569", fontSize: 11 }} />
+                      <Tooltip
+                        cursor={{ fill: "rgba(217,119,6,.05)" }}
+                        content={({ active, payload }) =>
+                          active && payload?.[0] ? (
+                            <div className="chart-tooltip">
+                              <b>{payload[0].value?.toLocaleString()} ครั้ง</b>
+                              <span>{payload[0].payload.label}</span>
+                            </div>
+                          ) : null
+                        }
+                      />
+                      <Bar dataKey="value" radius={[0, 12, 12, 0]} animationDuration={850}>
+                        {placeBarData.map((entry, i) => (
+                          <Cell key={`${entry.label}-${i}`} fill={i === 0 ? "#92400e" : i < 3 ? "#d97706" : "#fcd34d"} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </section>
+
+              {/* Age Group Composition Donut (จัดกลุ่มอายุให้เหลือ 6 ช่วง อ่านง่าย) */}
+              <CompositionDonutCard
+                total={grandTotal}
+                segments={bucketAgeGroups(rows, rowTotals).map((b, i) => ({
+                  name: b.label,
+                  value: b.value,
+                  color: ["#d97706", "#f59e0b", "#fbbf24", "#fcd34d", "#fde68a", "#fef3c7"][i % 6],
+                  glow: ["#fcd34d", "#fde68a", "#fef3c7", "#fffbeb", "#fef9c3", "#fefce8"][i % 6],
+                  icon: MapPin,
+                }))}
+              />
+            </div>
+          </>
+        );
+      })()}
+
+      {/* ===== SECTION 20: ตัวชี้วัดที่เกี่ยวข้อง 22.7 — จำแนกตามกลุ่มอายุ x ช่วงเวลาเกิดเหตุ ===== */}
+      <div className="indicator-group-head indicator-group-head-sub">
+        <span className="indicator-badge indicator-badge-14"><Clock size={13} /> Section ที่ 20 · ตัวชี้วัดที่เกี่ยวข้อง 22.7</span>
+        <h2><Link href="/indicator-relate-22-7" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{getSimpleIndicator("22_7").name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
+      </div>
+
+      {(() => {
+        const analysis22_7 = getSimpleIndicatorAnalysis("22_7");
+        if (analysis22_7.kind !== "heatmap" || analysis22_7.matrix.length === 0) return null;
+        const { rows, cols, matrix } = analysis22_7;
+        const colTotals = cols.map((_, ci) => matrix.reduce((s, row) => s + (row[ci] ?? 0), 0));
+        const rowTotals = rows.map((_, ri) => matrix[ri].reduce((s, v) => s + v, 0));
+        const grandTotal = colTotals.reduce((s, v) => s + v, 0);
+        const topColIdx = colTotals.reduce((best, v, i) => (v > colTotals[best] ? i : best), 0);
+        const topRowIdx = rowTotals.reduce((best, v, i) => (v > rowTotals[best] ? i : best), 0);
+        const timeBarData = cols.map((label, i) => ({ label, value: colTotals[i] }));
+
+        return (
+          <>
+            <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่เกี่ยวข้อง 22.7">
+              <StatCard icon={Clock} tone="rose" label="รวมครั้งทั้งหมด" value={grandTotal.toLocaleString()} note="ทำร้ายตนเอง ทุกช่วงเวลา" index={0} featured />
+              <StatCard icon={ClipboardList} tone="purple" label="ช่วงเวลาเด่นสุด" value={cols[topColIdx] ?? "-"} note={`${colTotals[topColIdx]?.toLocaleString() ?? 0} ครั้ง`} index={1} />
+              <StatCard icon={CalendarClock} tone="teal" label="กลุ่มอายุเด่นสุด" value={rows[topRowIdx] ?? "-"} note={`${rowTotals[topRowIdx]?.toLocaleString() ?? 0} ครั้ง`} index={2} />
+              <StatCard icon={Percent} tone="amber" label="สัดส่วนช่วงเวลาเด่นสุด" value={`${grandTotal > 0 ? Math.round((colTotals[topColIdx] / grandTotal) * 100) : 0}%`} note="ของทุกช่วงเวลารวมกัน" index={3} />
+            </section>
+
+            <div className="overview-two-col">
+              {/* Time-of-day Bar (kept chronological order, not sorted) */}
+              <section className="panel analytics-card">
+                <div className="panel-heading">
+                  <div><p className="eyebrow"><ChartNoAxesCombined size={12} /> จำแนกตามช่วงเวลา</p><h2>จำนวนครั้งตามช่วงเวลาเกิดเหตุ</h2></div>
+                </div>
+                <div className="chart-wrap chart-wrap-tall" aria-label="กราฟจำนวนครั้งตามช่วงเวลาเกิดเหตุ">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={timeBarData} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
+                      <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 10.5 }} interval={0} angle={-20} textAnchor="end" height={50} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                      <Tooltip
+                        cursor={{ fill: "rgba(67,56,202,.05)" }}
+                        content={({ active, payload }) =>
+                          active && payload?.[0] ? (
+                            <div className="chart-tooltip">
+                              <b>{payload[0].value?.toLocaleString()} ครั้ง</b>
+                              <span>{payload[0].payload.label}</span>
+                            </div>
+                          ) : null
+                        }
+                      />
+                      <Bar dataKey="value" radius={[8, 8, 0, 0]} animationDuration={850}>
+                        {timeBarData.map((entry, i) => (
+                          <Cell key={`${entry.label}-${i}`} fill={i === topColIdx ? "#3730a3" : "#818cf8"} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </section>
+
+              {/* Age Group Composition Donut (จัดกลุ่มอายุให้เหลือ 6 ช่วง อ่านง่าย) */}
+              <CompositionDonutCard
+                total={grandTotal}
+                segments={bucketAgeGroups(rows, rowTotals).map((b, i) => ({
+                  name: b.label,
+                  value: b.value,
+                  color: ["#4338ca", "#6366f1", "#22d3ee", "#a5b4fc", "#818cf8", "#c7d2fe"][i % 6],
+                  glow: ["#818cf8", "#a5b4fc", "#67e8f9", "#e0e7ff", "#c7d2fe", "#eef2ff"][i % 6],
+                  icon: Clock,
+                }))}
+              />
+            </div>
+          </>
+        );
+      })()}
+
+      {/* ===== SECTION 21: ตัวชี้วัดที่เกี่ยวข้อง 23.4 — แนวโน้มรายเดือน (จิตเภท F20) ===== */}
+      <div className="indicator-group-head indicator-group-head-sub">
+        <span className="indicator-badge indicator-badge-14"><Brain size={13} /> Section ที่ 21 · ตัวชี้วัดที่เกี่ยวข้อง 23.4</span>
+        <h2><Link href="/indicator-relate-23-4" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{getSimpleIndicator("23_4").name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
+      </div>
+
+      {(() => {
+        const analysis23_4 = getSimpleIndicatorAnalysis("23_4");
+        const monthlyData = analysis23_4.kind === "monthly" ? analysis23_4.data : [];
+        const total23_4 = analysis23_4.kind === "monthly" ? analysis23_4.total : 0;
+        const peak = monthlyData.reduce((best, m) => (m.value > (best?.value ?? -1) ? m : best), monthlyData[0]);
+        const avgMonthly = monthlyData.length > 0 ? Math.round((total23_4 / monthlyData.length) * 10) / 10 : 0;
+        return (
+          <>
+            <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่เกี่ยวข้อง 23.4">
+              <StatCard
+                icon={Brain}
+                tone="purple"
+                label={getSimpleIndicatorHeadline("23_4")?.label ?? "ความชุกร้อยละประชากร"}
+                value={`${getSimpleIndicatorHeadline("23_4")?.value?.toLocaleString() ?? "-"}${getSimpleIndicatorHeadline("23_4")?.unit ?? ""}`}
+                note="ผู้ป่วยจิตเภท (F20.xx) ทั้งจังหวัด"
+                index={0}
+                featured
+              />
+              <StatCard icon={CalendarClock} tone="amber" label="เดือนที่สูงสุด" value={peak?.label ?? "-"} note={`${peak?.value.toLocaleString() ?? 0} ราย`} index={1} />
+              <StatCard icon={Users} tone="teal" label="รวมทั้งปี" value={total23_4.toLocaleString()} note="ผู้ป่วยรายใหม่ 12 เดือนย้อนหลัง" index={2} />
+              <StatCard icon={Percent} tone="blue" label="เฉลี่ยต่อเดือน" value={`${avgMonthly}`} note="ราย/เดือน" index={3} />
+            </section>
+
+            <section className="panel analytics-card">
+              <div className="panel-heading">
+                <div><p className="eyebrow"><ChartNoAxesCombined size={12} /> แนวโน้มรายเดือน</p><h2>ผู้ป่วยจิตเภทรายใหม่ (F20.xx) รายเดือน</h2></div>
+              </div>
+              <div className="chart-wrap chart-wrap-tall" aria-label="กราฟแนวโน้มผู้ป่วยจิตเภทรายใหม่รายเดือน">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={monthlyData} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
+                    <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                    <Tooltip
+                      cursor={{ stroke: "rgba(147,51,234,.2)", strokeWidth: 24 }}
+                      content={({ active, payload }) =>
+                        active && payload?.[0] ? (
+                          <div className="chart-tooltip">
+                            <b>{payload[0].value?.toLocaleString()} ราย</b>
+                            <span>{payload[0].payload.label}</span>
+                          </div>
+                        ) : null
+                      }
+                    />
+                    <Line type="monotone" dataKey="value" stroke="#9333ea" strokeWidth={2.5} dot={{ r: 3, fill: "#9333ea" }} activeDot={{ r: 5 }} animationDuration={850} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </section>
+          </>
+        );
+      })()}
+
+      {/* ===== SECTION 22: ตัวชี้วัดที่เกี่ยวข้อง 23.6 — แนวโน้มรายเดือน (ซึมเศร้า F32-F39) ===== */}
+      <div className="indicator-group-head indicator-group-head-sub">
+        <span className="indicator-badge indicator-badge-14"><HeartCrack size={13} /> Section ที่ 22 · ตัวชี้วัดที่เกี่ยวข้อง 23.6</span>
+        <h2><Link href="/indicator-relate-23-6" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{getSimpleIndicator("23_6").name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
+      </div>
+
+      {(() => {
+        const analysis23_6 = getSimpleIndicatorAnalysis("23_6");
+        const monthlyData = analysis23_6.kind === "monthly" ? analysis23_6.data : [];
+        const total23_6 = analysis23_6.kind === "monthly" ? analysis23_6.total : 0;
+        const peak = monthlyData.reduce((best, m) => (m.value > (best?.value ?? -1) ? m : best), monthlyData[0]);
+        const avgMonthly = monthlyData.length > 0 ? Math.round((total23_6 / monthlyData.length) * 10) / 10 : 0;
+        return (
+          <>
+            <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่เกี่ยวข้อง 23.6">
+              <StatCard
+                icon={HeartCrack}
+                tone="teal"
+                label={getSimpleIndicatorHeadline("23_6")?.label ?? "ความชุกร้อยละประชากร"}
+                value={`${getSimpleIndicatorHeadline("23_6")?.value?.toLocaleString() ?? "-"}${getSimpleIndicatorHeadline("23_6")?.unit ?? ""}`}
+                note="ผู้ป่วยซึมเศร้า (F32-F39) ทั้งจังหวัด"
+                index={0}
+                featured
+              />
+              <StatCard icon={CalendarClock} tone="amber" label="เดือนที่สูงสุด" value={peak?.label ?? "-"} note={`${peak?.value.toLocaleString() ?? 0} ราย`} index={1} />
+              <StatCard icon={Users} tone="blue" label="รวมทั้งปี" value={total23_6.toLocaleString()} note="ผู้ป่วยรายใหม่ 12 เดือนย้อนหลัง" index={2} />
+              <StatCard icon={Percent} tone="purple" label="เฉลี่ยต่อเดือน" value={`${avgMonthly}`} note="ราย/เดือน" index={3} />
+            </section>
+
+            <section className="panel analytics-card">
+              <div className="panel-heading">
+                <div><p className="eyebrow"><ChartNoAxesCombined size={12} /> แนวโน้มรายเดือน</p><h2>ผู้ป่วยซึมเศร้ารายใหม่ (F32-F39) รายเดือน</h2></div>
+              </div>
+              <div className="chart-wrap chart-wrap-tall" aria-label="กราฟแนวโน้มผู้ป่วยซึมเศร้ารายใหม่รายเดือน">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={monthlyData} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
+                    <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                    <Tooltip
+                      cursor={{ stroke: "rgba(13,148,136,.2)", strokeWidth: 24 }}
+                      content={({ active, payload }) =>
+                        active && payload?.[0] ? (
+                          <div className="chart-tooltip">
+                            <b>{payload[0].value?.toLocaleString()} ราย</b>
+                            <span>{payload[0].payload.label}</span>
+                          </div>
+                        ) : null
+                      }
+                    />
+                    <Line type="monotone" dataKey="value" stroke="#0d9488" strokeWidth={2.5} dot={{ r: 3, fill: "#0d9488" }} activeDot={{ r: 5 }} animationDuration={850} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </section>
+          </>
+        );
+      })()}
+
+      {/* ===== SECTION 23: ตัวชี้วัดที่เกี่ยวข้อง 23.5 — แนวโน้มรายเดือน (อารมณ์สองขั้ว F30-F31) ===== */}
+      <div className="indicator-group-head indicator-group-head-sub">
+        <span className="indicator-badge indicator-badge-14"><Waves size={13} /> Section ที่ 23 · ตัวชี้วัดที่เกี่ยวข้อง 23.5</span>
+        <h2><Link href="/indicator-relate-23-5" className="indicator-title-link"><span className="indicator-title-shimmer" aria-hidden="true" /><span className="indicator-title-link-text">{getSimpleIndicator("23_5").name}</span><ExternalLink size={15} className="indicator-title-link-icon" /></Link></h2>
+      </div>
+
+      {(() => {
+        const analysis23_5 = getSimpleIndicatorAnalysis("23_5");
+        const monthlyData = analysis23_5.kind === "monthly" ? analysis23_5.data : [];
+        const total23_5 = analysis23_5.kind === "monthly" ? analysis23_5.total : 0;
+        const peak = monthlyData.reduce((best, m) => (m.value > (best?.value ?? -1) ? m : best), monthlyData[0]);
+        const avgMonthly = monthlyData.length > 0 ? Math.round((total23_5 / monthlyData.length) * 10) / 10 : 0;
+        return (
+          <>
+            <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่เกี่ยวข้อง 23.5">
+              <StatCard
+                icon={Waves}
+                tone="blue"
+                label={getSimpleIndicatorHeadline("23_5")?.label ?? "ความชุกร้อยละประชากร"}
+                value={`${getSimpleIndicatorHeadline("23_5")?.value?.toLocaleString() ?? "-"}${getSimpleIndicatorHeadline("23_5")?.unit ?? ""}`}
+                note="ผู้ป่วยอารมณ์สองขั้ว (F30-F31) ทั้งจังหวัด"
+                index={0}
+                featured
+              />
+              <StatCard icon={CalendarClock} tone="amber" label="เดือนที่สูงสุด" value={peak?.label ?? "-"} note={`${peak?.value.toLocaleString() ?? 0} ราย`} index={1} />
+              <StatCard icon={Users} tone="teal" label="รวมทั้งปี" value={total23_5.toLocaleString()} note="ผู้ป่วยรายใหม่ 12 เดือนย้อนหลัง" index={2} />
+              <StatCard icon={Percent} tone="purple" label="เฉลี่ยต่อเดือน" value={`${avgMonthly}`} note="ราย/เดือน" index={3} />
+            </section>
+
+            <section className="panel analytics-card">
+              <div className="panel-heading">
+                <div><p className="eyebrow"><ChartNoAxesCombined size={12} /> แนวโน้มรายเดือน</p><h2>ผู้ป่วยอารมณ์สองขั้วรายใหม่ (F30-F31) รายเดือน</h2></div>
+              </div>
+              <div className="chart-wrap chart-wrap-tall" aria-label="กราฟแนวโน้มผู้ป่วยอารมณ์สองขั้วรายใหม่รายเดือน">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={monthlyData} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
+                    <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                    <Tooltip
+                      cursor={{ stroke: "rgba(37,99,235,.2)", strokeWidth: 24 }}
+                      content={({ active, payload }) =>
+                        active && payload?.[0] ? (
+                          <div className="chart-tooltip">
+                            <b>{payload[0].value?.toLocaleString()} ราย</b>
+                            <span>{payload[0].payload.label}</span>
+                          </div>
+                        ) : null
+                      }
+                    />
+                    <Line type="monotone" dataKey="value" stroke="#2563eb" strokeWidth={2.5} dot={{ r: 3, fill: "#2563eb" }} activeDot={{ r: 5 }} animationDuration={850} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </section>
+          </>
+        );
+      })()}
     </motion.div>
   );
 }
@@ -899,10 +2594,10 @@ function Indicator1Section() {
       </div>
 
       <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่ 1">
-        <StatCard label="ผู้ป่วยทั้งจังหวัด" value={provinceTotal.toLocaleString()} note="รวมทุกอำเภอ" index={0} featured />
-        <StatCard label="จำนวนอำเภอ" value={String(amphoeList.length)} note="มีข้อมูลครบทุกอำเภอ" index={1} />
-        <StatCard label="กลุ่มวินิจฉัย" value={String(diagnosisBreakdown.length)} note="1B030 – 1B033" index={2} />
-        <StatCard label="อำเภอสูงสุด" value={amphoeStats[0]?.amphoe ?? "-"} note={`${amphoeStats[0]?.total.toLocaleString() ?? 0} ราย`} index={3} />
+        <StatCard icon={Users} tone="blue" label="ผู้ป่วยทั้งจังหวัด" value={provinceTotal.toLocaleString()} note="รวมทุกอำเภอ" index={0} featured />
+        <StatCard icon={MapPin} tone="blue" label="จำนวนอำเภอ" value={String(amphoeList.length)} note="มีข้อมูลครบทุกอำเภอ" index={1} />
+        <StatCard icon={ClipboardList} tone="purple" label="กลุ่มวินิจฉัย" value={String(diagnosisBreakdown.length)} note="1B030 – 1B033" index={2} />
+        <StatCard icon={Building2} tone="amber" label="อำเภอสูงสุด" value={amphoeStats[0]?.amphoe ?? "-"} note={`${amphoeStats[0]?.total.toLocaleString() ?? 0} ราย`} index={3} />
       </section>
 
       <div className="indicator1-layout">
@@ -936,10 +2631,255 @@ function Indicator1Section() {
   );
 }
 
+function Indicator2AnalysisBody() {
+  return (
+    <>
+      {/* ===== SECTION: Key Stats ===== */}
+      <section id="indicator2-stats" className="stats-grid" aria-label="สถิติตัวชี้วัดที่ 2">
+        <StatCard icon={Users} tone="blue" label="ผู้ป่วย SMI-V ทั้งหมด" value={`${indicator2Metrics?.totalPatients.toLocaleString() ?? "-"}`} note={indicator2Metrics?.area ?? ""} index={0} featured />
+        <StatCard icon={Gauge} tone="teal" label="อัตราการเข้าถึงบริการ" value={`${indicator2Metrics?.accessRate ?? "-"}%`} note="Accessibility Rate (E)" index={1} />
+        <StatCard icon={ShieldCheck} tone="green" label="ไม่ก่อความรุนแรงซ้ำ" value={`${indicator2Metrics?.noRepeatViolence.toLocaleString() ?? "-"}`} note="ผู้ป่วยสะสม (F)" index={2} />
+        <StatCard icon={Activity} tone="teal" label="ดูแลต่อเนื่อง ≥2 ครั้ง" value={`${indicator2Metrics?.continuousCareRate ?? "-"}%`} note="ไม่ก่อซ้ำในปีงบประมาณ (O)" index={3} />
+      </section>
+
+      {/* ===== SECTION: Key Insights ===== */}
+      <section id="indicator2-insights" className="panel insight-card">
+        <div className="panel-heading">
+          <div><p className="eyebrow">สรุปสถานการณ์</p><h2>อ่านง่าย: อะไรกำลังเกิดขึ้น</h2></div>
+          <span className="live-pill"><i /> วิเคราะห์อัตโนมัติจากข้อมูล HDC</span>
+        </div>
+        <div className="insight-list">
+          <div className="insight-row">
+            <span className="insight-icon insight-icon-up"><TrendingUp size={15} /></span>
+            <span className="insight-copy">
+              ผู้ป่วยรายใหม่คิดเป็น <strong>{indicator2Insights?.newShare ?? "-"}%</strong> ของทั้งหมด
+              <small>รายเก่า {indicator2Insights?.oldShare ?? "-"}% ({indicator2Metrics?.oldPatients.toLocaleString() ?? "-"} คน) · รายใหม่ {indicator2Metrics?.newPatients.toLocaleString() ?? "-"} คน</small>
+            </span>
+          </div>
+          <div className="insight-row">
+            <span className="insight-icon insight-icon-down"><TrendingDown size={15} /></span>
+            <span className="insight-copy">
+              ติดตามครบ ≥2 ครั้งน้อยกว่าติดตาม 1 ครั้ง <strong>{indicator2Insights?.followUpGap?.toLocaleString() ?? "-"} คน</strong>
+              <small>อัตราไม่ก่อซ้ำต่างกัน {indicator2Insights?.rateDelta != null && indicator2Insights.rateDelta > 0 ? "+" : ""}{indicator2Insights?.rateDelta ?? "-"} จุด (1 ครั้ง {indicator2Metrics?.followUp1xRate ?? "-"}% vs ≥2 ครั้ง {indicator2Metrics?.followUp2xPlusRate ?? "-"}%)</small>
+            </span>
+          </div>
+          <div className="insight-row">
+            <span className="insight-icon insight-icon-layers"><Layers size={15} /></span>
+            <span className="insight-copy">
+              ครอบคลุมประชากร <strong>{indicator2Insights?.populationCoverage ?? "-"}%</strong>
+              <small>ผู้ป่วย {indicator2Metrics?.totalPatients.toLocaleString() ?? "-"} คน จากประชากร {indicator2Metrics?.population.toLocaleString() ?? "-"} คน (15-60 ปี)</small>
+            </span>
+          </div>
+          <div className="insight-row">
+            <span className="insight-icon insight-icon-target"><Target size={15} /></span>
+            <span className="insight-copy">
+              ต่ำกว่าประมาณการ <strong>{indicator2Insights?.estimateGap?.toLocaleString() ?? "-"} คน</strong>
+              <small>ประมาณการ {indicator2Metrics?.estimate.toLocaleString() ?? "-"} คน เทียบผู้ป่วยจริง {indicator2Metrics?.totalPatients.toLocaleString() ?? "-"} คน</small>
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== SECTION: Composition & Follow-up ===== */}
+      <div id="indicator2-composition-followup" className="overview-two-col">
+        {/* Composition Donut */}
+        <section id="indicator2-composition" className="panel analytics-card">
+          <div className="panel-heading">
+            <div><p className="eyebrow">องค์ประกอบผู้ป่วย</p><h2>สัดส่วนผู้ป่วยรายเก่า vs รายใหม่</h2></div>
+            <span className="live-pill"><i /> ข้อมูลจริงจาก HDC</span>
+          </div>
+          <div className="donut-card-body">
+            <div className="chart-wrap chart-wrap-donut" aria-label="กราฟวงกลมสัดส่วนผู้ป่วยรายเก่าเทียบรายใหม่">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={[
+                      { name: "รายเก่า (ก่อนปีงบปัจจุบัน)", value: indicator2Metrics?.oldPatients ?? 0 },
+                      { name: "รายใหม่ (ปีงบปัจจุบัน)", value: indicator2Metrics?.newPatients ?? 0 },
+                    ]}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius="58%"
+                    outerRadius="88%"
+                    paddingAngle={2}
+                    animationDuration={850}
+                  >
+                    <Cell fill="#4338ca" />
+                    <Cell fill="#818cf8" />
+                  </Pie>
+                  <Tooltip
+                    content={({ active, payload }) =>
+                      active && payload?.[0] ? (
+                        <div className="chart-tooltip">
+                          <b>{payload[0].value?.toLocaleString()} คน</b>
+                          <span>{payload[0].name}</span>
+                        </div>
+                      ) : null
+                    }
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="donut-center-label">
+                <strong>{indicator2Metrics?.totalPatients.toLocaleString() ?? "-"}</strong>
+                <span>ผู้ป่วยรวม</span>
+              </div>
+            </div>
+            <ul className="donut-legend">
+              {[
+                { name: "รายเก่า (ก่อนปีงบปัจจุบัน)", value: indicator2Metrics?.oldPatients ?? 0, color: "#4338ca" },
+                { name: "รายใหม่ (ปีงบปัจจุบัน)", value: indicator2Metrics?.newPatients ?? 0, color: "#818cf8" },
+              ].map((d) => (
+                <li key={d.name}>
+                  <span className="donut-legend-dot" style={{ background: d.color }} />
+                  <span className="donut-legend-label">{d.name}</span>
+                  <span className="donut-legend-value">
+                    {d.value.toLocaleString()} คน · {indicator2Metrics?.totalPatients ? Math.round((d.value / indicator2Metrics.totalPatients) * 1000) / 10 : "-"}%
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* Follow-up Comparison Grouped Bar */}
+        <section id="indicator2-followup" className="panel analytics-card">
+          <div className="panel-heading">
+            <div><p className="eyebrow">เปรียบเทียบการติดตาม</p><h2>จำนวนติดตาม 1 ครั้ง เทียบ ≥2 ครั้ง</h2></div>
+            <span className="live-pill"><i /> ข้อมูลจริงจาก HDC</span>
+          </div>
+          <div className="chart-wrap chart-wrap-tall" aria-label="กราฟแท่งเปรียบเทียบจำนวนผู้ป่วยติดตาม 1 ครั้ง และ 2 ครั้งขึ้นไป">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={[
+                  { label: "ติดตาม 1 ครั้ง", ติดตามทั้งหมด: indicator2Metrics?.followUp1x ?? 0, ไม่ก่อซ้ำ: indicator2Metrics?.followUp1xNoRepeat ?? 0 },
+                  { label: "ติดตาม ≥2 ครั้ง", ติดตามทั้งหมด: indicator2Metrics?.followUp2xPlus ?? 0, ไม่ก่อซ้ำ: indicator2Metrics?.followUp2xPlusNoRepeat ?? 0 },
+                ]}
+                margin={{ top: 8, right: 16, left: 0, bottom: 4 }}
+              >
+                <XAxis dataKey="label" tick={{ fill: "#475569", fontSize: 11.5 }} axisLine={{ stroke: "#e2e8f0" }} tickLine={false} />
+                <YAxis tick={{ fill: "#94a3b8", fontSize: 10 }} axisLine={false} tickLine={false} />
+                <Tooltip
+                  content={({ active, payload, label }) =>
+                    active && payload?.length ? (
+                      <div className="chart-tooltip">
+                        <b>{label}</b>
+                        {payload.map((p) => (
+                          <span key={p.dataKey as string}>{p.name}: {(p.value as number).toLocaleString()} คน</span>
+                        ))}
+                      </div>
+                    ) : null
+                  }
+                />
+                <Legend wrapperStyle={{ fontSize: 11 }} />
+                <Bar dataKey="ติดตามทั้งหมด" fill="#a5b4fc" radius={[6, 6, 0, 0]} maxBarSize={54} animationDuration={750} />
+                <Bar dataKey="ไม่ก่อซ้ำ" fill="#4338ca" radius={[6, 6, 0, 0]} maxBarSize={54} animationDuration={750} />
+              </BarChart>
+            </ResponsiveContainer>
+            <div className="chart-footnote">
+              <span className="footnote-dot" style={{ background: "#a5b4fc" }} /> ติดตามทั้งหมด &nbsp;
+              <span className="footnote-dot" style={{ background: "#4338ca" }} /> ไม่ก่อความรุนแรงซ้ำ
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* ===== SECTION: Care Pathway & Rates ===== */}
+      <div id="indicator2-pathway-rates" className="overview-two-col">
+        {/* Funnel */}
+        <section id="indicator2-funnel" className="panel funnel-card">
+          <div className="panel-heading">
+            <div><p className="eyebrow">เส้นทางการดูแล</p><h2>Funnel: จากประมาณการสู่การติดตามต่อเนื่อง</h2></div>
+            <span className="live-pill"><i /> ข้อมูลจริงจาก HDC</span>
+          </div>
+          <div className="funnel-list">
+            {[
+              { label: "ประมาณการผู้ป่วย SMI-V", value: indicator2Metrics?.estimate ?? 0 },
+              { label: "ผู้ป่วยทั้งหมดถึงปัจจุบัน", value: indicator2Metrics?.totalPatients ?? 0 },
+              { label: "ติดตามอย่างน้อย 1 ครั้ง", value: indicator2Metrics?.followUp1x ?? 0 },
+              { label: "ติดตามอย่างน้อย 2 ครั้ง", value: indicator2Metrics?.followUp2xPlus ?? 0 },
+              { label: "ติดตาม ≥2 ครั้ง ไม่ก่อซ้ำ", value: indicator2Metrics?.followUp2xPlusNoRepeat ?? 0 },
+            ].map((step, i) => {
+              const maxVal = Math.max(1, indicator2Metrics?.estimate ?? 1);
+              const pct = maxVal > 0 ? Math.round((step.value / maxVal) * 100) : 0;
+              return (
+                <div className="funnel-row" key={step.label}>
+                  <span className="funnel-label">{step.label}</span>
+                  <span className="funnel-bar-track">
+                    <motion.span
+                      className="funnel-bar-fill"
+                      style={{ opacity: 1 - i * 0.12 }}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${Math.max(pct, 4)}%` }}
+                      transition={{ duration: 0.7, delay: i * 0.06, ease }}
+                    />
+                  </span>
+                  <span className="funnel-value">{step.value.toLocaleString()}</span>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Rate Compare */}
+        <section id="indicator2-rates" className="panel rate-compare-card">
+          <div className="panel-heading">
+            <div><p className="eyebrow">เปรียบเทียบอัตรา</p><h2>อัตราร้อยละตามเกณฑ์ HDC</h2></div>
+          </div>
+          <div className="rate-compare-list">
+            {[
+              { label: "เข้าถึงบริการสะสม (E)", value: indicator2Metrics?.accessRate ?? 0 },
+              { label: "ติดตาม 1 ครั้ง ไม่ก่อซ้ำ (L)", value: indicator2Metrics?.followUp1xRate ?? 0 },
+              { label: "ติดตาม ≥2 ครั้ง ไม่ก่อซ้ำ (O)", value: indicator2Metrics?.continuousCareRate ?? 0 },
+            ].map((r) => (
+              <div className="rate-compare-item" key={r.label}>
+                <div className="rate-compare-ring" style={{ "--pct": `${Math.min(r.value, 100)}%` } as React.CSSProperties}>
+                  <span>{r.value}%</span>
+                </div>
+                <p>{r.label}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      {/* ===== SECTION: Summary Card ===== */}
+      <section id="indicator2-summary" className="panel summary-card">
+        <div className="panel-heading">
+          <div><p className="eyebrow">ภาพรวมตัวชี้วัด</p><h2>สรุปประสิทธิภาพการดูแล SMI-V</h2></div>
+        </div>
+        <div className="summary-grid">
+          <div className="summary-item">
+            <span className="summary-label">เข้าถึงบริการ</span>
+            <span className="summary-value">{indicator2Metrics?.accessRate ?? "-"}%</span>
+            <span className="summary-note">จากประมาณการ {indicator2Metrics?.estimate?.toLocaleString() ?? "-"} คน</span>
+          </div>
+          <div className="summary-item">
+            <span className="summary-label">ติดตาม 1 ครั้ง</span>
+            <span className="summary-value">{(indicator2Metrics?.followUp1xRate ?? 0).toFixed(2)}%</span>
+            <span className="summary-note">{indicator2Metrics?.followUp1x?.toLocaleString() ?? "-"} คน / {indicator2Metrics?.followUp1xNoRepeat?.toLocaleString() ?? "-"} ไม่ก่อซ้ำ</span>
+          </div>
+          <div className="summary-item">
+            <span className="summary-label">ติดตาม ≥2 ครั้ง</span>
+            <span className="summary-value">{indicator2Metrics?.continuousCareRate ?? "-"}%</span>
+            <span className="summary-note">{indicator2Metrics?.followUp2xPlus?.toLocaleString() ?? "-"} คน / {indicator2Metrics?.followUp2xPlusNoRepeat?.toLocaleString() ?? "-"} ไม่ก่อซ้ำ</span>
+          </div>
+          <div className="summary-item">
+            <span className="summary-label">ไม่ก่อซ้ำสะสม</span>
+            <span className="summary-value">{indicator2Metrics?.noRepeatViolence?.toLocaleString() ?? "-"} คน</span>
+            <span className="summary-note">ผู้ป่วยสะสม (F)</span>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
 function Indicator2Section() {
   return (
     <motion.div className="indicator-group" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45, ease }}>
-      <div className="indicator-group-head">
+      <div id="indicator2-header" className="indicator-group-head">
         <span className="indicator-badge indicator-badge-2">ตัวชี้วัด 2</span>
         <h2>{indicator2Name}</h2>
         <p>ข้อมูลระดับจังหวัด ไม่ได้กรองรายอำเภอ (province-level report)</p>
@@ -951,30 +2891,7 @@ function Indicator2Section() {
         </a>
       </div>
 
-      <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่ 2">
-        <StatCard label="ผู้ป่วย SMI-V ทั้งหมด" value={`${indicator2Metrics?.totalPatients.toLocaleString() ?? "-"}`} note={indicator2Metrics?.area ?? ""} index={0} featured />
-        <StatCard label="อัตราการเข้าถึงบริการ" value={`${indicator2Metrics?.accessRate ?? "-"}%`} note="Accessibility Rate" index={1} />
-        <StatCard label="ไม่ก่อความรุนแรงซ้ำ" value={`${indicator2Metrics?.noRepeatViolence.toLocaleString() ?? "-"}`} note="ผู้ป่วยสะสม" index={2} />
-        <StatCard label="ดูแลต่อเนื่อง ≥2 ครั้ง" value={`${indicator2Metrics?.continuousCareRate ?? "-"}%`} note="ไม่ก่อซ้ำในปีงบประมาณ" index={3} />
-      </section>
-
-      <div className="indicator1-layout">
-        <Indicator2InsightsCard />
-
-        <div className="indicator1-columns">
-          <div className="indicator1-main">
-            <p className="section-label">Funnel การดูแลผู้ป่วย</p>
-            <Indicator2FunnelCard />
-
-            <p className="section-label">เปรียบเทียบอัตราตามเกณฑ์</p>
-            <Indicator2RateCompareCard />
-          </div>
-
-          <div className="indicator1-side">
-            <Indicator2Card />
-          </div>
-        </div>
-      </div>
+      <Indicator2AnalysisBody />
 
       <section className="panel projects-card hdc-full-table-card">
         <div className="panel-title-row">
@@ -1075,7 +2992,7 @@ function Indicator4ResidenceCard() {
   );
   const total = totals.type1 + totals.type3 + totals.other;
   const items = [
-    { label: "ตัวอยู่ ทะเบียนบ้านอยู่", value: totals.type1, color: "#146948" },
+    { label: "ตัวอยู่ ทะเบียนบ้านอยู่", value: totals.type1, color: "#4338ca" },
     { label: "ตัวอยู่ ทะเบียนบ้านไม่อยู่", value: totals.type3, color: "#3a6fb0" },
     { label: "อื่นๆ ตาม Last visit", value: totals.other, color: "#a03d68" },
   ];
@@ -1118,10 +3035,10 @@ function Indicator4Section() {
       </div>
 
       <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่ 4">
-        <StatCard label="ผู้ป่วย SMI-V ทั้งหมดถึงปัจจุบัน" value={`${indicator4Metrics?.totalToDate.toLocaleString() ?? "-"}`} note="สะสมทั้งจังหวัด" index={0} featured />
-        <StatCard label="มารักษาในปีงบประมาณปัจจุบัน" value={`${indicator4Metrics?.treatedCurrentYear.toLocaleString() ?? "-"}`} note="ปีงบประมาณปัจจุบัน" index={1} />
-        <StatCard label="ไม่ก่อความรุนแรงซ้ำ" value={`${indicator4Metrics?.noRepeatViolence.toLocaleString() ?? "-"}`} note="เข้าเกณฑ์ SMI-V Low Risk" index={2} />
-        <StatCard label="ก่อความรุนแรงซ้ำ" value={`${indicator4RepeatRate}%`} note={`${indicator4Metrics?.repeatViolenceCurrentYear.toLocaleString() ?? "-"} คน ในปีงบประมาณปัจจุบัน`} index={3} />
+        <StatCard icon={Users} tone="blue" label="ผู้ป่วย SMI-V ทั้งหมดถึงปัจจุบัน" value={`${indicator4Metrics?.totalToDate.toLocaleString() ?? "-"}`} note="สะสมทั้งจังหวัด" index={0} featured />
+        <StatCard icon={CalendarClock} tone="teal" label="มารักษาในปีงบประมาณปัจจุบัน" value={`${indicator4Metrics?.treatedCurrentYear.toLocaleString() ?? "-"}`} note="ปีงบประมาณปัจจุบัน" index={1} />
+        <StatCard icon={ShieldCheck} tone="green" label="ไม่ก่อความรุนแรงซ้ำ" value={`${indicator4Metrics?.noRepeatViolence.toLocaleString() ?? "-"}`} note="เข้าเกณฑ์ SMI-V Low Risk" index={2} />
+        <StatCard icon={Repeat2} tone="rose" label="ก่อความรุนแรงซ้ำ" value={`${indicator4RepeatRate}%`} note={`${indicator4Metrics?.repeatViolenceCurrentYear.toLocaleString() ?? "-"} คน ในปีงบประมาณปัจจุบัน`} index={3} />
       </section>
 
       <div className="indicator1-layout">
@@ -1204,7 +3121,7 @@ function Indicator3RiskTierCard() {
   const avg = indicator3Insights.avgRate;
   const tiers = [
     { label: "ความเสี่ยงสูง (>ค่าเฉลี่ย)", items: indicator3AmphoeStats.filter((a) => a.repeatRate > avg), color: "#a03d68" },
-    { label: "ความเสี่ยงต่ำ (≤ค่าเฉลี่ย)", items: indicator3AmphoeStats.filter((a) => a.repeatRate <= avg), color: "#146948" },
+    { label: "ความเสี่ยงต่ำ (≤ค่าเฉลี่ย)", items: indicator3AmphoeStats.filter((a) => a.repeatRate <= avg), color: "#4338ca" },
   ];
   return (
     <section className="panel risk-tier-card">
@@ -1293,10 +3210,10 @@ function Indicator3Section() {
       </div>
 
       <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่ 3">
-        <StatCard label="สะสมทั้งจังหวัด" value={`${indicator3Metrics.cumulative.toLocaleString()}`} note="ปีงบ 2559-2568" index={0} featured />
-        <StatCard label="รายใหม่ปีงบปัจจุบัน" value={`${indicator3Metrics.newCases.toLocaleString()}`} note="ปีงบประมาณ 2569" index={1} />
-        <StatCard label="ก่อความรุนแรงซ้ำ" value={`${indicator3Metrics.repeatViolence.toLocaleString()}`} note="คนเดิมที่สะสมถึงปัจจุบัน" index={2} />
-        <StatCard label="ร้อยละก่อซ้ำ" value={`${indicator3RepeatRate}%`} note="[3/(1+2)]*100" index={3} />
+        <StatCard icon={Users} tone="blue" label="สะสมทั้งจังหวัด" value={`${indicator3Metrics.cumulative.toLocaleString()}`} note="ปีงบ 2559-2568" index={0} featured />
+        <StatCard icon={UserPlus} tone="blue" label="รายใหม่ปีงบปัจจุบัน" value={`${indicator3Metrics.newCases.toLocaleString()}`} note="ปีงบประมาณ 2569" index={1} />
+        <StatCard icon={Repeat2} tone="rose" label="ก่อความรุนแรงซ้ำ" value={`${indicator3Metrics.repeatViolence.toLocaleString()}`} note="คนเดิมที่สะสมถึงปัจจุบัน" index={2} />
+        <StatCard icon={Percent} tone="rose" label="ร้อยละก่อซ้ำ" value={`${indicator3RepeatRate}%`} note="[3/(1+2)]*100" index={3} />
       </section>
 
       <div className="indicator1-layout">
@@ -1313,8 +3230,8 @@ function Indicator3Section() {
               <div className="chart-wrap chart-wrap-tall" aria-label="กราฟร้อยละก่อความรุนแรงซ้ำแยกตามอำเภอ">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chartData} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
-                    <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#78827e", fontSize: 11 }} />
-                    <YAxis dataKey="amphoe" type="category" axisLine={false} tickLine={false} width={78} tick={{ fill: "#3a4440", fontSize: 12 }} />
+                    <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                    <YAxis dataKey="amphoe" type="category" axisLine={false} tickLine={false} width={78} tick={{ fill: "#475569", fontSize: 12 }} />
                     <Tooltip
                       cursor={{ fill: "rgba(20, 105, 72, .04)" }}
                       content={({ active, payload }) =>
@@ -1328,7 +3245,7 @@ function Indicator3Section() {
                     />
                     <Bar dataKey="repeatRate" radius={[0, 12, 12, 0]} animationDuration={850}>
                       {chartData.map((entry, index) => (
-                        <Cell key={entry.amphoe} fill={index === 0 ? "#0b5238" : index < 3 ? "#21845c" : "#8da19a"} />
+                        <Cell key={entry.amphoe} fill={index === 0 ? "#3730a3" : index < 3 ? "#4f46e5" : "#94a3b8"} />
                       ))}
                     </Bar>
                   </BarChart>
@@ -1356,7 +3273,7 @@ function Indicator3Section() {
               <div className="project-list">
                 {indicator3AmphoeStats.map((item) => (
                   <div className="project-row" key={item.amphoe}>
-                    <span className="project-symbol" style={{ "--symbol": "#146948" } as React.CSSProperties}><span /></span>
+                    <span className="project-symbol" style={{ "--symbol": "#4338ca" } as React.CSSProperties}><span /></span>
                     <span><strong>{item.amphoe}</strong><small>{item.facilityCount} หน่วยบริการ · สะสม {item.cumulative.toLocaleString()} · รายใหม่ {item.newCases.toLocaleString()} · ก่อซ้ำ {item.repeatViolence.toLocaleString()} คน</small></span>
                     <span className="status warning">{item.repeatRate}%</span>
                   </div>
@@ -1453,7 +3370,7 @@ function Indicator5NewOldCard() {
   const { newTotal, newFollowed, newRate, oldTotal, oldFollowed, oldRate } = indicator5NewOldBreakdown;
   const groups = [
     { label: "ผู้ป่วยรายใหม่", total: newTotal, followed: newFollowed, rate: newRate, color: "#3a6fb0" },
-    { label: "ผู้ป่วยรายเก่า", total: oldTotal, followed: oldFollowed, rate: oldRate, color: "#146948" },
+    { label: "ผู้ป่วยรายเก่า", total: oldTotal, followed: oldFollowed, rate: oldRate, color: "#4338ca" },
   ];
   const maxTotal = Math.max(1, newTotal, oldTotal);
   return (
@@ -1549,10 +3466,10 @@ function Indicator5Section() {
       </div>
 
       <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่ 5">
-        <StatCard label="ผู้ป่วยทั้งหมด (B)" value={`${indicator5Metrics.total.toLocaleString()}`} note="มารับบริการในปีงบประมาณ" index={0} featured />
-        <StatCard label="ได้รับการติดตามตามเกณฑ์ (A)" value={`${indicator5Metrics.followed.toLocaleString()}`} note="ติดตามครบตามเกณฑ์" index={1} />
-        <StatCard label="ร้อยละติดตาม" value={`${indicator5FollowRate}%`} note="[A/B]x100" index={2} />
-        <StatCard label="จำนวนอำเภอ" value={`${indicator5AmphoeList.length}`} note="ครบทุกอำเภอ" index={3} />
+        <StatCard icon={Users} tone="blue" label="ผู้ป่วยทั้งหมด (B)" value={`${indicator5Metrics.total.toLocaleString()}`} note="มารับบริการในปีงบประมาณ" index={0} featured />
+        <StatCard icon={ListChecks} tone="teal" label="ได้รับการติดตามตามเกณฑ์ (A)" value={`${indicator5Metrics.followed.toLocaleString()}`} note="ติดตามครบตามเกณฑ์" index={1} />
+        <StatCard icon={Percent} tone="teal" label="ร้อยละติดตาม" value={`${indicator5FollowRate}%`} note="[A/B]x100" index={2} />
+        <StatCard icon={MapPin} tone="blue" label="จำนวนอำเภอ" value={`${indicator5AmphoeList.length}`} note="ครบทุกอำเภอ" index={3} />
       </section>
 
       <div className="indicator1-layout">
@@ -1569,8 +3486,8 @@ function Indicator5Section() {
               <div className="chart-wrap chart-wrap-tall" aria-label="กราฟร้อยละติดตามตามเกณฑ์แยกตามอำเภอ">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chartData} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
-                    <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#78827e", fontSize: 11 }} />
-                    <YAxis dataKey="amphoe" type="category" axisLine={false} tickLine={false} width={78} tick={{ fill: "#3a4440", fontSize: 12 }} />
+                    <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                    <YAxis dataKey="amphoe" type="category" axisLine={false} tickLine={false} width={78} tick={{ fill: "#475569", fontSize: 12 }} />
                     <Tooltip
                       cursor={{ fill: "rgba(20, 105, 72, .04)" }}
                       content={({ active, payload }) =>
@@ -1584,7 +3501,7 @@ function Indicator5Section() {
                     />
                     <Bar dataKey="followRate" radius={[0, 12, 12, 0]} animationDuration={850}>
                       {chartData.map((entry, index) => (
-                        <Cell key={entry.amphoe} fill={index === 0 ? "#0b5238" : index < 3 ? "#21845c" : "#8da19a"} />
+                        <Cell key={entry.amphoe} fill={index === 0 ? "#3730a3" : index < 3 ? "#4f46e5" : "#94a3b8"} />
                       ))}
                     </Bar>
                   </BarChart>
@@ -1612,7 +3529,7 @@ function Indicator5Section() {
               <div className="project-list">
                 {indicator5AmphoeStats.map((item) => (
                   <div className="project-row" key={item.amphoe}>
-                    <span className="project-symbol" style={{ "--symbol": "#146948" } as React.CSSProperties}><span /></span>
+                    <span className="project-symbol" style={{ "--symbol": "#4338ca" } as React.CSSProperties}><span /></span>
                     <span><strong>{item.amphoe}</strong><small>{item.facilityCount} หน่วยบริการ · ทั้งหมด {item.total.toLocaleString()} · ติดตามแล้ว {item.followed.toLocaleString()} คน</small></span>
                     <span className="status warning">{item.followRate}%</span>
                   </div>
@@ -1662,6 +3579,889 @@ function Indicator5Section() {
   );
 }
 
+function IndicatorRelate14InsightsCard() {
+  const { highest, lowest, avgRate, belowAvgCount } = indicatorRelate14Insights;
+  return (
+    <section className="panel insight-card">
+      <div className="panel-heading">
+        <div><p className="eyebrow">วิเคราะห์ภาพรวม</p><h2>Insight ตัวชี้วัดที่เกี่ยวข้อง 14</h2></div>
+        <span className="live-pill"><i /> วิเคราะห์อัตโนมัติ</span>
+      </div>
+      <div className="insight-list">
+        <div className="insight-row">
+          <span className="insight-icon insight-icon-up"><TrendingUp size={15} /></span>
+          <span className="insight-copy">
+            <strong>{highest?.amphoe ?? "-"}</strong> อัตรารักษาต่อเนื่องสูงสุด {highest?.rateAB ?? 0}%
+            <small>{highest?.followed1x ?? 0} จาก {highest?.servedOctFeb ?? 0} คน</small>
+          </span>
+        </div>
+        <div className="insight-row">
+          <span className="insight-icon insight-icon-down"><TrendingDown size={15} /></span>
+          <span className="insight-copy">
+            <strong>{lowest?.amphoe ?? "-"}</strong> อัตรารักษาต่อเนื่องต่ำสุด {lowest?.rateAB ?? 0}%
+            <small>เฉลี่ยทั้งจังหวัด {avgRate}%</small>
+          </span>
+        </div>
+        <div className="insight-row">
+          <span className="insight-icon insight-icon-target"><Target size={15} /></span>
+          <span className="insight-copy">
+            <strong>{belowAvgCount} อำเภอ</strong> ต่ำกว่าค่าเฉลี่ยจังหวัด
+            <small>จากทั้งหมด {indicatorRelate14AmphoeStats.length} อำเภอ</small>
+          </span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function IndicatorRelate14Section() {
+  const chartData = indicatorRelate14AmphoeStats.map((item) => ({ amphoe: item.amphoe, rateAB: item.rateAB }));
+
+  return (
+    <motion.div className="indicator-group" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45, ease }}>
+      <div className="indicator-group-head">
+        <span className="indicator-badge indicator-badge-14">ตัวชี้วัดที่เกี่ยวข้อง 14</span>
+        <h2>{indicatorRelate14Name}</h2>
+        <p>ข้อมูลระดับจังหวัด มุมมองรายพื้นที่ (เขตพื้นที่) — ดึงโดย automate จากหน้าเว็บ HDC จริง</p>
+        <a href={indicatorRelate14SourceUrl} target="_blank" rel="noopener noreferrer" className="source-link source-link-inline">
+          <ExternalLink size={13} /> ดูรายงานต้นฉบับบน HDC
+        </a>
+        <SmiVNote text="เป็นโรคเดียวกับ SMI-V กลุ่มจิตเภท (F20-F29) ใช้ติดตามการรักษา" />
+      </div>
+
+      <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่เกี่ยวข้อง 14">
+        <StatCard icon={Users} tone="blue" label="มารับบริการทั้งหมด (B)" value={`${indicatorRelate14Metrics?.servedOctFeb.toLocaleString() ?? "-"}`} note="ในปีงบประมาณ" index={0} featured />
+        <StatCard icon={ListChecks} tone="teal" label="ติดตามต่อเนื่อง (A)" value={`${indicatorRelate14Metrics?.followed1x.toLocaleString() ?? "-"}`} note="อย่างน้อย 1 ครั้งภายใน 6 เดือน" index={1} />
+        <StatCard icon={Percent} tone="teal" label="อัตราการรักษาต่อเนื่อง" value={`${indicatorRelate14Metrics?.rateAB ?? "-"}%`} note="(A/B) x 100" index={2} />
+        <StatCard icon={HeartPulse} tone="purple" label="รวมทั้งปี (C)" value={`${indicatorRelate14Metrics?.totalCurrentYear.toLocaleString() ?? "-"}`} note="ผู้ป่วยจิตเภทสะสม" index={3} />
+      </section>
+
+      <div className="indicator1-layout">
+        <IndicatorRelate14InsightsCard />
+
+        <div className="indicator1-columns">
+          <div className="indicator1-main">
+            <p className="section-label">การกระจายตัวรายอำเภอ</p>
+            <section className="panel analytics-card">
+              <div className="panel-heading">
+                <div><p className="eyebrow">ตัวชี้วัดที่เกี่ยวข้อง 14</p><h2>อัตราการรักษาต่อเนื่องภายใน 6 เดือน แยกตามอำเภอ</h2></div>
+                <span className="live-pill"><i /> ข้อมูลจริงจาก HDC</span>
+              </div>
+              <div className="chart-wrap chart-wrap-tall" aria-label="กราฟอัตราการรักษาต่อเนื่อง แยกตามอำเภอ">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={chartData} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
+                    <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                    <YAxis dataKey="amphoe" type="category" axisLine={false} tickLine={false} width={78} tick={{ fill: "#475569", fontSize: 12 }} />
+                    <Tooltip
+                      cursor={{ fill: "rgba(181, 38, 95, .04)" }}
+                      content={({ active, payload }) =>
+                        active && payload?.[0] ? (
+                          <div className="chart-tooltip">
+                            <b>{payload[0].value}%</b>
+                            <span>{payload[0].payload.amphoe}</span>
+                          </div>
+                        ) : null
+                      }
+                    />
+                    <Bar dataKey="rateAB" radius={[0, 12, 12, 0]} animationDuration={850}>
+                      {chartData.map((entry, index) => (
+                        <Cell key={entry.amphoe} fill={index === 0 ? "#8a1a48" : index < 3 ? "#b5265f" : "#d998b3"} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </section>
+          </div>
+
+          <div className="indicator1-side">
+            <section className="timer-card report-info-card">
+              <div><p>ที่มาของข้อมูล</p><span className="pulse-text"><i /> ดึงจากหน้าเว็บ HDC จริง</span></div>
+              <strong className="report-info-value">{indicatorRelate14AmphoeStats.length} อำเภอ</strong>
+              <p className="report-info-note">อัปเดต {formatDate(indicatorRelate14ExtractedAt)}</p>
+              {indicatorRelate14ProcessedDate && <p className="report-info-processed"><span>วันที่ประมวลผล</span><strong>{indicatorRelate14ProcessedDate}</strong></p>}
+            </section>
+
+            <section className="panel projects-card amphoe-table-card">
+              <div className="panel-title-row"><h2>รายชื่ออำเภอ</h2><span className="soft-button" style={{ pointerEvents: "none" }}><MapPinned size={14} /> {indicatorRelate14AmphoeStats.length} อำเภอ</span></div>
+              <div className="project-list">
+                {indicatorRelate14AmphoeStats.map((item) => (
+                  <div className="project-row" key={item.amphoe}>
+                    <span className="project-symbol" style={{ "--symbol": "#b5265f" } as React.CSSProperties}><span /></span>
+                    <span><strong>{item.amphoe}</strong><small>มารับบริการ {item.servedOctFeb.toLocaleString()} · ติดตามต่อเนื่อง {item.followed1x.toLocaleString()} คน</small></span>
+                    <span className="status warning">{item.rateAB}%</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <section className="panel projects-card hdc-full-table-card">
+        <div className="panel-title-row">
+          <h2>ตารางข้อมูลตาม HDC (ทุกคอลัมน์)</h2>
+          <span className="soft-button" style={{ pointerEvents: "none" }}><MapPinned size={14} /> รายพื้นที่ (เขตพื้นที่)</span>
+        </div>
+        <HdcRawTable columns={indicatorRelate14TableColumns} headerRows={indicatorRelate14TableHeaderRows} rows={indicatorRelate14TableRows} />
+      </section>
+    </motion.div>
+  );
+}
+
+function IndicatorRelate15InsightsCard() {
+  const { highest, lowest, followUpGap, rateDelta } = indicatorRelate15Insights;
+  return (
+    <section className="panel insight-card">
+      <div className="panel-heading">
+        <div><p className="eyebrow">วิเคราะห์ภาพรวม</p><h2>Insight ตัวชี้วัดที่เกี่ยวข้อง 15</h2></div>
+        <span className="live-pill"><i /> วิเคราะห์อัตโนมัติ</span>
+      </div>
+      <div className="insight-list">
+        <div className="insight-row">
+          <span className="insight-icon insight-icon-up"><TrendingUp size={15} /></span>
+          <span className="insight-copy">
+            <strong>{highest?.amphoe ?? "-"}</strong> อัตราติดตามครั้งที่ 2 สูงสุด {highest?.rate2x ?? 0}%
+            <small>{highest?.followed2x ?? 0} คน</small>
+          </span>
+        </div>
+        <div className="insight-row">
+          <span className="insight-icon insight-icon-down"><TrendingDown size={15} /></span>
+          <span className="insight-copy">
+            <strong>{lowest?.amphoe ?? "-"}</strong> อัตราติดตามครั้งที่ 2 ต่ำสุด {lowest?.rate2x ?? 0}%
+          </span>
+        </div>
+        <div className="insight-row">
+          <span className="insight-icon insight-icon-layers"><Layers size={15} /></span>
+          <span className="insight-copy">
+            ผู้ป่วยหลุดการติดตามระหว่างครั้งที่ 1 ถึง 2 <strong>{followUpGap.toLocaleString()} คน</strong>
+          </span>
+        </div>
+        <div className="insight-row">
+          <span className="insight-icon insight-icon-target"><Target size={15} /></span>
+          <span className="insight-copy">
+            อัตราครั้งที่ 2 เทียบครั้งที่ 1 เปลี่ยนแปลง <strong>{rateDelta > 0 ? "+" : ""}{rateDelta}%</strong>
+          </span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function IndicatorRelate15Section() {
+  const chartData = indicatorRelate15AmphoeStats.map((item) => ({ amphoe: item.amphoe, rate1x: item.rate1x, rate2x: item.rate2x }));
+
+  return (
+    <motion.div className="indicator-group" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45, ease }}>
+      <div className="indicator-group-head">
+        <span className="indicator-badge indicator-badge-15">ตัวชี้วัดที่เกี่ยวข้อง 15</span>
+        <h2>{indicatorRelate15Name}</h2>
+        <p>ข้อมูลระดับจังหวัด มุมมองรายพื้นที่ (เขตพื้นที่) — ดึงโดย automate จากหน้าเว็บ HDC จริง</p>
+        <a href={indicatorRelate15SourceUrl} target="_blank" rel="noopener noreferrer" className="source-link source-link-inline">
+          <ExternalLink size={13} /> ดูรายงานต้นฉบับบน HDC
+        </a>
+        <SmiVNote text="เป็นโรคเดียวกับ SMI-V กลุ่มจิตเภท (F20-F29) ใช้ติดตามการรักษา" />
+      </div>
+
+      <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่เกี่ยวข้อง 15">
+        <StatCard icon={HeartPulse} tone="purple" label="สะสมทั้งหมด" value={`${indicatorRelate15Metrics?.cumulativeTotal.toLocaleString() ?? "-"}`} note="ผู้ป่วยจิตเภทสะสม" index={0} featured />
+        <StatCard icon={Users} tone="blue" label="เข้าถึงบริการ 5 ปีย้อนหลัง (B)" value={`${indicatorRelate15Metrics?.served5yr.toLocaleString() ?? "-"}`} note="ปีงบ 2565-2569" index={1} />
+        <StatCard icon={ListChecks} tone="teal" label="ติดตามครั้งที่ 1 (A1)" value={`${indicatorRelate15Metrics?.followed1x.toLocaleString() ?? "-"}`} note={`${indicatorRelate15Metrics?.rate1x ?? "-"}%`} index={2} />
+        <StatCard icon={Repeat2} tone="teal" label="ติดตามครั้งที่ 2 (A2)" value={`${indicatorRelate15Metrics?.followed2x.toLocaleString() ?? "-"}`} note={`${indicatorRelate15Metrics?.rate2x ?? "-"}%`} index={3} />
+      </section>
+
+      <div className="indicator1-layout">
+        <IndicatorRelate15InsightsCard />
+
+        <div className="indicator1-columns">
+          <div className="indicator1-main">
+            <p className="section-label">เปรียบเทียบอัตราติดตามครั้งที่ 1 และครั้งที่ 2 รายอำเภอ</p>
+            <section className="panel analytics-card">
+              <div className="panel-heading">
+                <div><p className="eyebrow">ตัวชี้วัดที่เกี่ยวข้อง 15</p><h2>อัตราการดูแลต่อเนื่อง แยกตามอำเภอ</h2></div>
+                <span className="live-pill"><i /> ข้อมูลจริงจาก HDC</span>
+              </div>
+              <div className="chart-wrap chart-wrap-tall" aria-label="กราฟอัตราติดตามครั้งที่ 1 และ 2 แยกตามอำเภอ">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={chartData} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
+                    <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                    <YAxis dataKey="amphoe" type="category" axisLine={false} tickLine={false} width={78} tick={{ fill: "#475569", fontSize: 12 }} />
+                    <Tooltip
+                      cursor={{ fill: "rgba(14, 138, 82, .04)" }}
+                      content={({ active, payload }) =>
+                        active && payload?.length ? (
+                          <div className="chart-tooltip">
+                            <b>ครั้งที่ 1: {payload.find((p) => p.dataKey === "rate1x")?.value ?? 0}%</b>
+                            <b>ครั้งที่ 2: {payload.find((p) => p.dataKey === "rate2x")?.value ?? 0}%</b>
+                            <span>{payload[0].payload.amphoe}</span>
+                          </div>
+                        ) : null
+                      }
+                    />
+                    <Bar dataKey="rate1x" radius={[0, 6, 6, 0]} animationDuration={850} fill="#c7d2fe" />
+                    <Bar dataKey="rate2x" radius={[0, 6, 6, 0]} animationDuration={850} fill="#4338ca" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="facility-compare-legend">
+                <span><i className="facility-dot" style={{ background: "#c7d2fe" }} /> ติดตามครั้งที่ 1</span>
+                <span><i className="facility-dot" style={{ background: "#4338ca" }} /> ติดตามครั้งที่ 2</span>
+              </div>
+            </section>
+          </div>
+
+          <div className="indicator1-side">
+            <section className="timer-card report-info-card">
+              <div><p>ที่มาของข้อมูล</p><span className="pulse-text"><i /> ดึงจากหน้าเว็บ HDC จริง</span></div>
+              <strong className="report-info-value">{indicatorRelate15AmphoeStats.length} อำเภอ</strong>
+              <p className="report-info-note">อัปเดต {formatDate(indicatorRelate15ExtractedAt)}</p>
+              {indicatorRelate15ProcessedDate && <p className="report-info-processed"><span>วันที่ประมวลผล</span><strong>{indicatorRelate15ProcessedDate}</strong></p>}
+            </section>
+
+            <section className="panel projects-card amphoe-table-card">
+              <div className="panel-title-row"><h2>รายชื่ออำเภอ</h2><span className="soft-button" style={{ pointerEvents: "none" }}><MapPinned size={14} /> {indicatorRelate15AmphoeStats.length} อำเภอ</span></div>
+              <div className="project-list">
+                {indicatorRelate15AmphoeStats.map((item) => (
+                  <div className="project-row" key={item.amphoe}>
+                    <span className="project-symbol" style={{ "--symbol": "#4338ca" } as React.CSSProperties}><span /></span>
+                    <span><strong>{item.amphoe}</strong><small>ครั้งที่ 1: {item.followed1x.toLocaleString()} ({item.rate1x}%) · ครั้งที่ 2: {item.followed2x.toLocaleString()} ({item.rate2x}%)</small></span>
+                    <span className="status warning">{item.rate2x}%</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <section className="panel projects-card hdc-full-table-card">
+        <div className="panel-title-row">
+          <h2>ตารางข้อมูลตาม HDC (ทุกคอลัมน์)</h2>
+          <span className="soft-button" style={{ pointerEvents: "none" }}><MapPinned size={14} /> รายพื้นที่ (เขตพื้นที่)</span>
+        </div>
+        <HdcRawTable columns={indicatorRelate15TableColumns} headerRows={indicatorRelate15TableHeaderRows} rows={indicatorRelate15TableRows} />
+      </section>
+    </motion.div>
+  );
+}
+
+function IndicatorRelate16InsightsCard() {
+  const { highest, lowest, avgRate, belowAvgCount } = indicatorRelate16Insights;
+  return (
+    <section className="panel insight-card">
+      <div className="panel-heading">
+        <div><p className="eyebrow">วิเคราะห์ภาพรวม</p><h2>Insight ตัวชี้วัดที่เกี่ยวข้อง 16</h2></div>
+        <span className="live-pill"><i /> วิเคราะห์อัตโนมัติ</span>
+      </div>
+      <div className="insight-list">
+        <div className="insight-row">
+          <span className="insight-icon insight-icon-up"><TrendingUp size={15} /></span>
+          <span className="insight-copy">
+            <strong>{highest?.amphoe ?? "-"}</strong> อัตรารักษาต่อเนื่องสูงสุด {highest?.rate ?? 0}%
+            <small>{highest?.followed ?? 0} จาก {highest?.total ?? 0} คน</small>
+          </span>
+        </div>
+        <div className="insight-row">
+          <span className="insight-icon insight-icon-down"><TrendingDown size={15} /></span>
+          <span className="insight-copy">
+            <strong>{lowest?.amphoe ?? "-"}</strong> อัตรารักษาต่อเนื่องต่ำสุด {lowest?.rate ?? 0}%
+            <small>เฉลี่ยทั้งจังหวัด {avgRate}%</small>
+          </span>
+        </div>
+        <div className="insight-row">
+          <span className="insight-icon insight-icon-target"><Target size={15} /></span>
+          <span className="insight-copy">
+            <strong>{belowAvgCount} อำเภอ</strong> ต่ำกว่าค่าเฉลี่ยจังหวัด
+            <small>จากทั้งหมด {indicatorRelate16AmphoeStats.length} อำเภอ</small>
+          </span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function IndicatorRelate16Section() {
+  const chartData = indicatorRelate16AmphoeStats.map((item) => ({ amphoe: item.amphoe, rate: item.rate }));
+
+  return (
+    <motion.div className="indicator-group" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45, ease }}>
+      <div className="indicator-group-head">
+        <span className="indicator-badge indicator-badge-16">ตัวชี้วัดที่เกี่ยวข้อง 16</span>
+        <h2>{indicatorRelate16Name}</h2>
+        <p>ข้อมูลระดับจังหวัด มุมมองรายพื้นที่ (เขตพื้นที่) — ดึงโดย automate จากหน้าเว็บ HDC จริง</p>
+        <a href={indicatorRelate16SourceUrl} target="_blank" rel="noopener noreferrer" className="source-link source-link-inline">
+          <ExternalLink size={13} /> ดูรายงานต้นฉบับบน HDC
+        </a>
+        <SmiVNote text="เป็นโรคเดียวกับ SMI-V กลุ่มจิตเภท (F20-F29) ใช้ติดตามการรักษา" />
+      </div>
+
+      <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่เกี่ยวข้อง 16">
+        <StatCard icon={Users} tone="blue" label="ผู้ป่วยทั้งหมด (B)" value={`${indicatorRelate16Metrics?.total.toLocaleString() ?? "-"}`} note="ในปีงบประมาณ" index={0} featured />
+        <StatCard icon={ListChecks} tone="teal" label="ติดตามต่อเนื่อง (A)" value={`${indicatorRelate16Metrics?.followed.toLocaleString() ?? "-"}`} note="ภายใน 6 เดือน" index={1} />
+        <StatCard icon={Percent} tone="teal" label="อัตราการรักษาต่อเนื่อง" value={`${indicatorRelate16Metrics?.rate ?? "-"}%`} note="(A/B) x 100" index={2} />
+      </section>
+
+      <div className="indicator1-layout">
+        <IndicatorRelate16InsightsCard />
+
+        <div className="indicator1-columns">
+          <div className="indicator1-main">
+            <p className="section-label">การกระจายตัวรายอำเภอ</p>
+            <section className="panel analytics-card">
+              <div className="panel-heading">
+                <div><p className="eyebrow">ตัวชี้วัดที่เกี่ยวข้อง 16</p><h2>อัตราการรักษาต่อเนื่องภายใน 6 เดือน แยกตามอำเภอ</h2></div>
+                <span className="live-pill"><i /> ข้อมูลจริงจาก HDC</span>
+              </div>
+              <div className="chart-wrap chart-wrap-tall" aria-label="กราฟอัตราการรักษาต่อเนื่อง แยกตามอำเภอ (Reverse)">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={chartData} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
+                    <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                    <YAxis dataKey="amphoe" type="category" axisLine={false} tickLine={false} width={78} tick={{ fill: "#475569", fontSize: 12 }} />
+                    <Tooltip
+                      cursor={{ fill: "rgba(82, 56, 189, .04)" }}
+                      content={({ active, payload }) =>
+                        active && payload?.[0] ? (
+                          <div className="chart-tooltip">
+                            <b>{payload[0].value}%</b>
+                            <span>{payload[0].payload.amphoe}</span>
+                          </div>
+                        ) : null
+                      }
+                    />
+                    <Bar dataKey="rate" radius={[0, 12, 12, 0]} animationDuration={850}>
+                      {chartData.map((entry, index) => (
+                        <Cell key={entry.amphoe} fill={index === 0 ? "#372580" : index < 3 ? "#5238bd" : "#c3b8ea"} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </section>
+          </div>
+
+          <div className="indicator1-side">
+            <section className="timer-card report-info-card">
+              <div><p>ที่มาของข้อมูล</p><span className="pulse-text"><i /> ดึงจากหน้าเว็บ HDC จริง</span></div>
+              <strong className="report-info-value">{indicatorRelate16AmphoeStats.length} อำเภอ</strong>
+              <p className="report-info-note">อัปเดต {formatDate(indicatorRelate16ExtractedAt)}</p>
+              {indicatorRelate16ProcessedDate && <p className="report-info-processed"><span>วันที่ประมวลผล</span><strong>{indicatorRelate16ProcessedDate}</strong></p>}
+            </section>
+
+            <section className="panel projects-card amphoe-table-card">
+              <div className="panel-title-row"><h2>รายชื่ออำเภอ</h2><span className="soft-button" style={{ pointerEvents: "none" }}><MapPinned size={14} /> {indicatorRelate16AmphoeStats.length} อำเภอ</span></div>
+              <div className="project-list">
+                {indicatorRelate16AmphoeStats.map((item) => (
+                  <div className="project-row" key={item.amphoe}>
+                    <span className="project-symbol" style={{ "--symbol": "#5238bd" } as React.CSSProperties}><span /></span>
+                    <span><strong>{item.amphoe}</strong><small>ผู้ป่วย {item.total.toLocaleString()} · ติดตามต่อเนื่อง {item.followed.toLocaleString()} คน</small></span>
+                    <span className="status warning">{item.rate}%</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <section className="panel projects-card hdc-full-table-card">
+        <div className="panel-title-row">
+          <h2>ตารางข้อมูลตาม HDC (ทุกคอลัมน์)</h2>
+          <span className="soft-button" style={{ pointerEvents: "none" }}><MapPinned size={14} /> รายพื้นที่ (เขตพื้นที่)</span>
+        </div>
+        <HdcRawTable columns={indicatorRelate16TableColumns} headerRows={indicatorRelate16TableHeaderRows} rows={indicatorRelate16TableRows} />
+      </section>
+    </motion.div>
+  );
+}
+
+function IndicatorRelate21_2InsightsCard() {
+  const { highest, lowest, avgRate, belowAvgCount } = indicatorRelate21_2Insights;
+  return (
+    <section className="panel insight-card">
+      <div className="panel-heading">
+        <div><p className="eyebrow">วิเคราะห์ภาพรวม</p><h2>Insight ตัวชี้วัดที่เกี่ยวข้อง 21.2</h2></div>
+        <span className="live-pill"><i /> วิเคราะห์อัตโนมัติ</span>
+      </div>
+      <div className="insight-list">
+        <div className="insight-row">
+          <span className="insight-icon insight-icon-up"><TrendingUp size={15} /></span>
+          <span className="insight-copy">
+            <strong>{highest?.amphoe ?? "-"}</strong> สัดส่วนผู้ป่วยยาเสพติด (OPD) สูงสุด {highest?.opdRate ?? 0}%
+            <small>{highest?.opdF1019 ?? 0} จาก {highest?.opdTotal ?? 0} คน</small>
+          </span>
+        </div>
+        <div className="insight-row">
+          <span className="insight-icon insight-icon-down"><TrendingDown size={15} /></span>
+          <span className="insight-copy">
+            <strong>{lowest?.amphoe ?? "-"}</strong> สัดส่วนผู้ป่วยยาเสพติด (OPD) ต่ำสุด {lowest?.opdRate ?? 0}%
+            <small>เฉลี่ยทั้งจังหวัด {avgRate}%</small>
+          </span>
+        </div>
+        <div className="insight-row">
+          <span className="insight-icon insight-icon-target"><Target size={15} /></span>
+          <span className="insight-copy">
+            <strong>{belowAvgCount} อำเภอ</strong> ต่ำกว่าค่าเฉลี่ยจังหวัด
+            <small>จากทั้งหมด {indicatorRelate21_2AmphoeStats.length} อำเภอ</small>
+          </span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function IndicatorRelate21_2Section() {
+  const chartData = indicatorRelate21_2AmphoeStats.map((item) => ({ amphoe: item.amphoe, opdRate: item.opdRate }));
+
+  return (
+    <motion.div className="indicator-group" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45, ease }}>
+      <div className="indicator-group-head">
+        <span className="indicator-badge indicator-badge-14">ตัวชี้วัดที่เกี่ยวข้อง 21.2</span>
+        <h2>{indicatorRelate21_2Name}</h2>
+        <p>ข้อมูลระดับจังหวัด แยกตามสถานพยาบาล (workload) — ดึงโดย automate จากหน้าเว็บ HDC จริง</p>
+        <a href={indicatorRelate21_2SourceUrl} target="_blank" rel="noopener noreferrer" className="source-link source-link-inline">
+          <ExternalLink size={13} /> ดูรายงานต้นฉบับบน HDC
+        </a>
+        <SmiVNote text="เกี่ยวข้องกับกลุ่ม SMI-V สารเสพติด (F10-F19)" />
+      </div>
+
+      <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่เกี่ยวข้อง 21.2">
+        <StatCard icon={Stethoscope} tone="blue" label="ผู้ป่วยนอกทั้งหมด (B1)" value={`${indicatorRelate21_2Metrics?.opdTotal.toLocaleString() ?? "-"}`} note="F00-F99 ทั้งจังหวัด" index={0} featured />
+        <StatCard icon={Pill} tone="purple" label="ผู้ป่วยนอกสารเสพติด (A1)" value={`${indicatorRelate21_2Metrics?.opdF1019.toLocaleString() ?? "-"}`} note={`${indicatorRelate21_2Metrics?.opdRate ?? "-"}% ของผู้ป่วยนอกทั้งหมด`} index={1} />
+        <StatCard icon={Hospital} tone="blue" label="ผู้ป่วยในทั้งหมด (B2)" value={`${indicatorRelate21_2Metrics?.ipdTotal.toLocaleString() ?? "-"}`} note="F00-F99 ทั้งจังหวัด" index={2} />
+        <StatCard icon={Pill} tone="purple" label="ผู้ป่วยในสารเสพติด (A2)" value={`${indicatorRelate21_2Metrics?.ipdF1019.toLocaleString() ?? "-"}`} note={`${indicatorRelate21_2Metrics?.ipdRate ?? "-"}% ของผู้ป่วยในทั้งหมด`} index={3} />
+      </section>
+
+      <div className="indicator1-layout">
+        <IndicatorRelate21_2InsightsCard />
+
+        <div className="indicator1-columns">
+          <div className="indicator1-main">
+            <p className="section-label">สัดส่วนผู้ป่วยนอกสารเสพติด แยกตามอำเภอ</p>
+            <section className="panel analytics-card">
+              <div className="panel-heading">
+                <div><p className="eyebrow">ตัวชี้วัดที่เกี่ยวข้อง 21.2</p><h2>ร้อยละผู้ป่วยนอกสารเสพติด (F10-F19) แยกตามอำเภอ</h2></div>
+                <span className="live-pill"><i /> ข้อมูลจริงจาก HDC</span>
+              </div>
+              <div className="chart-wrap chart-wrap-tall" aria-label="กราฟร้อยละผู้ป่วยนอกสารเสพติดแยกตามอำเภอ">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={chartData} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
+                    <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                    <YAxis dataKey="amphoe" type="category" axisLine={false} tickLine={false} width={78} tick={{ fill: "#475569", fontSize: 12 }} />
+                    <Tooltip
+                      cursor={{ fill: "rgba(181, 38, 95, .04)" }}
+                      content={({ active, payload }) =>
+                        active && payload?.[0] ? (
+                          <div className="chart-tooltip">
+                            <b>{payload[0].value}%</b>
+                            <span>{payload[0].payload.amphoe}</span>
+                          </div>
+                        ) : null
+                      }
+                    />
+                    <Bar dataKey="opdRate" radius={[0, 12, 12, 0]} animationDuration={850}>
+                      {chartData.map((entry, index) => (
+                        <Cell key={entry.amphoe} fill={index === 0 ? "#8a1a48" : index < 3 ? "#b5265f" : "#d998b3"} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </section>
+          </div>
+
+          <div className="indicator1-side">
+            <section className="timer-card report-info-card">
+              <div><p>ที่มาของข้อมูล</p><span className="pulse-text"><i /> ดึงจากหน้าเว็บ HDC จริง</span></div>
+              <strong className="report-info-value">{indicatorRelate21_2AmphoeStats.length} อำเภอ</strong>
+              <p className="report-info-note">อัปเดต {formatDate(indicatorRelate21_2ExtractedAt)}</p>
+              {indicatorRelate21_2ProcessedDate && <p className="report-info-processed"><span>วันที่ประมวลผล</span><strong>{indicatorRelate21_2ProcessedDate}</strong></p>}
+            </section>
+
+            <section className="panel projects-card amphoe-table-card">
+              <div className="panel-title-row"><h2>รายชื่ออำเภอ</h2><span className="soft-button" style={{ pointerEvents: "none" }}><MapPinned size={14} /> {indicatorRelate21_2AmphoeStats.length} อำเภอ</span></div>
+              <div className="project-list">
+                {indicatorRelate21_2AmphoeStats.map((item) => (
+                  <div className="project-row" key={item.amphoe}>
+                    <span className="project-symbol" style={{ "--symbol": "#b5265f" } as React.CSSProperties}><span /></span>
+                    <span><strong>{item.amphoe}</strong><small>OPD {item.opdF1019.toLocaleString()}/{item.opdTotal.toLocaleString()} · IPD {item.ipdF1019.toLocaleString()}/{item.ipdTotal.toLocaleString()}</small></span>
+                    <span className="status warning">{item.opdRate}%</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <section className="panel projects-card hdc-full-table-card">
+        <div className="panel-title-row">
+          <h2>ตารางข้อมูลตาม HDC (ทุกคอลัมน์)</h2>
+          <span className="soft-button" style={{ pointerEvents: "none" }}><MapPinned size={14} /> รายอำเภอ</span>
+        </div>
+        <HdcRawTable columns={indicatorRelate21_2TableColumns} headerRows={indicatorRelate21_2TableHeaderRows} rows={indicatorRelate21_2TableRows} />
+      </section>
+    </motion.div>
+  );
+}
+
+function IndicatorRelate21_6InsightsCard() {
+  const { highest, lowest, avgRate, belowAvgCount } = indicatorRelate21_6Insights;
+  return (
+    <section className="panel insight-card">
+      <div className="panel-heading">
+        <div><p className="eyebrow">วิเคราะห์ภาพรวม</p><h2>Insight ตัวชี้วัดที่เกี่ยวข้อง 21.6</h2></div>
+        <span className="live-pill"><i /> วิเคราะห์อัตโนมัติ</span>
+      </div>
+      <div className="insight-list">
+        <div className="insight-row">
+          <span className="insight-icon insight-icon-up"><TrendingUp size={15} /></span>
+          <span className="insight-copy">
+            <strong>{highest?.amphoe ?? "-"}</strong> Retention Rate สูงสุด {highest?.retentionRateOverall ?? 0}%
+          </span>
+        </div>
+        <div className="insight-row">
+          <span className="insight-icon insight-icon-down"><TrendingDown size={15} /></span>
+          <span className="insight-copy">
+            <strong>{lowest?.amphoe ?? "-"}</strong> Retention Rate ต่ำสุด {lowest?.retentionRateOverall ?? 0}%
+            <small>เฉลี่ยทั้งจังหวัด {avgRate}%</small>
+          </span>
+        </div>
+        <div className="insight-row">
+          <span className="insight-icon insight-icon-target"><Target size={15} /></span>
+          <span className="insight-copy">
+            <strong>{belowAvgCount} อำเภอ</strong> ต่ำกว่าค่าเฉลี่ยจังหวัด
+            <small>จากทั้งหมด {indicatorRelate21_6AmphoeStats.length} อำเภอ</small>
+          </span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function IndicatorRelate21_6Section() {
+  const chartData = indicatorRelate21_6AmphoeStats.map((item) => ({ amphoe: item.amphoe, retentionRateOverall: item.retentionRateOverall }));
+
+  return (
+    <motion.div className="indicator-group" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45, ease }}>
+      <div className="indicator-group-head">
+        <span className="indicator-badge indicator-badge-15">ตัวชี้วัดที่เกี่ยวข้อง 21.6</span>
+        <h2>{indicatorRelate21_6Name}</h2>
+        <p>ข้อมูลระดับจังหวัด มุมมองรายอำเภอ — ดึงโดย automate จากหน้าเว็บ HDC จริง</p>
+        <a href={indicatorRelate21_6SourceUrl} target="_blank" rel="noopener noreferrer" className="source-link source-link-inline">
+          <ExternalLink size={13} /> ดูรายงานต้นฉบับบน HDC
+        </a>
+        <SmiVNote text="เกี่ยวข้องกับกลุ่ม SMI-V สารเสพติด (F10-F19)" />
+      </div>
+
+      <section className="stats-grid" aria-label="สถิติตัวชี้วัดที่เกี่ยวข้อง 21.6">
+        <StatCard icon={HeartPulse} tone="blue" label="ผู้ป่วยจิตเวชจาก บสต. ทั้งหมด" value={`${indicatorRelate21_6Metrics?.totalPsychFromBsot.toLocaleString() ?? "-"}`} note="ทั้งหมดในกลุ่มโรคจิตเวช" index={0} featured />
+        <StatCard icon={Percent} tone="teal" label="Retention Rate เฉลี่ยจังหวัด" value={`${indicatorRelate21_6Metrics?.retentionRateOverall ?? "-"}%`} note="ติดตามดูแลหลังบำบัดต่อเนื่อง" index={1} />
+      </section>
+
+      <div className="indicator1-layout">
+        <IndicatorRelate21_6InsightsCard />
+
+        <div className="indicator1-columns">
+          <div className="indicator1-main">
+            <p className="section-label">Retention Rate แยกตามอำเภอ</p>
+            <section className="panel analytics-card">
+              <div className="panel-heading">
+                <div><p className="eyebrow">ตัวชี้วัดที่เกี่ยวข้อง 21.6</p><h2>อัตราการติดตามดูแลหลังบำบัด (Retention Rate) แยกตามอำเภอ</h2></div>
+                <span className="live-pill"><i /> ข้อมูลจริงจาก HDC</span>
+              </div>
+              <div className="chart-wrap chart-wrap-tall" aria-label="กราฟ Retention Rate แยกตามอำเภอ">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={chartData} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
+                    <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                    <YAxis dataKey="amphoe" type="category" axisLine={false} tickLine={false} width={78} tick={{ fill: "#475569", fontSize: 12 }} />
+                    <Tooltip
+                      cursor={{ fill: "rgba(14, 138, 82, .04)" }}
+                      content={({ active, payload }) =>
+                        active && payload?.[0] ? (
+                          <div className="chart-tooltip">
+                            <b>{payload[0].value}%</b>
+                            <span>{payload[0].payload.amphoe}</span>
+                          </div>
+                        ) : null
+                      }
+                    />
+                    <Bar dataKey="retentionRateOverall" radius={[0, 12, 12, 0]} animationDuration={850}>
+                      {chartData.map((entry, index) => (
+                        <Cell key={entry.amphoe} fill={index === 0 ? "#4338ca" : index < 3 ? "#6366f1" : "#c7d2fe"} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </section>
+          </div>
+
+          <div className="indicator1-side">
+            <section className="timer-card report-info-card">
+              <div><p>ที่มาของข้อมูล</p><span className="pulse-text"><i /> ดึงจากหน้าเว็บ HDC จริง</span></div>
+              <strong className="report-info-value">{indicatorRelate21_6AmphoeStats.length} อำเภอ</strong>
+              <p className="report-info-note">อัปเดต {formatDate(indicatorRelate21_6ExtractedAt)}</p>
+              {indicatorRelate21_6ProcessedDate && <p className="report-info-processed"><span>วันที่ประมวลผล</span><strong>{indicatorRelate21_6ProcessedDate}</strong></p>}
+            </section>
+
+            <section className="panel projects-card amphoe-table-card">
+              <div className="panel-title-row"><h2>รายชื่ออำเภอ</h2><span className="soft-button" style={{ pointerEvents: "none" }}><MapPinned size={14} /> {indicatorRelate21_6AmphoeStats.length} อำเภอ</span></div>
+              <div className="project-list">
+                {indicatorRelate21_6AmphoeStats.map((item) => (
+                  <div className="project-row" key={item.amphoe}>
+                    <span className="project-symbol" style={{ "--symbol": "#4338ca" } as React.CSSProperties}><span /></span>
+                    <span><strong>{item.amphoe}</strong><small>ผู้ป่วยจิตเวชจาก บสต. {item.totalPsychFromBsot.toLocaleString()} คน</small></span>
+                    <span className="status warning">{item.retentionRateOverall}%</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <section className="panel projects-card hdc-full-table-card">
+        <div className="panel-title-row">
+          <h2>ตารางข้อมูลตาม HDC (ทุกคอลัมน์)</h2>
+          <span className="soft-button" style={{ pointerEvents: "none" }}><MapPinned size={14} /> รายอำเภอ</span>
+        </div>
+        <HdcRawTable columns={indicatorRelate21_6TableColumns} headerRows={indicatorRelate21_6TableHeaderRows} rows={indicatorRelate21_6TableRows} />
+      </section>
+    </motion.div>
+  );
+}
+
+const simpleIndicatorSmiVMessage: Record<SimpleIndicatorKey, string> = {
+  "21_1": "เกี่ยวข้องกับกลุ่ม SMI-V สารเสพติด (F10-F19)",
+  "21_4": "เกี่ยวข้องกับกลุ่ม SMI-V สารเสพติด (F10-F19)",
+  "21_7": "เกี่ยวข้องกับกลุ่ม SMI-V สารเสพติด (F10-F19)",
+  "22_1": "บริบทความรุนแรงและจิตเวช สามารถใช้วิเคราะห์ร่วมกับ SMI-V ได้",
+  "22_2": "บริบทความรุนแรงและจิตเวช สามารถใช้วิเคราะห์ร่วมกับ SMI-V ได้",
+  "22_3": "บริบทความรุนแรงและจิตเวช สามารถใช้วิเคราะห์ร่วมกับ SMI-V ได้",
+  "22_4": "บริบทความรุนแรงและจิตเวช สามารถใช้วิเคราะห์ร่วมกับ SMI-V ได้",
+  "22_5": "บริบทความรุนแรงและจิตเวช สามารถใช้วิเคราะห์ร่วมกับ SMI-V ได้",
+  "22_6": "บริบทความรุนแรงและจิตเวช สามารถใช้วิเคราะห์ร่วมกับ SMI-V ได้",
+  "22_7": "บริบทความรุนแรงและจิตเวช สามารถใช้วิเคราะห์ร่วมกับ SMI-V ได้",
+  "23_4": "เป็นโรคหลักในเกณฑ์ SMI-V (F20-29, F30-31, F32-39) ใช้เฝ้าระวังเชิงระบาดวิทยา",
+  "23_5": "เป็นโรคหลักในเกณฑ์ SMI-V (F20-29, F30-31, F32-39) ใช้เฝ้าระวังเชิงระบาดวิทยา",
+  "23_6": "เป็นโรคหลักในเกณฑ์ SMI-V (F20-29, F30-31, F32-39) ใช้เฝ้าระวังเชิงระบาดวิทยา",
+};
+
+/** หน้าตัวชี้วัดเพิ่มเติมระดับจังหวัด (ไม่มีมิติอำเภอ) — Dashboard วิเคราะห์ (จากมิติที่มีในตาราง) + ตาราง HDC ตรงต้นฉบับ + ข้อความเชื่อมโยง SMI-V */
+const DONUT_COLORS = ["#4338ca", "#6366f1", "#818cf8", "#a5b4fc", "#c7d2fe", "#f59e0b", "#fbbf24", "#fde68a", "#fda4af", "#f472b6", "#94a3b8", "#cbd5e1", "#e2e8f0"];
+
+function DonutAnalysisCard({ analysis }: { analysis: Extract<SimpleAnalysis, { kind: "donut" }> }) {
+  return (
+    <section className="panel analytics-card">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">วิเคราะห์จากข้อมูลในตาราง</p>
+          <h2>{analysis.axisLabel}</h2>
+        </div>
+        <span className="live-pill"><i /> ข้อมูลจริงจาก HDC</span>
+      </div>
+      <div className="donut-card-body">
+        <div className="chart-wrap chart-wrap-donut" aria-label="กราฟวงกลมสัดส่วนข้อมูล">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie data={analysis.data} dataKey="value" nameKey="label" cx="50%" cy="50%" innerRadius="58%" outerRadius="88%" paddingAngle={2} animationDuration={850}>
+                {analysis.data.map((entry: { label: string; value: number }, i: number) => (
+                  <Cell key={entry.label} fill={DONUT_COLORS[i % DONUT_COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip
+                content={({ active, payload }) =>
+                  active && payload?.[0] ? (
+                    <div className="chart-tooltip">
+                      <b>{(payload[0].value as number)?.toLocaleString()} {analysis.unit}</b>
+                      <span>{payload[0].name} ({(((payload[0].value as number) / analysis.total) * 100).toFixed(1)}%)</span>
+                    </div>
+                  ) : null
+                }
+              />
+            </PieChart>
+          </ResponsiveContainer>
+          <div className="donut-center-label">
+            <strong>{analysis.total.toLocaleString()}</strong>
+            <span>{analysis.unit} รวม</span>
+          </div>
+        </div>
+        <ul className="donut-legend">
+          {analysis.data.map((d: { label: string; value: number }, i: number) => (
+            <li key={d.label}>
+              <span className="donut-legend-dot" style={{ background: DONUT_COLORS[i % DONUT_COLORS.length] }} />
+              <span className="donut-legend-label">{d.label}</span>
+              <span className="donut-legend-value">{d.value.toLocaleString()} ({((d.value / analysis.total) * 100).toFixed(1)}%)</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+function heatmapColor(value: number, max: number) {
+  if (max <= 0 || value <= 0) return "rgba(148, 163, 184, 0.08)";
+  const t = Math.min(1, value / max);
+  // ไล่เฉดสีม่วง-คราม จากอ่อนไปเข้มตามสัดส่วนค่า
+  const alpha = 0.12 + t * 0.78;
+  return `rgba(67, 56, 202, ${alpha.toFixed(3)})`;
+}
+
+function HeatmapAnalysisCard({ analysis }: { analysis: Extract<SimpleAnalysis, { kind: "heatmap" }> }) {
+  const max = Math.max(1, ...analysis.matrix.flat());
+  return (
+    <section className="panel analytics-card">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">วิเคราะห์จากข้อมูลในตาราง</p>
+          <h2>{analysis.axisLabel}</h2>
+        </div>
+        <span className="live-pill"><i /> ข้อมูลจริงจาก HDC</span>
+      </div>
+      <div className="heatmap-scroll">
+        <table className="heatmap-table">
+          <thead>
+            <tr>
+              <th className="heatmap-corner">กลุ่มอายุ</th>
+              {analysis.cols.map((c: string) => (
+                <th key={c} title={c}>{c.length > 14 ? c.slice(0, 12) + "…" : c}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {analysis.rows.map((rowLabel: string, ri: number) => (
+              <tr key={rowLabel}>
+                <th scope="row">{rowLabel}</th>
+                {analysis.matrix[ri].map((v: number, ci: number) => (
+                  <td key={ci} style={{ background: heatmapColor(v, max) }} title={`${rowLabel} × ${analysis.cols[ci]}: ${v.toLocaleString()} ${analysis.unit}`}>
+                    {v > 0 ? v.toLocaleString() : ""}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="heatmap-legend-note">สีเข้มขึ้น = ค่าสูงขึ้น (สูงสุด {max.toLocaleString()} {analysis.unit})</p>
+    </section>
+  );
+}
+
+function SimpleIndicatorSection({ indicatorKey }: { indicatorKey: SimpleIndicatorKey }) {
+  const data = getSimpleIndicator(indicatorKey);
+  const analysis = getSimpleIndicatorAnalysis(indicatorKey);
+  const label = simpleIndicatorLabels[indicatorKey];
+  const message = simpleIndicatorSmiVMessage[indicatorKey];
+
+  return (
+    <motion.div className="indicator-group" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45, ease }}>
+      <div className="indicator-group-head">
+        <span className="indicator-badge indicator-badge-16">ตัวชี้วัดที่เกี่ยวข้อง {label}</span>
+        <h2>{data.name}</h2>
+        <p>ข้อมูลระดับจังหวัด (ไม่มีมิติอำเภอ) — ดึงโดย automate จากหน้าเว็บ HDC จริง</p>
+        <a href={data.sourceUrl} target="_blank" rel="noopener noreferrer" className="source-link source-link-inline">
+          <ExternalLink size={13} /> ดูรายงานต้นฉบับบน HDC
+        </a>
+        <SmiVNote text={message} />
+      </div>
+
+      <section className="timer-card report-info-card" style={{ maxWidth: 420 }}>
+        <div><p>ที่มาของข้อมูล</p><span className="pulse-text"><i /> ดึงจากหน้าเว็บ HDC จริง</span></div>
+        <strong className="report-info-value">จังหวัดสตูล</strong>
+        <p className="report-info-note">อัปเดต {formatDate(data.extractedAt)}</p>
+        {data.processedDate && <p className="report-info-processed"><span>วันที่ประมวลผล</span><strong>{data.processedDate}</strong></p>}
+      </section>
+
+      {analysis.kind === "metrics" && (
+        <section className="stats-grid" aria-label={`สถิติตัวชี้วัดที่เกี่ยวข้อง ${label}`}>
+          {analysis.items.map((item, i) => (
+            <StatCard key={item.label} icon={Activity} tone={(["blue", "teal", "green", "purple", "rose", "amber"] as const)[i % 6]} label={item.label} value={`${item.value}${item.unit}`} note={item.note ?? ""} index={i} featured={i === 0} />
+          ))}
+        </section>
+      )}
+
+      {(analysis.kind === "breakdown" || analysis.kind === "monthly") && analysis.data.length > 0 && (
+        <section className="panel analytics-card">
+          <div className="panel-heading">
+            <div>
+              <p className="eyebrow">วิเคราะห์จากข้อมูลในตาราง</p>
+              <h2>{analysis.kind === "monthly" ? `แนวโน้มรายเดือน (รวม ${analysis.total.toLocaleString()} ${analysis.unit})` : analysis.axisLabel}</h2>
+            </div>
+            <span className="live-pill"><i /> ข้อมูลจริงจาก HDC</span>
+          </div>
+          <div className="chart-wrap chart-wrap-tall" aria-label="กราฟวิเคราะห์ข้อมูล">
+            <ResponsiveContainer width="100%" height="100%">
+              {analysis.kind === "monthly" ? (
+                <LineChart data={analysis.data} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
+                  <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                  <Tooltip
+                    cursor={{ stroke: "#4338ca", strokeDasharray: "3 3" }}
+                    content={({ active, payload }) =>
+                      active && payload?.[0] ? (
+                        <div className="chart-tooltip">
+                          <b>{payload[0].value?.toLocaleString()} {analysis.unit}</b>
+                          <span>{payload[0].payload.label}</span>
+                        </div>
+                      ) : null
+                    }
+                  />
+                  <Line type="monotone" dataKey="value" stroke="#4338ca" strokeWidth={2.5} dot={{ r: 4, fill: "#4338ca" }} activeDot={{ r: 6 }} animationDuration={850} />
+                </LineChart>
+              ) : (
+                <BarChart data={analysis.data} layout="vertical" margin={{ top: 4, right: 24, left: 0, bottom: 0 }}>
+                  <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: "#64748b", fontSize: 11 }} />
+                  <YAxis dataKey="label" type="category" axisLine={false} tickLine={false} width={140} tick={{ fill: "#475569", fontSize: 11 }} />
+                  <Tooltip
+                    cursor={{ fill: "rgba(20, 105, 72, .04)" }}
+                    content={({ active, payload }) =>
+                      active && payload?.[0] ? (
+                        <div className="chart-tooltip">
+                          <b>{payload[0].value?.toLocaleString()} {analysis.unit}</b>
+                          <span>{payload[0].payload.label}</span>
+                        </div>
+                      ) : null
+                    }
+                  />
+                  <Bar dataKey="value" radius={[0, 8, 8, 0]} animationDuration={850}>
+                    {analysis.data.map((entry, index) => (
+                      <Cell key={entry.label} fill={index === 0 ? "#8a1a48" : index < 3 ? "#b5265f" : "#d998b3"} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              )}
+            </ResponsiveContainer>
+          </div>
+        </section>
+      )}
+
+      {analysis.kind === "donut" && analysis.data.length > 0 && <DonutAnalysisCard analysis={analysis} />}
+
+      {analysis.kind === "heatmap" && analysis.matrix.length > 0 && <HeatmapAnalysisCard analysis={analysis} />}
+
+
+
+      {analysis.kind === "zero" && (
+        <section className="panel analytics-card">
+          <div className="panel-heading">
+            <div><p className="eyebrow">วิเคราะห์จากข้อมูลในตาราง</p><h2>ยังไม่มีข้อมูลให้วิเคราะห์ในช่วงเวลานี้</h2></div>
+          </div>
+          <p className="hdc-table-empty">{analysis.note}</p>
+        </section>
+      )}
+
+      <section className="panel projects-card hdc-full-table-card">
+        <div className="panel-title-row">
+          <h2>ตารางข้อมูลตาม HDC (ทุกคอลัมน์)</h2>
+          <span className="soft-button" style={{ pointerEvents: "none" }}><MapPinned size={14} /> ระดับจังหวัด</span>
+        </div>
+        <HdcRawTable columns={data.columns} headerRows={data.headerRows} rows={data.rows} />
+      </section>
+    </motion.div>
+  );
+}
+
 function HippoHdcSection() {
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45, ease }}>
@@ -1706,7 +4506,30 @@ export default function DashboardShell({ view = "overview" }: { view?: ViewKey }
               {view === "indicator3" && <Indicator3Section />}
               {view === "indicator4" && <Indicator4Section />}
               {view === "indicator5" && <Indicator5Section />}
+              {view === "indicator_relate_14" && <IndicatorRelate14Section />}
+              {view === "indicator_relate_15" && <IndicatorRelate15Section />}
+              {view === "indicator_relate_16" && <IndicatorRelate16Section />}
+              {view === "indicator_relate_21_2" && <IndicatorRelate21_2Section />}
+              {view === "indicator_relate_21_6" && <IndicatorRelate21_6Section />}
+              {view === "indicator_relate_21_1" && <SimpleIndicatorSection indicatorKey="21_1" />}
+              {view === "indicator_relate_21_4" && <SimpleIndicatorSection indicatorKey="21_4" />}
+              {view === "indicator_relate_21_7" && <SimpleIndicatorSection indicatorKey="21_7" />}
+              {view === "indicator_relate_22_1" && <SimpleIndicatorSection indicatorKey="22_1" />}
+              {view === "indicator_relate_22_2" && <SimpleIndicatorSection indicatorKey="22_2" />}
+              {view === "indicator_relate_22_3" && <SimpleIndicatorSection indicatorKey="22_3" />}
+              {view === "indicator_relate_22_4" && <SimpleIndicatorSection indicatorKey="22_4" />}
+              {view === "indicator_relate_22_5" && <SimpleIndicatorSection indicatorKey="22_5" />}
+              {view === "indicator_relate_22_6" && <SimpleIndicatorSection indicatorKey="22_6" />}
+              {view === "indicator_relate_22_7" && <SimpleIndicatorSection indicatorKey="22_7" />}
+              {view === "indicator_relate_23_4" && <SimpleIndicatorSection indicatorKey="23_4" />}
+              {view === "indicator_relate_23_5" && <SimpleIndicatorSection indicatorKey="23_5" />}
+              {view === "indicator_relate_23_6" && <SimpleIndicatorSection indicatorKey="23_6" />}
               {view === "hippo-hdc" && <HippoHdcSection />}
+              {view === "blank" && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+                  {/* หน้าว่างตามที่ขอ */}
+                </motion.div>
+              )}
             </motion.div>
           </AnimatePresence>
         </main>
