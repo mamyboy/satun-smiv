@@ -16,7 +16,8 @@
     "extract:indicator_relate_14": "node scripts/extract-indicator.js indicator_relate_14",
     "extract:indicator_relate_15": "node scripts/extract-indicator.js indicator_relate_15",
     "extract:indicator_relate_16": "node scripts/extract-indicator.js indicator_relate_16",
-    "extract:all": "node scripts/extract-indicator.js all"
+    "extract:all": "node scripts/extract-indicator.js all",
+    "update:data": "bash scripts/update-data.sh"
   },
   "dependencies": {
     "gsap": "^3.15.0",
