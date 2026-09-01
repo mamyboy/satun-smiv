@@ -12,8 +12,8 @@ const notoSansThai = Noto_Sans_Thai({
 });
 
 export const metadata: Metadata = {
-  title: "Flowly — Project Dashboard",
-  description: "แดชบอร์ดบริหารโครงการและการทำงานร่วมกันของทีม",
+  title: "SMI-V Dashboard — สสจ.สตูล",
+  description: "แดชบอร์ดเฝ้าระวังผู้ป่วยจิตเวชที่มีความเสี่ยงสูงต่อการก่อความรุนแรง (SMI-V) จังหวัดสตูล",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
