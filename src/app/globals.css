@@ -519,11 +519,16 @@ a:focus-visible { outline: 3px solid rgba(67, 56, 202, .3); outline-offset: 2px;
 .hippo-table-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .hippo-pivot-wrap { max-height: 560px; overflow: auto; }
 .hippo-pivot-table th, .hippo-pivot-table td { white-space: nowrap; }
+.hippo-pivot-table th.num, .hippo-pivot-table td.num { text-align: right; }
 .hippo-pivot-table thead th:first-child, .hippo-pivot-table tbody td:first-child { position: sticky; left: 0; background: #fff; z-index: 3; box-shadow: 2px 0 4px rgba(15,23,42,.04); }
 .hippo-pivot-table thead th:first-child { z-index: 4; background: #f8fafc; }
 .hippo-pivot-table tfoot td:first-child { position: sticky; left: 0; z-index: 3; }
 .hippo-pivot-table thead th { position: sticky; top: 0; background: #f8fafc; z-index: 2; }
 .hippo-pivot-table tfoot td { position: sticky; bottom: 0; background: #f8fafc; font-weight: 700; border-top: 2px solid rgba(15,23,42,.1); }
+.hippo-pivot-table thead th.sortable { cursor: pointer; user-select: none; }
+.hippo-pivot-table thead th.sortable:hover { background: #eef2ff; }
+.hippo-pivot-table thead th.sortable .th-sort-inner { display: inline-flex; align-items: center; gap: 4px; justify-content: flex-end; }
+.hippo-pivot-table thead th.sortable.is-active { color: #4338ca; }
 .hippo-total-col { background: rgba(67,56,202,.04); }
 .hippo-empty-note { text-align: center; padding: 32px 16px; color: #94a3b8; font-size: 13px; }
 .hippo-live-caption { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; color: #64748b; padding: 2px 2px 0; }

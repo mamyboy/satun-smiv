@@ -4761,7 +4761,10 @@ function HippoHdcSection() {
   const [rowDim, setRowDim] = useState<HippoDim>("ampur");
   const [colDim, setColDim] = useState<HippoDim | "none">("category");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const [sortColKey, setSortColKey] = useState<string>("__total__");
   const [excludeMode, setExcludeMode] = useState<Record<string, boolean>>({});
+
+  const changeColDim = (dim: HippoDim | "none") => { setColDim(dim); setSortColKey("__total__"); };
 
   const toggleExclude = (key: string) => setExcludeMode((prev) => ({ ...prev, [key]: !prev[key] }));
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
@@ -4771,11 +4774,11 @@ function HippoHdcSection() {
     const zone = event.over?.id as string | undefined;
     if (!dim || !zone) return;
     if (zone === "shelf-row") {
-      if (colDim === dim) setColDim(rowDim === dim ? "none" : rowDim);
+      if (colDim === dim) changeColDim(rowDim === dim ? "none" : rowDim);
       setRowDim(dim);
     } else if (zone === "shelf-col") {
       if (rowDim === dim) setRowDim(colDim === dim ? "ampur" : (colDim as HippoDim));
-      setColDim(dim);
+      changeColDim(dim);
     }
   };
 
@@ -4924,12 +4927,16 @@ function HippoHdcSection() {
     };
 
     let rowOrder = orderKeys(rowDim, rowKeys);
-    rowOrder = rowOrder.sort((a, b) => sortDir === "desc" ? (rowTotals.get(b)! - rowTotals.get(a)!) : (rowTotals.get(a)! - rowTotals.get(b)!));
+    const sortValueFor = (rk: string) => {
+      if (sortColKey === "__total__" || !colKeys.has(sortColKey)) return rowTotals.get(rk) ?? 0;
+      return cells.get(`${rk}\u0000${sortColKey}`) ?? 0;
+    };
+    rowOrder = rowOrder.sort((a, b) => sortDir === "desc" ? (sortValueFor(b) - sortValueFor(a)) : (sortValueFor(a) - sortValueFor(b)));
     const colOrder = colDim === "none" ? ["รวม"] : orderKeys(colDim, colKeys);
 
     return { rowOrder, colOrder, rowKeys, colKeys, cells, rowTotals, colTotals, grandTotal: grandPeople.size };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filtered, rowDim, colDim, sortDir, combineTypearea13]);
+  }, [filtered, rowDim, colDim, sortDir, sortColKey, combineTypearea13]);
 
   const chartData = useMemo(
     () => pivot.rowOrder.slice(0, 12).map((k) => ({ label: pivot.rowKeys.get(k) ?? k, total: pivot.rowTotals.get(k) ?? 0 })),
@@ -5232,7 +5239,7 @@ function HippoHdcSection() {
           <div className="hippo-shelf-zones">
             <HippoShelfZone zoneId="shelf-row" label="แกนแถว" icon={Rows3} activeDim={rowDim} placeholder="ลากมิติมาวางที่นี่" onClear={() => setRowDim("ampur")} />
             <ArrowLeftRight size={18} className="hippo-axis-swap-icon" />
-            <HippoShelfZone zoneId="shelf-col" label="แกนคอลัมน์" icon={Columns3} activeDim={colDim} placeholder="— ไม่แยกคอลัมน์ —" onClear={() => setColDim("none")} />
+            <HippoShelfZone zoneId="shelf-col" label="แกนคอลัมน์" icon={Columns3} activeDim={colDim} placeholder="— ไม่แยกคอลัมน์ —" onClear={() => changeColDim("none")} />
           </div>
         </DndContext>
       </section>
@@ -5289,19 +5296,39 @@ function HippoHdcSection() {
           <div><p className="eyebrow"><Table2 size={12} /> Pivot Table</p><h2>{HIPPO_DIM_LABEL[rowDim]} × {colDim === "none" ? "รวม" : HIPPO_DIM_LABEL[colDim]}</h2></div>
           <div className="hippo-table-actions">
             <button type="button" className="soft-button" onClick={() => setSortDir(sortDir === "desc" ? "asc" : "desc")}>
-              {sortDir === "desc" ? <ArrowDown size={13} /> : <ArrowUp size={13} />} เรียงตามผลรวม
+              {sortDir === "desc" ? <ArrowDown size={13} /> : <ArrowUp size={13} />} {sortColKey === "__total__" ? "เรียงตามผลรวม" : `เรียงตาม ${pivot.colKeys.get(sortColKey) ?? sortColKey}`}
             </button>
             <button type="button" className="soft-button" onClick={handleExport}><Download size={13} /> ดาวน์โหลด CSV</button>
           </div>
         </div>
+        <p className="hippo-crosstab-note">คลิกหัวคอลัมน์ (รวมถึง &quot;รวม&quot;) เพื่อสั่งเรียงแถวตามคอลัมน์นั้น — คลิกซ้ำเพื่อสลับทิศทาง</p>
 
         <div className="indicator-table-wrap hippo-pivot-wrap">
           <table className="indicator-table hippo-pivot-table">
             <thead>
               <tr>
                 <th>{HIPPO_DIM_LABEL[rowDim]}</th>
-                {pivot.colOrder.map((ck) => <th key={ck} className="num">{pivot.colKeys.get(ck) ?? ck}</th>)}
-                <th className="num hippo-total-col">รวม</th>
+                {pivot.colOrder.map((ck) => (
+                  <th
+                    key={ck}
+                    className={`num sortable${sortColKey === ck ? " is-active" : ""}`}
+                    onClick={() => { if (sortColKey === ck) setSortDir(sortDir === "desc" ? "asc" : "desc"); else { setSortColKey(ck); setSortDir("desc"); } }}
+                  >
+                    <span className="th-sort-inner">
+                      {pivot.colKeys.get(ck) ?? ck}
+                      {sortColKey === ck && (sortDir === "desc" ? <ArrowDown size={11} /> : <ArrowUp size={11} />)}
+                    </span>
+                  </th>
+                ))}
+                <th
+                  className={`num hippo-total-col sortable${sortColKey === "__total__" ? " is-active" : ""}`}
+                  onClick={() => { if (sortColKey === "__total__") setSortDir(sortDir === "desc" ? "asc" : "desc"); else { setSortColKey("__total__"); setSortDir("desc"); } }}
+                >
+                  <span className="th-sort-inner">
+                    รวม
+                    {sortColKey === "__total__" && (sortDir === "desc" ? <ArrowDown size={11} /> : <ArrowUp size={11} />)}
+                  </span>
+                </th>
               </tr>
             </thead>
             <tbody>
