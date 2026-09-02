@@ -4743,11 +4743,22 @@ function HippoShelfZone({ zoneId, label, icon: Icon, activeDim, onClear, placeho
   );
 }
 
+function hippoFacilityType(hosname: string): string {
+  if (!hosname) return "อื่นๆ";
+  if (hosname.includes("โรงพยาบาลส่งเสริมสุขภาพตำบล")) return "รพ.สต.";
+  if (hosname.includes("สถานีอนามัย")) return "รพ.สต.";
+  if (hosname.includes("ศูนย์สุขภาพชุมชน")) return "ศูนย์สุขภาพชุมชน (ศสม.)";
+  if (hosname.startsWith("โรงพยาบาล")) return "โรงพยาบาล";
+  return "อื่นๆ";
+}
+const HIPPO_FACILITY_TYPE_ORDER = ["โรงพยาบาล", "รพ.สต.", "ศูนย์สุขภาพชุมชน (ศสม.)", "อื่นๆ"];
+
 function HippoHdcSection() {
   const { rows, error } = useHippoRecords();
 
   const [selSource, setSelSource] = useState<Set<string>>(new Set());
   const [selAmpur, setSelAmpur] = useState<Set<string>>(new Set());
+  const [selFacilityType, setSelFacilityType] = useState<Set<string>>(new Set());
   const [selFacility, setSelFacility] = useState<Set<string>>(new Set());
   const [facilitySearch, setFacilitySearch] = useState("");
   const [selCategory, setSelCategory] = useState<Set<string>>(new Set());
@@ -4795,8 +4806,14 @@ function HippoHdcSection() {
     }
     return { min, max };
   }, [safeRows]);
+  const facilityTypeOptions = useMemo(() => {
+    const present = new Set(safeRows.filter((r) => r.hoscode).map((r) => hippoFacilityType(r.hosname)));
+    return HIPPO_FACILITY_TYPE_ORDER.filter((t) => present.has(t));
+  }, [safeRows]);
+
   const facilityByAmpur = useMemo(() => {
-    const relevant = selAmpur.size > 0 ? safeRows.filter((r) => selAmpur.has(r.ampur)) : safeRows;
+    let relevant = selAmpur.size > 0 ? safeRows.filter((r) => selAmpur.has(r.ampur)) : safeRows;
+    if (selFacilityType.size > 0) relevant = relevant.filter((r) => selFacilityType.has(hippoFacilityType(r.hosname)));
     const groups = new Map<string, Map<string, { hoscode: string; hosname: string; ampur: string }>>();
     relevant.forEach((r) => {
       if (!r.hoscode) return;
@@ -4813,7 +4830,7 @@ function HippoHdcSection() {
       }))
       .filter((g) => g.facilities.length > 0)
       .sort((a, b) => a.ampur.localeCompare(b.ampur, "th"));
-  }, [safeRows, selAmpur, facilitySearch]);
+  }, [safeRows, selAmpur, selFacilityType, facilitySearch]);
   const facilityOptions = useMemo(() => facilityByAmpur.flatMap((g) => g.facilities), [facilityByAmpur]);
 
   const categoryOptions = useMemo(() => Array.from(new Set(safeRows.map((r) => r.category))).sort((a, b) => a.localeCompare(b, "th")), [safeRows]);
@@ -4844,6 +4861,7 @@ function HippoHdcSection() {
   const clearAll = (setter: (s: Set<string>) => void) => setter(new Set());
 
   const toggleAmpur = (value: string) => { toggleSet(selAmpur, setSelAmpur, value); setSelFacility(new Set()); };
+  const toggleFacilityType = (value: string) => { toggleSet(selFacilityType, setSelFacilityType, value); setSelFacility(new Set()); };
   const toggleCategory = (value: string) => { toggleSet(selCategory, setSelCategory, value); setSelCode(new Set()); };
 
   const passSet = (excluded: boolean, sel: Set<string>, value: string) => {
@@ -4856,6 +4874,7 @@ function HippoHdcSection() {
     return safeRows.filter((r) => {
       if (!passSet(!!excludeMode.source, selSource, r.source)) return false;
       if (!passSet(!!excludeMode.ampur, selAmpur, r.ampur)) return false;
+      if (!passSet(!!excludeMode.facility_type, selFacilityType, hippoFacilityType(r.hosname))) return false;
       if (!passSet(!!excludeMode.facility, selFacility, r.hoscode)) return false;
       if (!passSet(!!excludeMode.category, selCategory, r.category)) return false;
       if (!passSet(!!excludeMode.code, selCode, r.code)) return false;
@@ -4865,7 +4884,7 @@ function HippoHdcSection() {
       if (dateTo && (!r.date_serv || r.date_serv > dateTo)) return false;
       return true;
     });
-  }, [safeRows, selSource, selAmpur, selFacility, selCategory, selCode, selTypearea, selAgeBand, dateFrom, dateTo, excludeMode]);
+  }, [safeRows, selSource, selAmpur, selFacilityType, selFacility, selCategory, selCode, selTypearea, selAgeBand, dateFrom, dateTo, excludeMode]);
 
   const dimKeyOf = (r: HippoRecord, dim: HippoDim): string => {
     if (dim === "ampur") return r.ampur;
@@ -4954,7 +4973,7 @@ function HippoHdcSection() {
   };
 
   const resetFilters = () => {
-    setSelSource(new Set()); setSelAmpur(new Set()); setSelFacility(new Set()); setFacilitySearch("");
+    setSelSource(new Set()); setSelAmpur(new Set()); setSelFacilityType(new Set()); setSelFacility(new Set()); setFacilitySearch("");
     setSelCategory(new Set()); setSelCode(new Set()); setCodeSearch("");
     setSelTypearea(new Set()); setSelAgeBand(new Set()); setCombineTypearea13(false);
     setDateFrom(""); setDateTo("");
@@ -4996,8 +5015,8 @@ function HippoHdcSection() {
       <div className="hippo-live-caption">
         <span>กำลังแสดง:</span>
         <strong>{HIPPO_DIM_LABEL[rowDim]} × {colDim === "none" ? "รวม" : HIPPO_DIM_LABEL[colDim]}</strong>
-        {(selSource.size > 0 || selAmpur.size > 0 || selFacility.size > 0 || selCategory.size > 0 || selCode.size > 0 || selTypearea.size > 0 || selAgeBand.size > 0 || dateFrom || dateTo) && (
-          <span className="hippo-live-caption-filters"><Funnel size={11} /> มีตัวกรองอยู่ {selSource.size + selAmpur.size + selFacility.size + selCategory.size + selCode.size + selTypearea.size + selAgeBand.size + (dateFrom || dateTo ? 1 : 0)} รายการ</span>
+        {(selSource.size > 0 || selAmpur.size > 0 || selFacilityType.size > 0 || selFacility.size > 0 || selCategory.size > 0 || selCode.size > 0 || selTypearea.size > 0 || selAgeBand.size > 0 || dateFrom || dateTo) && (
+          <span className="hippo-live-caption-filters"><Funnel size={11} /> มีตัวกรองอยู่ {selSource.size + selAmpur.size + selFacilityType.size + selFacility.size + selCategory.size + selCode.size + selTypearea.size + selAgeBand.size + (dateFrom || dateTo ? 1 : 0)} รายการ</span>
         )}
       </div>
 
@@ -5075,6 +5094,25 @@ function HippoHdcSection() {
               <div className="hippo-chip-list">
                 {ampurOptions.map((a) => (
                   <button key={a} type="button" className={selAmpur.has(a) ? "active" : ""} onClick={() => toggleAmpur(a)}>{a}</button>
+                ))}
+              </div>
+            </div>
+
+            <div className="hippo-filter-group">
+              <span className="hippo-filter-title">ประเภทหน่วยบริการ {selFacilityType.size > 0 && <b>({selFacilityType.size})</b>}
+                {selFacilityType.size > 0 && (
+                  <button type="button" className={`hippo-exclude-toggle${excludeMode.facility_type ? " is-exclude" : ""}`} onClick={() => toggleExclude("facility_type")}>
+                    <EyeOff size={11} /> {excludeMode.facility_type ? "กำลังตัดออก" : "ตัดออก"}
+                  </button>
+                )}
+              </span>
+              <div className="hippo-select-all-row">
+                <button type="button" className="hippo-select-all-btn" onClick={() => selectAll(setSelFacilityType, facilityTypeOptions)}>เลือกทั้งหมด</button>
+                <button type="button" className="hippo-select-all-btn" onClick={() => { clearAll(setSelFacilityType); setSelFacility(new Set()); }}>ล้าง</button>
+              </div>
+              <div className="hippo-chip-list">
+                {facilityTypeOptions.map((t) => (
+                  <button key={t} type="button" className={selFacilityType.has(t) ? "active" : ""} onClick={() => toggleFacilityType(t)}>{t}</button>
                 ))}
               </div>
             </div>
