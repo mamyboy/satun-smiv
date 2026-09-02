@@ -192,7 +192,7 @@ specialpp_base AS (
         ON concat(ch.provcode, ch.distcode) = ca.ampurcodefull
     WHERE
         s.pid IS NOT NULL
-        AND upper(trim(s.ppspecial)) IN ('1B030', '1B031', '1B032', '1B033')
+        AND upper(trim(s.ppspecial)) IN ('1B030', '1B031', '1B032', '1B033', '1B036', '1B037')
 ),
 
 specialpp_qualified AS (
@@ -216,6 +216,8 @@ specialpp_qualified AS (
             WHEN '1B031' THEN 'ประเมินความเสี่ยง SMI-V: ทำร้ายผู้อื่น/ก่อเหตุรุนแรง (1B031)'
             WHEN '1B032' THEN 'ประเมินความเสี่ยง SMI-V: หลงผิด มุ่งร้ายเฉพาะเจาะจง (1B032)'
             WHEN '1B033' THEN 'ประเมินความเสี่ยง SMI-V: ก่อคดีอาชญากรรมรุนแรง (1B033)'
+            WHEN '1B036' THEN 'ประเมินความเสี่ยง SMI-V: พบว่าปกติ (1B036)'
+            WHEN '1B037' THEN 'ประเมินความเสี่ยง SMI-V: ก่อเหตุรุนแรงแล้ว ได้รับการติดตาม (1B037)'
         END AS category,
         code
     FROM specialpp_base

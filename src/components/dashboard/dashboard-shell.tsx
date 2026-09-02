@@ -4766,12 +4766,12 @@ function HippoHdcSection() {
       <div className="indicator-group-head">
         <span className="indicator-badge indicator-badge-overview"><Database size={13} /> HIPPO HDC</span>
         <h2>Cross-tab Explorer — ตัวชี้วัด SMI-V ทั้งหมด</h2>
-        <p>ข้อมูลจาก 43 แฟ้ม (DIAGNOSIS_OPD จำแนกตามรหัส ICD-10-TM และ SPECIALPP รหัส 1B030–1B033) หมุนดูได้ทุกมิติ: อำเภอ, หน่วยบริการ, กลุ่มโรค/รหัส, Typearea (1/2/3/4/1+3), ช่วงอายุ</p>
+        <p>ข้อมูลจาก 43 แฟ้ม (DIAGNOSIS_OPD จำแนกตามรหัส ICD-10-TM และ SPECIALPP รหัส 1B030–1B033, 1B036–1B037) หมุนดูได้ทุกมิติ: อำเภอ, หน่วยบริการ, กลุ่มโรค/รหัส, Typearea (1/2/3/4/1+3), ช่วงอายุ</p>
       </div>
 
       <div className="hippo-live-caption">
         <span>กำลังแสดง:</span>
-        <strong>{level === "overall" ? "ภาพรวม (ไม่แยกโรค)" : level === "category" ? "รายกลุ่มโรค" : "รายรหัส ICD-10-TM"}</strong>
+        <strong>{level === "overall" ? "ภาพรวม (ไม่แยกโรค)" : level === "category" ? "รายกลุ่มโรค" : source === "SPECIALPP" ? "รายรหัส PPSPECIAL" : "รายรหัส ICD-10-TM"}</strong>
         <span className="hippo-live-caption-sep">·</span>
         <strong>{source === "DIAGNOSIS_OPD" ? "จำแนกตามการวินิจฉัย (DIAGNOSIS_OPD)" : "ประเมินความเสี่ยง SMI-V (SPECIALPP)"}</strong>
         {(selAmpur.size > 0 || selFacility.size > 0 || selDisease.size > 0 || selTypearea.size > 0 || selAgeBand.size > 0) && (
@@ -4783,7 +4783,7 @@ function HippoHdcSection() {
         <StatCard icon={Rows3} tone="indigo" label="แถวข้อมูลที่กรองแล้ว" value={filtered.length.toLocaleString("th-TH")} note={`จากทั้งหมด ${scoped.length.toLocaleString("th-TH")} แถว`} index={0} featured />
         <StatCard icon={ArrowLeftRight} tone="blue" label="ผลรวมที่แสดง" value={pivot.grandTotal.toLocaleString("th-TH")} note={level === "overall" ? "ไม่ซ้ำคน (level: ภาพรวม)" : diseaseMarginalized ? "⚠️ อาจนับซ้ำ (รวมข้ามกลุ่มโรค)" : "ไม่ซ้ำคนในระดับที่เลือก"} index={1} />
         <StatCard icon={Hospital} tone="teal" label="หน่วยบริการในผลลัพธ์" value={String(facilityOptions.length)} note={`${ampurOptions.length} อำเภอ`} index={2} />
-        <StatCard icon={Layers} tone="purple" label="กลุ่มโรค/รหัสในผลลัพธ์" value={String(diseaseOptions.length)} note={level === "code" ? "รายรหัส ICD-10-TM" : level === "category" ? "รายกลุ่มโรค" : "ไม่แยกกลุ่มโรค"} index={3} />
+        <StatCard icon={Layers} tone="purple" label="กลุ่มโรค/รหัสในผลลัพธ์" value={String(diseaseOptions.length)} note={level === "code" ? (source === "SPECIALPP" ? "รายรหัส PPSPECIAL" : "รายรหัส ICD-10-TM") : level === "category" ? "รายกลุ่มโรค" : "ไม่แยกกลุ่มโรค"} index={3} />
       </section>
 
       <section className="panel hippo-step-panel">
@@ -4799,7 +4799,7 @@ function HippoHdcSection() {
           <div className="indicator-table-filters">
             <button type="button" className={level === "overall" ? "active" : ""} onClick={() => setLevel("overall")}>ภาพรวม (ไม่แยกโรค)</button>
             <button type="button" className={level === "category" ? "active" : ""} onClick={() => setLevel("category")}>รายกลุ่มโรค</button>
-            <button type="button" className={level === "code" ? "active" : ""} onClick={() => setLevel("code")}>รายรหัส ICD-10-TM</button>
+            <button type="button" className={level === "code" ? "active" : ""} onClick={() => setLevel("code")}>{source === "SPECIALPP" ? "รายรหัส PPSPECIAL" : "รายรหัส ICD-10-TM"}</button>
           </div>
         </div>
 
@@ -4807,7 +4807,7 @@ function HippoHdcSection() {
           <span className="hippo-control-label">แหล่งข้อมูล</span>
           <div className="indicator-table-filters">
             <button type="button" className={source === "DIAGNOSIS_OPD" ? "active" : ""} onClick={() => setSource("DIAGNOSIS_OPD")}><Brain size={13} /> จำแนกตามการวินิจฉัย (DIAGNOSIS_OPD)</button>
-            <button type="button" className={source === "SPECIALPP" ? "active" : ""} onClick={() => setSource("SPECIALPP")}><ShieldCheck size={13} /> ประเมินความเสี่ยง SMI-V (SPECIALPP 1B030-1B033)</button>
+            <button type="button" className={source === "SPECIALPP" ? "active" : ""} onClick={() => setSource("SPECIALPP")}><ShieldCheck size={13} /> ประเมินความเสี่ยง SMI-V (SPECIALPP 1B030-1B033, 1B036-1B037)</button>
           </div>
         </div>
       </section>
