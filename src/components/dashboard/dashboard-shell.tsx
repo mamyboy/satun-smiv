@@ -4934,7 +4934,7 @@ function HippoHdcSection() {
     rowOrder = rowOrder.sort((a, b) => sortDir === "desc" ? (sortValueFor(b) - sortValueFor(a)) : (sortValueFor(a) - sortValueFor(b)));
     const colOrder = colDim === "none" ? ["รวม"] : orderKeys(colDim, colKeys);
 
-    return { rowOrder, colOrder, rowKeys, colKeys, cells, rowTotals, colTotals, grandTotal: grandPeople.size };
+    return { rowOrder, colOrder, rowKeys, colKeys, cells, rowTotals, colTotals, grandTotal: grandPeople.size, maxCell: Math.max(1, ...Array.from(cells.values())) };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtered, rowDim, colDim, sortDir, sortColKey, combineTypearea13]);
 
@@ -5332,12 +5332,21 @@ function HippoHdcSection() {
               </tr>
             </thead>
             <tbody>
-              {pivot.rowOrder.map((rk) => (
-                <tr key={rk}>
+              {pivot.rowOrder.map((rk, ri) => (
+                <tr key={rk} className={ri % 2 === 1 ? "hippo-row-alt" : ""}>
                   <td className="indicator-table-name"><span>{pivot.rowKeys.get(rk) ?? rk}</span></td>
                   {pivot.colOrder.map((ck) => {
                     const v = pivot.cells.get(`${rk}\u0000${ck}`) ?? 0;
-                    return <td key={ck} className="indicator-table-value num">{v > 0 ? v.toLocaleString("th-TH") : <span className="indicator-table-empty">-</span>}</td>;
+                    const intensity = v > 0 ? Math.min(1, Math.sqrt(v / pivot.maxCell)) : 0;
+                    return (
+                      <td
+                        key={ck}
+                        className="indicator-table-value num hippo-heat-cell"
+                        style={v > 0 ? ({ "--heat": intensity.toFixed(3) } as React.CSSProperties) : undefined}
+                      >
+                        {v > 0 ? v.toLocaleString("th-TH") : <span className="indicator-table-empty">-</span>}
+                      </td>
+                    );
                   })}
                   <td className="indicator-table-value num hippo-total-col"><strong>{(pivot.rowTotals.get(rk) ?? 0).toLocaleString("th-TH")}</strong></td>
                 </tr>
