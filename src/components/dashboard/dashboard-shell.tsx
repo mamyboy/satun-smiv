@@ -4473,24 +4473,26 @@ function SimpleIndicatorSection({ indicatorKey }: { indicatorKey: SimpleIndicato
 }
 
 // ---------------------------------------------------------------------------
-// HIPPO HDC — Cross-tab explorer over public/data/hippo-hdc-summary.csv
+// HIPPO HDC — raw record-level pivot explorer (person_id, source, ampur,
+// hoscode, hosname, code, typearea, age_band). One row per real record —
+// no pre-aggregation, so COUNT(DISTINCT person_id) at ANY grouping is
+// always correct (no double-counting risk when marginalizing a dimension,
+// unlike the old pre-rolled-up summary CSV).
 // ---------------------------------------------------------------------------
-type HippoRow = {
-  level: "code" | "category" | "overall";
+type HippoRecord = {
+  person_id: string;
   source: "DIAGNOSIS_OPD" | "SPECIALPP";
   ampur: string;
   hoscode: string;
   hosname: string;
-  category: string;
   code: string;
+  category: string;
   typearea: string;
   typearea_label: string;
   age_band: string;
-  patient_count: number;
 };
 
 const HIPPO_AGE_ORDER = ["0-14 ปี", "15-29 ปี", "30-44 ปี", "45-59 ปี", "60-74 ปี", "75 ปีขึ้นไป", "ไม่ทราบ"];
-const HIPPO_TYPEAREA_ORDER = ["1", "2", "3", "4", "5", ""];
 const HIPPO_TYPEAREA_LABEL: Record<string, string> = {
   "1": "1: ในเขต มีชื่อ+อยู่จริง",
   "2": "2: ในเขต มีชื่อ แต่ไม่อยู่จริง",
@@ -4500,14 +4502,106 @@ const HIPPO_TYPEAREA_LABEL: Record<string, string> = {
   "": "ไม่ทราบ",
   "1+3": "1+3: รวม (อยู่จริงในเขต + อาศัยในเขตทะเบียนนอกเขต)",
 };
-const HIPPO_DIM_LABEL: Record<string, string> = {
-  ampur: "อำเภอ",
-  facility: "หน่วยบริการ",
-  disease: "กลุ่มโรค/รหัส",
-  typearea: "Typearea",
-  age_band: "ช่วงอายุ",
-  source: "แหล่งข้อมูล",
+const HIPPO_SOURCE_LABEL: Record<HippoRecord["source"], string> = {
+  DIAGNOSIS_OPD: "จำแนกตามการวินิจฉัย (DIAGNOSIS_OPD)",
+  SPECIALPP: "ประเมินความเสี่ยง SMI-V (SPECIALPP)",
 };
+
+const HIPPO_SPECIALPP_LABEL: Record<string, string> = {
+  "1B030": "ประเมินความเสี่ยง SMI-V: ทำร้ายตนเองรุนแรง (1B030)",
+  "1B031": "ประเมินความเสี่ยง SMI-V: ทำร้ายผู้อื่น/ก่อเหตุรุนแรง (1B031)",
+  "1B032": "ประเมินความเสี่ยง SMI-V: หลงผิด มุ่งร้ายเฉพาะเจาะจง (1B032)",
+  "1B033": "ประเมินความเสี่ยง SMI-V: ก่อคดีอาชญากรรมรุนแรง (1B033)",
+  "1B036": "ประเมินความเสี่ยง SMI-V: พบว่าปกติ (1B036)",
+  "1B037": "ประเมินความเสี่ยง SMI-V: ก่อเหตุรุนแรงแล้ว ได้รับการติดตาม (1B037)",
+};
+
+// Same clinical grouping as scripts/sql/hippo-hdc-records.sql's WHERE scope —
+// kept client-side so the raw `code` column stays untouched in the CSV.
+function hippoIcdCategory(code: string): string | null {
+  const root = code.startsWith("F341") ? "F341" : code.startsWith("F638") ? "F638" : code.startsWith("F988") ? "F988" : code.slice(0, 3);
+  if (root >= "F00" && root <= "F03") return "โรคสมองเสื่อม (F00-F03)";
+  if (root === "F10") return "ติดแอลกอฮอล์ (F10)";
+  if (root === "F15") return "ติดยาบ้า Amphetamine (F15)";
+  if (["F11", "F12", "F13", "F14", "F16", "F17", "F18", "F19"].includes(root)) return "ติดสารเสพติดอื่นๆ (F11-F19)";
+  if (root === "F20") return "โรคจิตเภท (F20)";
+  if (root >= "F21" && root <= "F29") return "โรคจิตอื่นๆ (F21-F29)";
+  if (root === "F31") return "โรคอารมณ์สองขั้ว (F31)";
+  if (["F32", "F33", "F341", "F38", "F39"].includes(root)) return "โรคซึมเศร้า (F32,F33,F341,F38,F39)";
+  if (root >= "F40" && root <= "F48") return "โรควิตกกังวล (F40-F48)";
+  if (root >= "F70" && root <= "F79") return "ความบกพร่องทางสติปัญญา (F70-F79)";
+  if (root === "F81") return "ความบกพร่องทางการเรียนรู้ (F81)";
+  if (root === "F84") return "โรคออทิสติก (F84)";
+  if (root === "F90") return "โรคสมาธิสั้น (F90)";
+  if (root >= "X60" && root <= "X84") return "พยายามฆ่าตัวตาย/ตั้งใจทำร้ายตนเอง (X60-X84)";
+  if (root === "F638") return "ผู้ป่วยติดเกมส์ในผู้ใหญ่ 15 ปีขึ้นไป (F638)";
+  if (root === "F988") return "ผู้ป่วยติดเกมส์ในเด็ก ต่ำกว่า 15 ปี (F988)";
+  if (root >= "G40" && root <= "G41") return "โรคลมชัก (G40-G41)";
+  const OTHER = new Set([
+    "F04", "F05", "F06", "F07", "F09",
+    "F50", "F51", "F52", "F53", "F54", "F55", "F56", "F57", "F58", "F59",
+    "F60", "F61", "F62", "F63", "F64", "F65", "F66", "F67", "F68", "F69",
+    "F80", "F82", "F83", "F88", "F89",
+    "F91", "F92", "F93", "F94", "F95", "F96", "F97", "F98", "F99",
+  ]);
+  if (OTHER.has(root)) return "โรคทางจิตเวชอื่นๆ";
+  return "อื่นๆ (ยังไม่จัดกลุ่ม)";
+}
+
+// Clinical code order, NOT alphabetical Thai sort — SPECIALPP (รหัสส่งเสริมป้องกัน)
+// codes first in their own fixed screening order, then ICD-10-TM (รหัสวินิจฉัย)
+// groups in the same order hippoIcdCategory() checks them, so rows/columns read
+// top-to-bottom the way a clinician expects (1B030→1B037, then F00→F99, X60-X84, G40-G41).
+const HIPPO_SPECIALPP_ORDER = ["1B030", "1B031", "1B032", "1B033", "1B036", "1B037"];
+const HIPPO_CATEGORY_ORDER = [
+  "ประเมินความเสี่ยง SMI-V: ทำร้ายตนเองรุนแรง (1B030)",
+  "ประเมินความเสี่ยง SMI-V: ทำร้ายผู้อื่น/ก่อเหตุรุนแรง (1B031)",
+  "ประเมินความเสี่ยง SMI-V: หลงผิด มุ่งร้ายเฉพาะเจาะจง (1B032)",
+  "ประเมินความเสี่ยง SMI-V: ก่อคดีอาชญากรรมรุนแรง (1B033)",
+  "ประเมินความเสี่ยง SMI-V: พบว่าปกติ (1B036)",
+  "ประเมินความเสี่ยง SMI-V: ก่อเหตุรุนแรงแล้ว ได้รับการติดตาม (1B037)",
+  "โรคสมองเสื่อม (F00-F03)",
+  "ติดแอลกอฮอล์ (F10)",
+  "ติดยาบ้า Amphetamine (F15)",
+  "ติดสารเสพติดอื่นๆ (F11-F19)",
+  "โรคจิตเภท (F20)",
+  "โรคจิตอื่นๆ (F21-F29)",
+  "โรคอารมณ์สองขั้ว (F31)",
+  "โรคซึมเศร้า (F32,F33,F341,F38,F39)",
+  "โรควิตกกังวล (F40-F48)",
+  "ความบกพร่องทางสติปัญญา (F70-F79)",
+  "ความบกพร่องทางการเรียนรู้ (F81)",
+  "โรคออทิสติก (F84)",
+  "โรคสมาธิสั้น (F90)",
+  "พยายามฆ่าตัวตาย/ตั้งใจทำร้ายตนเอง (X60-X84)",
+  "ผู้ป่วยติดเกมส์ในผู้ใหญ่ 15 ปีขึ้นไป (F638)",
+  "ผู้ป่วยติดเกมส์ในเด็ก ต่ำกว่า 15 ปี (F988)",
+  "โรคลมชัก (G40-G41)",
+  "โรคทางจิตเวชอื่นๆ",
+  "อื่นๆ (ยังไม่จัดกลุ่ม)",
+];
+function hippoCategoryRank(category: string): number {
+  const i = HIPPO_CATEGORY_ORDER.indexOf(category);
+  return i === -1 ? HIPPO_CATEGORY_ORDER.length : i;
+}
+// key is the raw code (e.g. "1B030", "F200") — sort SPECIALPP by its fixed
+// screening order, then ICD-10-TM codes by clinical category, then by code text.
+function hippoCodeSortValue(key: string): [number, number, string] {
+  const ppIdx = HIPPO_SPECIALPP_ORDER.indexOf(key);
+  if (ppIdx !== -1) return [0, ppIdx, key];
+  const category = hippoIcdCategory(key) ?? "อื่นๆ (ยังไม่จัดกลุ่ม)";
+  return [1, hippoCategoryRank(category), key];
+}
+function hippoCompareByClinicalOrder(dim: HippoDim, a: string, b: string): number {
+  if (dim === "category") return hippoCategoryRank(a) - hippoCategoryRank(b) || a.localeCompare(b, "th");
+  if (dim === "code") {
+    const [ta, ra, ka] = hippoCodeSortValue(a);
+    const [tb, rb, kb] = hippoCodeSortValue(b);
+    return ta - tb || ra - rb || ka.localeCompare(kb, "th");
+  }
+  return a.localeCompare(b, "th");
+}
+
 
 function parseCsv(text: string): string[][] {
   const rows: string[][] = [];
@@ -4530,13 +4624,13 @@ function parseCsv(text: string): string[][] {
   return rows.filter((r) => r.length > 1 || r[0] !== "");
 }
 
-function useHippoData() {
-  const [rows, setRows] = useState<HippoRow[] | null>(null);
+function useHippoRecords() {
+  const [rows, setRows] = useState<HippoRecord[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/data/hippo-hdc-summary.csv")
+    fetch("/data/hippo-hdc-records.csv")
       .then((res) => {
         if (!res.ok) throw new Error(`โหลดข้อมูลไม่สำเร็จ (${res.status})`);
         return res.text();
@@ -4546,25 +4640,28 @@ function useHippoData() {
         const table = parseCsv(text);
         const header = table[0];
         const idx = (key: string) => header.indexOf(key);
-        const iLevel = idx("level"), iSource = idx("source"), iAmpur = idx("ampur"),
-          iHoscode = idx("HOSCODE"), iHosname = idx("HOSNAME"),
-          iCategory = idx("category"), iCode = idx("code"), iTypearea = idx("typearea"),
-          iTypeareaLabel = idx("typearea_label"), iAgeBand = idx("age_band"), iCount = idx("patient_count");
-        const parsed: HippoRow[] = table.slice(1)
+        const iPerson = idx("person_id"), iSource = idx("source"), iAmpur = idx("ampur"),
+          iHoscode = idx("HOSCODE"), iHosname = idx("HOSNAME"), iCode = idx("code"),
+          iTypearea = idx("typearea"), iTypeareaLabel = idx("typearea_label"), iAgeBand = idx("age_band");
+        const parsed: HippoRecord[] = table.slice(1)
           .filter((r) => r.length >= header.length && r[iAmpur])
-          .map((r) => ({
-            level: r[iLevel] as HippoRow["level"],
-            source: r[iSource] as HippoRow["source"],
-            ampur: r[iAmpur],
-            hoscode: r[iHoscode] ?? "",
-            hosname: r[iHosname] ?? "",
-            category: r[iCategory],
-            code: r[iCode],
-            typearea: r[iTypearea],
-            typearea_label: r[iTypeareaLabel],
-            age_band: r[iAgeBand],
-            patient_count: Number(r[iCount]) || 0,
-          }));
+          .map((r) => {
+            const source = r[iSource] as HippoRecord["source"];
+            const code = r[iCode];
+            const category = source === "SPECIALPP" ? (HIPPO_SPECIALPP_LABEL[code] ?? code) : (hippoIcdCategory(code) ?? "อื่นๆ (ยังไม่จัดกลุ่ม)");
+            return {
+              person_id: r[iPerson],
+              source,
+              ampur: r[iAmpur],
+              hoscode: r[iHoscode] ?? "",
+              hosname: r[iHosname] ?? "",
+              code,
+              category,
+              typearea: r[iTypearea],
+              typearea_label: r[iTypeareaLabel],
+              age_band: r[iAgeBand],
+            };
+          });
         setRows(parsed);
       })
       .catch((err) => { if (!cancelled) setError(err.message || "เกิดข้อผิดพลาด"); });
@@ -4587,232 +4684,34 @@ function downloadCsv(filename: string, headers: string[], data: (string | number
   URL.revokeObjectURL(url);
 }
 
-type HippoCrosstabRow = {
-  ampur: string;
-  specialpp_code: string;
-  specialpp_label: string;
-  icd_code: string;
-  icd_category: string;
-  patient_count: number;
+type HippoDim = "ampur" | "facility" | "category" | "code" | "typearea" | "age_band" | "source";
+
+const HIPPO_DIM_LABEL: Record<HippoDim, string> = {
+  ampur: "อำเภอ",
+  facility: "หน่วยบริการ",
+  category: "กลุ่มโรค/รหัส SMI-V",
+  code: "รหัสละเอียด (ICD-10-TM/PPSPECIAL)",
+  typearea: "Typearea",
+  age_band: "ช่วงอายุ",
+  source: "แหล่งข้อมูล",
 };
-
-function useHippoCrosstabData() {
-  const [rows, setRows] = useState<HippoCrosstabRow[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    fetch("/data/hippo-hdc-crosstab.csv")
-      .then((res) => {
-        if (!res.ok) throw new Error(`โหลดข้อมูลไม่สำเร็จ (${res.status})`);
-        return res.text();
-      })
-      .then((text) => {
-        if (cancelled) return;
-        const table = parseCsv(text);
-        const header = table[0];
-        const idx = (key: string) => header.indexOf(key);
-        const iAmpur = idx("ampur"), iCode = idx("specialpp_code"), iLabel = idx("specialpp_label"),
-          iIcd = idx("icd_code"), iCat = idx("icd_category"), iCount = idx("patient_count");
-        const parsed: HippoCrosstabRow[] = table.slice(1)
-          .filter((r) => r.length >= header.length && r[iAmpur])
-          .map((r) => ({
-            ampur: r[iAmpur],
-            specialpp_code: r[iCode],
-            specialpp_label: r[iLabel],
-            icd_code: r[iIcd],
-            icd_category: r[iCat],
-            patient_count: Number(r[iCount]) || 0,
-          }));
-        setRows(parsed);
-      })
-      .catch((err) => { if (!cancelled) setError(err.message || "เกิดข้อผิดพลาด"); });
-    return () => { cancelled = true; };
-  }, []);
-
-  return { rows, error };
-}
-
-function HippoCrosstabSection() {
-  const { rows, error } = useHippoCrosstabData();
-  const [selAmpur, setSelAmpur] = useState<Set<string>>(new Set());
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
-
-  const ampurOptions = useMemo(() => {
-    if (!rows) return [];
-    return Array.from(new Set(rows.map((r) => r.ampur))).sort((a, b) => a.localeCompare(b, "th"));
-  }, [rows]);
-
-  const filtered = useMemo(() => {
-    if (!rows) return [];
-    return selAmpur.size === 0 ? rows : rows.filter((r) => selAmpur.has(r.ampur));
-  }, [rows, selAmpur]);
-
-  const pivot = useMemo(() => {
-    const rowKeys = new Map<string, string>();
-    const colKeys = new Map<string, string>();
-    const cells = new Map<string, number>();
-    const rowTotals = new Map<string, number>();
-    const colTotals = new Map<string, number>();
-    let grandTotal = 0;
-    for (const r of filtered) {
-      const rk = r.specialpp_code;
-      rowKeys.set(rk, `${r.specialpp_code} — ${r.specialpp_label}`);
-      const ck = r.icd_code;
-      colKeys.set(ck, `${r.icd_code} — ${r.icd_category}`);
-      const cellKey = `${rk}\u0000${ck}`;
-      cells.set(cellKey, (cells.get(cellKey) ?? 0) + r.patient_count);
-      rowTotals.set(rk, (rowTotals.get(rk) ?? 0) + r.patient_count);
-      colTotals.set(ck, (colTotals.get(ck) ?? 0) + r.patient_count);
-      grandTotal += r.patient_count;
-    }
-    let rowOrder = Array.from(rowKeys.keys()).sort((a, b) => a.localeCompare(b));
-    rowOrder = rowOrder.sort((a, b) => sortDir === "desc" ? (rowTotals.get(b)! - rowTotals.get(a)!) : (rowTotals.get(a)! - rowTotals.get(b)!));
-    const colOrder = Array.from(colKeys.keys()).sort((a, b) => (colTotals.get(b)! - colTotals.get(a)!));
-    return { rowOrder, colOrder, rowKeys, colKeys, cells, rowTotals, colTotals, grandTotal };
-  }, [filtered, sortDir]);
-
-  const handleExport = () => {
-    const headers = ["รหัส SMI-V (SPECIALPP)", ...pivot.colOrder.map((c) => pivot.colKeys.get(c) ?? c), "รวมทั้งแถว"];
-    const data = pivot.rowOrder.map((rk) => {
-      const values = pivot.colOrder.map((ck) => pivot.cells.get(`${rk}\u0000${ck}`) ?? 0);
-      return [pivot.rowKeys.get(rk) ?? rk, ...values, pivot.rowTotals.get(rk) ?? 0];
-    });
-    downloadCsv(`hippo-hdc-crosstab-${Date.now()}.csv`, headers, data);
-  };
-
-  if (error) {
-    return (
-      <section className="panel hippo-placeholder-card">
-        <span className="hippo-placeholder-icon"><CircleAlert size={30} strokeWidth={1.6} /></span>
-        <h2>โหลดข้อมูล Cross-tab ไม่สำเร็จ</h2>
-        <p>{error} — ต้องรัน <code>scripts/sql/hippo-hdc-crosstab.sql</code> แล้ววางไฟล์ที่ <code>public/data/hippo-hdc-crosstab.csv</code></p>
-      </section>
-    );
-  }
-
-  if (!rows) {
-    return (
-      <section className="panel hippo-placeholder-card">
-        <span className="hippo-placeholder-icon"><Loader size={30} strokeWidth={1.6} className="hippo-spin" /></span>
-        <h2>กำลังโหลดข้อมูล Cross-tab…</h2>
-      </section>
-    );
-  }
-
-  if (rows.length === 0) {
-    return (
-      <section className="panel hippo-placeholder-card">
-        <span className="hippo-placeholder-icon"><Database size={30} strokeWidth={1.6} /></span>
-        <h2>ยังไม่มีข้อมูล Cross-tab</h2>
-        <p>รันสคริปต์ <code>scripts/sql/hippo-hdc-crosstab.sql</code> บนแหล่งข้อมูล 43 แฟ้ม แล้ววางผลลัพธ์ที่ <code>public/data/hippo-hdc-crosstab.csv</code></p>
-      </section>
-    );
-  }
-
-  return (
-    <section className="panel">
-      <div className="panel-heading">
-        <div>
-          <p className="eyebrow"><Table2 size={12} /> Cross-tab: คนเดียวกันมีทั้งสองรหัส</p>
-          <h2>รหัส SMI-V (SPECIALPP) × รหัสวินิจฉัย (ICD-10-TM)</h2>
-          <p className="hippo-crosstab-note">
-            แต่ละช่องคือจำนวนคนที่ถูกประเมิน SMI-V รหัสนั้น <strong>และ</strong> มีการวินิจฉัยโรครหัสนั้นด้วย (คนเดียวกัน) —
-            ต่างจากตาราง Pivot ด้านบนที่ DIAGNOSIS_OPD กับ SPECIALPP แยกกันไม่ได้ join ถึงกัน
-          </p>
-        </div>
-        <div className="hippo-table-actions">
-          <button type="button" className="soft-button" onClick={() => setSortDir(sortDir === "desc" ? "asc" : "desc")}>
-            {sortDir === "desc" ? <ArrowDown size={13} /> : <ArrowUp size={13} />} เรียงตามผลรวม
-          </button>
-          <button type="button" className="soft-button" onClick={handleExport}><Download size={13} /> ดาวน์โหลด CSV</button>
-        </div>
-      </div>
-
-      <div className="hippo-filter-group" style={{ marginBottom: 14 }}>
-        <span className="hippo-filter-title">กรองตามอำเภอ {selAmpur.size > 0 && <b>({selAmpur.size})</b>}</span>
-        <div className="hippo-select-all-row">
-          <button type="button" className="hippo-select-all-btn" onClick={() => setSelAmpur(new Set(ampurOptions))}>เลือกทั้งหมด</button>
-          <button type="button" className="hippo-select-all-btn" onClick={() => setSelAmpur(new Set())}>ล้าง</button>
-        </div>
-        <div className="hippo-chip-list">
-          {ampurOptions.map((a) => (
-            <button key={a} type="button" className={selAmpur.has(a) ? "active" : ""} onClick={() => setSelAmpur((prev) => { const next = new Set(prev); if (next.has(a)) next.delete(a); else next.add(a); return next; })}>{a}</button>
-          ))}
-        </div>
-      </div>
-
-      {pivot.rowOrder.length === 0 ? (
-        <p className="hippo-empty-note">ไม่พบคนที่มีทั้งสองรหัสร่วมกันในขอบเขตที่เลือก</p>
-      ) : (
-        <div className="indicator-table-wrap hippo-pivot-wrap">
-          <table className="indicator-table hippo-pivot-table">
-            <thead>
-              <tr>
-                <th>รหัส SMI-V (SPECIALPP)</th>
-                {pivot.colOrder.map((ck) => <th key={ck} className="num" title={pivot.colKeys.get(ck)}>{ck}</th>)}
-                <th className="num hippo-total-col">รวม</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pivot.rowOrder.map((rk) => (
-                <tr key={rk}>
-                  <td className="indicator-table-name"><span title={pivot.rowKeys.get(rk)}>{pivot.rowKeys.get(rk) ?? rk}</span></td>
-                  {pivot.colOrder.map((ck) => {
-                    const v = pivot.cells.get(`${rk}\u0000${ck}`) ?? 0;
-                    return <td key={ck} className="indicator-table-value num">{v > 0 ? v.toLocaleString("th-TH") : <span className="indicator-table-empty">-</span>}</td>;
-                  })}
-                  <td className="indicator-table-value num hippo-total-col"><strong>{(pivot.rowTotals.get(rk) ?? 0).toLocaleString("th-TH")}</strong></td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td><strong>รวมทั้งหมด</strong></td>
-                {pivot.colOrder.map((ck) => <td key={ck} className="num">{(pivot.colTotals.get(ck) ?? 0).toLocaleString("th-TH")}</td>)}
-                <td className="num hippo-total-col"><strong>{pivot.grandTotal.toLocaleString("th-TH")}</strong></td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      )}
-    </section>
-  );
-}
-
-type HippoDim = "ampur" | "facility" | "disease" | "typearea" | "age_band" | "source";
-
 const HIPPO_DIM_ICON: Record<HippoDim, typeof MapPin> = {
   ampur: MapPin,
   facility: Hospital,
-  disease: Brain,
+  category: Brain,
+  code: Layers,
   typearea: Layers,
   age_band: Users,
   source: Database,
 };
-const HIPPO_SOURCE_LABEL: Record<HippoRow["source"], string> = {
-  DIAGNOSIS_OPD: "จำแนกตามการวินิจฉัย (DIAGNOSIS_OPD)",
-  SPECIALPP: "ประเมินความเสี่ยง SMI-V (SPECIALPP)",
-};
 
-function HippoFieldChip({ dim, disabled }: { dim: HippoDim; disabled?: boolean }) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id: `field-${dim}`,
-    data: { dim },
-    disabled,
-  });
+function HippoFieldChip({ dim }: { dim: HippoDim }) {
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: `field-${dim}`, data: { dim } });
   const Icon = HIPPO_DIM_ICON[dim];
   const style = transform ? { transform: `translate(${transform.x}px, ${transform.y}px)`, zIndex: 50 } : undefined;
   return (
-    <button
-      ref={setNodeRef}
-      style={style}
-      {...listeners}
-      {...attributes}
-      type="button"
-      className={`hippo-field-chip${isDragging ? " is-dragging" : ""}${disabled ? " is-disabled" : ""}`}
-      title={disabled ? "ใช้ได้เมื่อเลือกระดับ รายกลุ่มโรค/รายรหัส" : "ลากไปวางที่แกนแถวหรือคอลัมน์"}
-    >
+    <button ref={setNodeRef} style={style} {...listeners} {...attributes} type="button"
+      className={`hippo-field-chip${isDragging ? " is-dragging" : ""}`} title="ลากไปวางที่แกนแถวหรือคอลัมน์">
       <GripVertical size={12} className="hippo-field-chip-grip" />
       <Icon size={13} />
       {HIPPO_DIM_LABEL[dim]}
@@ -4820,20 +4719,8 @@ function HippoFieldChip({ dim, disabled }: { dim: HippoDim; disabled?: boolean }
   );
 }
 
-function HippoShelfZone({
-  zoneId,
-  label,
-  icon: Icon,
-  activeDim,
-  onClear,
-  placeholder,
-}: {
-  zoneId: string;
-  label: string;
-  icon: typeof MapPin;
-  activeDim: HippoDim | "none";
-  onClear: () => void;
-  placeholder: string;
+function HippoShelfZone({ zoneId, label, icon: Icon, activeDim, onClear, placeholder }: {
+  zoneId: string; label: string; icon: typeof MapPin; activeDim: HippoDim | "none"; onClear: () => void; placeholder: string;
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: zoneId });
   const ActiveIcon = activeDim !== "none" ? HIPPO_DIM_ICON[activeDim] : null;
@@ -4854,35 +4741,25 @@ function HippoShelfZone({
 }
 
 function HippoHdcSection() {
-  const { rows, error } = useHippoData();
+  const { rows, error } = useHippoRecords();
 
-  const [level, setLevel] = useState<HippoRow["level"]>("category");
-  const [selSource, setSelSource] = useState<Set<HippoRow["source"]>>(new Set());
+  const [selSource, setSelSource] = useState<Set<string>>(new Set());
   const [selAmpur, setSelAmpur] = useState<Set<string>>(new Set());
   const [selFacility, setSelFacility] = useState<Set<string>>(new Set());
   const [facilitySearch, setFacilitySearch] = useState("");
-  const [selDisease, setSelDisease] = useState<Set<string>>(new Set());
+  const [selCategory, setSelCategory] = useState<Set<string>>(new Set());
+  const [selCode, setSelCode] = useState<Set<string>>(new Set());
+  const [codeSearch, setCodeSearch] = useState("");
   const [selTypearea, setSelTypearea] = useState<Set<string>>(new Set());
   const [selAgeBand, setSelAgeBand] = useState<Set<string>>(new Set());
   const [combineTypearea13, setCombineTypearea13] = useState(false);
   const [rowDim, setRowDim] = useState<HippoDim>("ampur");
-  const [colDim, setColDim] = useState<HippoDim | "none">("disease");
-  const [diseaseSearch, setDiseaseSearch] = useState("");
+  const [colDim, setColDim] = useState<HippoDim | "none">("category");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [excludeMode, setExcludeMode] = useState<Record<string, boolean>>({});
 
   const toggleExclude = (key: string) => setExcludeMode((prev) => ({ ...prev, [key]: !prev[key] }));
-
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
-
-  const handleLevelChange = (next: HippoRow["level"]) => {
-    setLevel(next);
-    if (next === "overall") {
-      setRowDim((d) => (d === "disease" ? "ampur" : d));
-      setColDim((d) => (d === "disease" ? "none" : d));
-    }
-    setSelDisease(new Set()); // options change shape (code vs category) — stale picks would silently mismatch
-  };
 
   const handleShelfDragEnd = (event: DragEndEvent) => {
     const dim = event.active.data.current?.dim as HippoDim | undefined;
@@ -4897,18 +4774,11 @@ function HippoHdcSection() {
     }
   };
 
-  // Scoped to current level (before user filters) — source is now a regular filter/pivot
-  // dimension rather than a hard split, so both sources flow through together by default.
-  const scoped = useMemo(() => {
-    if (!rows) return [];
-    return rows.filter((r) => r.level === level);
-  }, [rows, level]);
+  const safeRows = useMemo(() => rows ?? [], [rows]);
 
-  const singleSource = selSource.size === 1 ? Array.from(selSource)[0] : null;
-
-  const ampurOptions = useMemo(() => Array.from(new Set(scoped.map((r) => r.ampur))).sort((a, b) => a.localeCompare(b, "th")), [scoped]);
+  const ampurOptions = useMemo(() => Array.from(new Set(safeRows.map((r) => r.ampur))).sort((a, b) => a.localeCompare(b, "th")), [safeRows]);
   const facilityByAmpur = useMemo(() => {
-    const relevant = selAmpur.size > 0 ? scoped.filter((r) => selAmpur.has(r.ampur)) : scoped;
+    const relevant = selAmpur.size > 0 ? safeRows.filter((r) => selAmpur.has(r.ampur)) : safeRows;
     const groups = new Map<string, Map<string, { hoscode: string; hosname: string; ampur: string }>>();
     relevant.forEach((r) => {
       if (!r.hoscode) return;
@@ -4925,41 +4795,38 @@ function HippoHdcSection() {
       }))
       .filter((g) => g.facilities.length > 0)
       .sort((a, b) => a.ampur.localeCompare(b.ampur, "th"));
-  }, [scoped, selAmpur, facilitySearch]);
+  }, [safeRows, selAmpur, facilitySearch]);
   const facilityOptions = useMemo(() => facilityByAmpur.flatMap((g) => g.facilities), [facilityByAmpur]);
-  const diseaseOptions = useMemo(() => {
+
+  const categoryOptions = useMemo(() => Array.from(new Set(safeRows.map((r) => r.category))).sort((a, b) => a.localeCompare(b, "th")), [safeRows]);
+  const codeOptions = useMemo(() => {
+    const relevant = selCategory.size > 0 ? safeRows.filter((r) => selCategory.has(r.category)) : safeRows;
     const map = new Map<string, string>();
-    scoped.forEach((r) => {
-      const key = level === "code" ? r.code : r.category;
-      const label = level === "code" ? `${r.code} — ${r.category}` : r.category;
-      map.set(key, label);
-    });
-    return Array.from(map.entries()).sort((a, b) => a[1].localeCompare(b[1], "th"));
-  }, [scoped, level]);
+    relevant.forEach((r) => map.set(r.code, `${r.code} — ${r.category}`));
+    const search = codeSearch.trim().toLowerCase();
+    return Array.from(map.entries())
+      .filter(([, label]) => !search || label.toLowerCase().includes(search))
+      .sort((a, b) => a[1].localeCompare(b[1], "th"));
+  }, [safeRows, selCategory, codeSearch]);
   const typeareaOptions = useMemo(() => {
-    const set = new Set(scoped.map((r) => r.typearea));
-    return HIPPO_TYPEAREA_ORDER.filter((t) => set.has(t));
-  }, [scoped]);
+    const set = new Set(safeRows.map((r) => r.typearea));
+    return ["1", "2", "3", "4", "5", ""].filter((t) => set.has(t));
+  }, [safeRows]);
   const ageBandOptions = useMemo(() => {
-    const set = new Set(scoped.map((r) => r.age_band));
+    const set = new Set(safeRows.map((r) => r.age_band));
     return HIPPO_AGE_ORDER.filter((a) => set.has(a));
-  }, [scoped]);
+  }, [safeRows]);
 
   const toggleSet = (set: Set<string>, setter: (s: Set<string>) => void, value: string) => {
     const next = new Set(set);
     if (next.has(value)) next.delete(value); else next.add(value);
     setter(next);
   };
-  const selectAll = <T,>(setter: (s: Set<T>) => void, values: T[]) => setter(new Set(values));
-  const clearAll = <T,>(setter: (s: Set<T>) => void) => setter(new Set());
+  const selectAll = (setter: (s: Set<string>) => void, values: string[]) => setter(new Set(values));
+  const clearAll = (setter: (s: Set<string>) => void) => setter(new Set());
 
-  const toggleAmpur = (value: string) => {
-    toggleSet(selAmpur, setSelAmpur, value);
-    setSelFacility(new Set()); // facility list depends on selected อำเภอ — clear stale picks
-  };
-
-  const diseaseLabel = (r: HippoRow) => (level === "code" ? `${r.code}` : r.category);
-  const diseaseFullLabel = (r: HippoRow) => (level === "code" ? `${r.code} — ${r.category}` : r.category);
+  const toggleAmpur = (value: string) => { toggleSet(selAmpur, setSelAmpur, value); setSelFacility(new Set()); };
+  const toggleCategory = (value: string) => { toggleSet(selCategory, setSelCategory, value); setSelCode(new Set()); };
 
   const passSet = (excluded: boolean, sel: Set<string>, value: string) => {
     if (sel.size === 0) return true;
@@ -4968,51 +4835,46 @@ function HippoHdcSection() {
   };
 
   const filtered = useMemo(() => {
-    return scoped.filter((r) => {
-      if (!passSet(!!excludeMode.source, selSource as Set<string>, r.source)) return false;
+    return safeRows.filter((r) => {
+      if (!passSet(!!excludeMode.source, selSource, r.source)) return false;
       if (!passSet(!!excludeMode.ampur, selAmpur, r.ampur)) return false;
       if (!passSet(!!excludeMode.facility, selFacility, r.hoscode)) return false;
+      if (!passSet(!!excludeMode.category, selCategory, r.category)) return false;
+      if (!passSet(!!excludeMode.code, selCode, r.code)) return false;
       if (!passSet(!!excludeMode.typearea, selTypearea, r.typearea)) return false;
       if (!passSet(!!excludeMode.age_band, selAgeBand, r.age_band)) return false;
-      if (level !== "overall") {
-        const key = diseaseLabel(r);
-        if (!passSet(!!excludeMode.disease, selDisease, key)) return false;
-        if (diseaseSearch.trim() && !diseaseFullLabel(r).toLowerCase().includes(diseaseSearch.trim().toLowerCase())) return false;
-      }
       return true;
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scoped, selSource, selAmpur, selFacility, selTypearea, selAgeBand, selDisease, diseaseSearch, level, excludeMode]);
+  }, [safeRows, selSource, selAmpur, selFacility, selCategory, selCode, selTypearea, selAgeBand, excludeMode]);
 
-  const dimKeyOf = (r: HippoRow, dim: HippoDim): string => {
+  const dimKeyOf = (r: HippoRecord, dim: HippoDim): string => {
     if (dim === "ampur") return r.ampur;
     if (dim === "facility") return r.hoscode || "ไม่ทราบหน่วยบริการ";
-    if (dim === "disease") return level === "overall" ? "ทุกกลุ่มโรครวม" : diseaseLabel(r);
+    if (dim === "category") return r.category;
+    if (dim === "code") return r.code;
     if (dim === "age_band") return r.age_band;
     if (dim === "source") return r.source;
-    // typearea
     if (combineTypearea13 && (r.typearea === "1" || r.typearea === "3")) return "1+3";
     return r.typearea || "ไม่ทราบ";
   };
-  const dimLabelOf = (dim: HippoDim, key: string, r?: HippoRow): string => {
+  const dimLabelOf = (dim: HippoDim, key: string, r?: HippoRecord): string => {
     if (dim === "typearea") return key === "1+3" ? HIPPO_TYPEAREA_LABEL["1+3"] : (HIPPO_TYPEAREA_LABEL[key] ?? key);
     if (dim === "facility") return r?.hosname || key;
-    if (dim === "source") return HIPPO_SOURCE_LABEL[key as HippoRow["source"]] ?? key;
-    if (dim === "disease" && level === "code" && r) return `${r.code} — ${r.category}`;
+    if (dim === "source") return HIPPO_SOURCE_LABEL[key as HippoRecord["source"]] ?? key;
+    if (dim === "code" && r) return `${r.code} — ${r.category}`;
     return key;
   };
 
-  // Warn when marginalizing away the disease dimension at category/code level (risk of double-counting a
-  // multi-morbid person once per matching category/code).
-  const diseaseMarginalized = level !== "overall" && rowDim !== "disease" && colDim !== "disease" && (selDisease.size === 0 || selDisease.size > 1);
-
+  // Raw records + COUNT(DISTINCT person_id) per cell means every grouping is
+  // always accurate — no double-counting risk when marginalizing a dimension
+  // (unlike a pre-aggregated summary table), so no warning banner is needed.
   const pivot = useMemo(() => {
     const rowKeys = new Map<string, string>();
     const colKeys = new Map<string, string>();
-    const cells = new Map<string, number>();
-    const rowTotals = new Map<string, number>();
-    const colTotals = new Map<string, number>();
-    let grandTotal = 0;
+    const cellPeople = new Map<string, Set<string>>();
+    const rowPeople = new Map<string, Set<string>>();
+    const colPeople = new Map<string, Set<string>>();
+    const grandPeople = new Set<string>();
 
     for (const r of filtered) {
       const rk = dimKeyOf(r, rowDim);
@@ -5020,29 +4882,37 @@ function HippoHdcSection() {
       const ck = colDim === "none" ? "รวม" : dimKeyOf(r, colDim);
       if (colDim !== "none") colKeys.set(ck, dimLabelOf(colDim, ck, r));
       const cellKey = `${rk}\u0000${ck}`;
-      cells.set(cellKey, (cells.get(cellKey) ?? 0) + r.patient_count);
-      rowTotals.set(rk, (rowTotals.get(rk) ?? 0) + r.patient_count);
-      colTotals.set(ck, (colTotals.get(ck) ?? 0) + r.patient_count);
-      grandTotal += r.patient_count;
+      if (!cellPeople.has(cellKey)) cellPeople.set(cellKey, new Set());
+      cellPeople.get(cellKey)!.add(r.person_id);
+      if (!rowPeople.has(rk)) rowPeople.set(rk, new Set());
+      rowPeople.get(rk)!.add(r.person_id);
+      if (!colPeople.has(ck)) colPeople.set(ck, new Set());
+      colPeople.get(ck)!.add(r.person_id);
+      grandPeople.add(r.person_id);
     }
+
+    const cells = new Map<string, number>();
+    cellPeople.forEach((set, key) => cells.set(key, set.size));
+    const rowTotals = new Map<string, number>();
+    rowPeople.forEach((set, key) => rowTotals.set(key, set.size));
+    const colTotals = new Map<string, number>();
+    colPeople.forEach((set, key) => colTotals.set(key, set.size));
 
     const orderKeys = (dim: HippoDim | "none", keys: Map<string, string>) => {
       const arr = Array.from(keys.keys());
       if (dim === "age_band") return HIPPO_AGE_ORDER.filter((k) => arr.includes(k));
-      if (dim === "typearea") {
-        const order = ["1", "2", "3", "4", "5", "", "1+3"];
-        return order.filter((k) => arr.includes(k));
-      }
-      return arr.sort((a, b) => (rowTotals.get(a) !== undefined ? 0 : 0) || a.localeCompare(b, "th"));
+      if (dim === "typearea") return ["1", "2", "3", "4", "5", "", "1+3"].filter((k) => arr.includes(k));
+      if (dim === "category" || dim === "code") return arr.sort((a, b) => hippoCompareByClinicalOrder(dim, a, b));
+      return arr.sort((a, b) => a.localeCompare(b, "th"));
     };
 
     let rowOrder = orderKeys(rowDim, rowKeys);
     rowOrder = rowOrder.sort((a, b) => sortDir === "desc" ? (rowTotals.get(b)! - rowTotals.get(a)!) : (rowTotals.get(a)! - rowTotals.get(b)!));
     const colOrder = colDim === "none" ? ["รวม"] : orderKeys(colDim, colKeys);
 
-    return { rowOrder, colOrder, rowKeys, colKeys, cells, rowTotals, colTotals, grandTotal };
+    return { rowOrder, colOrder, rowKeys, colKeys, cells, rowTotals, colTotals, grandTotal: grandPeople.size };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filtered, rowDim, colDim, sortDir, combineTypearea13, level]);
+  }, [filtered, rowDim, colDim, sortDir, combineTypearea13]);
 
   const chartData = useMemo(
     () => pivot.rowOrder.slice(0, 12).map((k) => ({ label: pivot.rowKeys.get(k) ?? k, total: pivot.rowTotals.get(k) ?? 0 })),
@@ -5056,13 +4926,13 @@ function HippoHdcSection() {
       const values = pivot.colOrder.map((ck) => pivot.cells.get(`${rk}\u0000${ck}`) ?? 0);
       return [rowLabel, ...values, pivot.rowTotals.get(rk) ?? 0];
     });
-    downloadCsv(`hippo-hdc-${level}-${singleSource ?? "all-sources"}-${Date.now()}.csv`, headers, data);
+    downloadCsv(`hippo-hdc-${rowDim}-x-${colDim}-${Date.now()}.csv`, headers, data);
   };
 
   const resetFilters = () => {
     setSelSource(new Set()); setSelAmpur(new Set()); setSelFacility(new Set()); setFacilitySearch("");
-    setSelDisease(new Set()); setSelTypearea(new Set());
-    setSelAgeBand(new Set()); setDiseaseSearch(""); setCombineTypearea13(false);
+    setSelCategory(new Set()); setSelCode(new Set()); setCodeSearch("");
+    setSelTypearea(new Set()); setSelAgeBand(new Set()); setCombineTypearea13(false);
     setExcludeMode({});
   };
 
@@ -5072,7 +4942,7 @@ function HippoHdcSection() {
         <section className="panel hippo-placeholder-card">
           <span className="hippo-placeholder-icon"><CircleAlert size={34} strokeWidth={1.6} /></span>
           <h2>โหลดข้อมูลไม่สำเร็จ</h2>
-          <p>{error} — ตรวจสอบว่ามีไฟล์ <code>public/data/hippo-hdc-summary.csv</code> ในโปรเจกต์</p>
+          <p>{error} — ตรวจสอบว่ามีไฟล์ <code>public/data/hippo-hdc-records.csv</code> ในโปรเจกต์</p>
         </section>
       </motion.div>
     );
@@ -5084,7 +4954,7 @@ function HippoHdcSection() {
         <section className="panel hippo-placeholder-card">
           <span className="hippo-placeholder-icon"><Loader size={34} strokeWidth={1.6} className="hippo-spin" /></span>
           <h2>กำลังโหลดข้อมูล HIPPO HDC…</h2>
-          <p>กำลังอ่านไฟล์สรุปข้อมูลจาก 43 แฟ้ม (diagnosis_opd + specialpp)</p>
+          <p>กำลังอ่านไฟล์ raw record จาก 43 แฟ้ม (diagnosis_opd + specialpp)</p>
         </section>
       </motion.div>
     );
@@ -5094,66 +4964,49 @@ function HippoHdcSection() {
     <motion.div className="hippo-hdc-page" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45, ease }}>
       <div className="indicator-group-head">
         <span className="indicator-badge indicator-badge-overview"><Database size={13} /> HIPPO HDC</span>
-        <h2>Cross-tab Explorer — ตัวชี้วัด SMI-V ทั้งหมด</h2>
-        <p>ข้อมูลจาก 43 แฟ้ม (DIAGNOSIS_OPD จำแนกตามรหัส ICD-10-TM และ SPECIALPP รหัส 1B030–1B033, 1B036–1B037) หมุนดูได้ทุกมิติ: แหล่งข้อมูล, อำเภอ, หน่วยบริการ, กลุ่มโรค/รหัส, Typearea (1/2/3/4/1+3), ช่วงอายุ — ลากมิติวางแกนแถว/คอลัมน์ได้อิสระ</p>
+        <h2>Cross-tab Explorer — ข้อมูลดิบระดับ Record</h2>
+        <p>ข้อมูล raw record จาก 43 แฟ้ม ({safeRows.length.toLocaleString("th-TH")} แถว, ไม่ยุบรวมมาก่อน) — หมุนดูได้ทุกมิติ: แหล่งข้อมูล, อำเภอ, หน่วยบริการ, กลุ่มโรค, รหัสละเอียด, Typearea, ช่วงอายุ — ลากมิติวางแกนแถว/คอลัมน์ได้อิสระ นับคนไม่ซ้ำ (COUNT DISTINCT) ทุกมิติเสมอ</p>
       </div>
 
       <div className="hippo-live-caption">
         <span>กำลังแสดง:</span>
-        <strong>{level === "overall" ? "ภาพรวม (ไม่แยกโรค)" : level === "category" ? "รายกลุ่มโรค" : (singleSource === "SPECIALPP" ? "รายรหัส PPSPECIAL" : "รายรหัส ICD-10-TM/PPSPECIAL")}</strong>
-        <span className="hippo-live-caption-sep">·</span>
-        <strong>{singleSource ? HIPPO_SOURCE_LABEL[singleSource] : "ทุกแหล่งข้อมูล (DIAGNOSIS_OPD + SPECIALPP)"}</strong>
-        {(selSource.size > 0 || selAmpur.size > 0 || selFacility.size > 0 || selDisease.size > 0 || selTypearea.size > 0 || selAgeBand.size > 0) && (
-          <span className="hippo-live-caption-filters"><Funnel size={11} /> มีตัวกรองอยู่ {selSource.size + selAmpur.size + selFacility.size + selDisease.size + selTypearea.size + selAgeBand.size} รายการ</span>
+        <strong>{HIPPO_DIM_LABEL[rowDim]} × {colDim === "none" ? "รวม" : HIPPO_DIM_LABEL[colDim]}</strong>
+        {(selSource.size > 0 || selAmpur.size > 0 || selFacility.size > 0 || selCategory.size > 0 || selCode.size > 0 || selTypearea.size > 0 || selAgeBand.size > 0) && (
+          <span className="hippo-live-caption-filters"><Funnel size={11} /> มีตัวกรองอยู่ {selSource.size + selAmpur.size + selFacility.size + selCategory.size + selCode.size + selTypearea.size + selAgeBand.size} รายการ</span>
         )}
       </div>
 
       <section className="stats-grid" aria-label="สรุปข้อมูล HIPPO HDC">
-        <StatCard icon={Rows3} tone="indigo" label="แถวข้อมูลที่กรองแล้ว" value={filtered.length.toLocaleString("th-TH")} note={`จากทั้งหมด ${scoped.length.toLocaleString("th-TH")} แถว`} index={0} featured />
-        <StatCard icon={ArrowLeftRight} tone="blue" label="ผลรวมที่แสดง" value={pivot.grandTotal.toLocaleString("th-TH")} note={level === "overall" ? "ไม่ซ้ำคน (level: ภาพรวม)" : diseaseMarginalized ? "⚠️ อาจนับซ้ำ (รวมข้ามกลุ่มโรค)" : "ไม่ซ้ำคนในระดับที่เลือก"} index={1} />
+        <StatCard icon={Rows3} tone="indigo" label="แถวข้อมูล (record) ที่กรองแล้ว" value={filtered.length.toLocaleString("th-TH")} note={`จากทั้งหมด ${safeRows.length.toLocaleString("th-TH")} แถว`} index={0} featured />
+        <StatCard icon={ArrowLeftRight} tone="blue" label="จำนวนคนไม่ซ้ำ" value={pivot.grandTotal.toLocaleString("th-TH")} note="COUNT(DISTINCT person_id)" index={1} />
         <StatCard icon={Hospital} tone="teal" label="หน่วยบริการในผลลัพธ์" value={String(facilityOptions.length)} note={`${ampurOptions.length} อำเภอ`} index={2} />
-        <StatCard icon={Layers} tone="purple" label="กลุ่มโรค/รหัสในผลลัพธ์" value={String(diseaseOptions.length)} note={level === "code" ? (singleSource === "SPECIALPP" ? "รายรหัส PPSPECIAL" : "รายรหัส ICD-10-TM") : level === "category" ? "รายกลุ่มโรค" : "ไม่แยกกลุ่มโรค"} index={3} />
-      </section>
-
-      <section className="panel hippo-step-panel">
-        <div className="panel-heading">
-          <div>
-            <p className="eyebrow"><span className="hippo-step-badge">1</span> เลือกชุดข้อมูล</p>
-            <h2>ต้องการดูข้อมูลชุดไหน</h2>
-          </div>
-        </div>
-
-        <div className="hippo-control-row">
-          <span className="hippo-control-label">ระดับความละเอียด</span>
-          <div className="indicator-table-filters">
-            <button type="button" className={level === "overall" ? "active" : ""} onClick={() => handleLevelChange("overall")}>ภาพรวม (ไม่แยกโรค)</button>
-            <button type="button" className={level === "category" ? "active" : ""} onClick={() => handleLevelChange("category")}>รายกลุ่มโรค</button>
-            <button type="button" className={level === "code" ? "active" : ""} onClick={() => handleLevelChange("code")}>{singleSource === "SPECIALPP" ? "รายรหัส PPSPECIAL" : "รายรหัส ICD-10-TM/PPSPECIAL"}</button>
-          </div>
-        </div>
-
-        <div className="hippo-control-row">
-          <span className="hippo-control-label">แหล่งข้อมูล (เลือกได้มากกว่า 1, ไม่เลือก = ทั้งหมด)
-            {selSource.size > 0 && (
-              <button type="button" className={`hippo-exclude-toggle${excludeMode.source ? " is-exclude" : ""}`} onClick={() => toggleExclude("source")}>
-                <EyeOff size={11} /> {excludeMode.source ? "กำลังตัดออก" : "ตัดออก"}
-              </button>
-            )}
-          </span>
-          <div className="indicator-table-filters">
-            <button type="button" className={selSource.has("DIAGNOSIS_OPD") ? "active" : ""} onClick={() => toggleSet(selSource as Set<string>, setSelSource as (s: Set<string>) => void, "DIAGNOSIS_OPD")}><Brain size={13} /> จำแนกตามการวินิจฉัย (DIAGNOSIS_OPD)</button>
-            <button type="button" className={selSource.has("SPECIALPP") ? "active" : ""} onClick={() => toggleSet(selSource as Set<string>, setSelSource as (s: Set<string>) => void, "SPECIALPP")}><ShieldCheck size={13} /> ประเมินความเสี่ยง SMI-V (SPECIALPP 1B030-1B033, 1B036-1B037)</button>
-          </div>
-        </div>
+        <StatCard icon={Layers} tone="purple" label="รหัสละเอียดในผลลัพธ์" value={String(codeOptions.length)} note={`${categoryOptions.length} กลุ่มโรค/SMI-V`} index={3} />
       </section>
 
       <section className="panel hippo-step-panel hippo-filters-panel">
         <div className="panel-heading">
           <div>
-            <p className="eyebrow"><span className="hippo-step-badge">2</span> กรองข้อมูล</p>
+            <p className="eyebrow"><span className="hippo-step-badge">1</span> กรองข้อมูล</p>
             <h2>เลือกขอบเขตที่ต้องการ (ไม่เลือก = แสดงทั้งหมด)</h2>
           </div>
           <button type="button" className="soft-button" onClick={resetFilters}><RotateCcw size={13} /> ล้างตัวกรองทั้งหมด</button>
+        </div>
+
+        <div className="hippo-filter-section">
+          <p className="hippo-filter-section-title"><Database size={12} /> แหล่งข้อมูล</p>
+          <div className="hippo-filter-group">
+            <span className="hippo-filter-title">
+              {selSource.size > 0 && (
+                <button type="button" className={`hippo-exclude-toggle${excludeMode.source ? " is-exclude" : ""}`} onClick={() => toggleExclude("source")}>
+                  <EyeOff size={11} /> {excludeMode.source ? "กำลังตัดออก" : "ตัดออก"}
+                </button>
+              )}
+            </span>
+            <div className="indicator-table-filters">
+              <button type="button" className={selSource.has("DIAGNOSIS_OPD") ? "active" : ""} onClick={() => toggleSet(selSource, setSelSource, "DIAGNOSIS_OPD")}><Brain size={13} /> จำแนกตามการวินิจฉัย (DIAGNOSIS_OPD)</button>
+              <button type="button" className={selSource.has("SPECIALPP") ? "active" : ""} onClick={() => toggleSet(selSource, setSelSource, "SPECIALPP")}><ShieldCheck size={13} /> ประเมินความเสี่ยง SMI-V (SPECIALPP)</button>
+            </div>
+          </div>
         </div>
 
         <div className="hippo-filter-section">
@@ -5216,35 +5069,52 @@ function HippoHdcSection() {
           </div>
         </div>
 
-        {level !== "overall" && (
-          <div className="hippo-filter-section">
-            <p className="hippo-filter-section-title"><Brain size={12} /> ทางคลินิก</p>
-            <div className="hippo-filter-groups">
-              <div className="hippo-filter-group hippo-filter-group-wide">
-                <span className="hippo-filter-title">{level === "code" ? "รหัส ICD-10-TM / PPSPECIAL (พร้อมชื่อกลุ่มโรค)" : "กลุ่มโรค"} {selDisease.size > 0 && <b>({selDisease.size})</b>}
-                  {selDisease.size > 0 && (
-                    <button type="button" className={`hippo-exclude-toggle${excludeMode.disease ? " is-exclude" : ""}`} onClick={() => toggleExclude("disease")}>
-                      <EyeOff size={11} /> {excludeMode.disease ? "กำลังตัดออก" : "ตัดออก"}
-                    </button>
-                  )}
-                </span>
-                <div className="hippo-mini-search">
-                  <Search size={13} />
-                  <input type="text" placeholder="ค้นหา..." value={diseaseSearch} onChange={(e) => setDiseaseSearch(e.target.value)} />
-                </div>
-                <div className="hippo-select-all-row">
-                  <button type="button" className="hippo-select-all-btn" onClick={() => selectAll(setSelDisease, diseaseOptions.map(([k]) => k))}>เลือกทั้งหมด</button>
-                  <button type="button" className="hippo-select-all-btn" onClick={() => clearAll(setSelDisease)}>ล้าง</button>
-                </div>
-                <div className="hippo-chip-list hippo-chip-list-scroll">
-                  {diseaseOptions.map(([key, label]) => (
-                    <button key={key} type="button" className={selDisease.has(key) ? "active" : ""} onClick={() => toggleSet(selDisease, setSelDisease, key)}>{label}</button>
-                  ))}
-                </div>
+        <div className="hippo-filter-section">
+          <p className="hippo-filter-section-title"><Brain size={12} /> ทางคลินิก</p>
+          <div className="hippo-filter-groups">
+            <div className="hippo-filter-group hippo-filter-group-wide">
+              <span className="hippo-filter-title">กลุ่มโรค/SMI-V {selCategory.size > 0 && <b>({selCategory.size})</b>}
+                {selCategory.size > 0 && (
+                  <button type="button" className={`hippo-exclude-toggle${excludeMode.category ? " is-exclude" : ""}`} onClick={() => toggleExclude("category")}>
+                    <EyeOff size={11} /> {excludeMode.category ? "กำลังตัดออก" : "ตัดออก"}
+                  </button>
+                )}
+              </span>
+              <div className="hippo-select-all-row">
+                <button type="button" className="hippo-select-all-btn" onClick={() => selectAll(setSelCategory, categoryOptions)}>เลือกทั้งหมด</button>
+                <button type="button" className="hippo-select-all-btn" onClick={() => { clearAll(setSelCategory); setSelCode(new Set()); }}>ล้าง</button>
+              </div>
+              <div className="hippo-chip-list hippo-chip-list-scroll">
+                {categoryOptions.map((c) => (
+                  <button key={c} type="button" className={selCategory.has(c) ? "active" : ""} onClick={() => toggleCategory(c)}>{c}</button>
+                ))}
+              </div>
+            </div>
+
+            <div className="hippo-filter-group hippo-filter-group-wide">
+              <span className="hippo-filter-title">รหัสละเอียด (ICD-10-TM/PPSPECIAL) {selCode.size > 0 && <b>({selCode.size})</b>}
+                {selCode.size > 0 && (
+                  <button type="button" className={`hippo-exclude-toggle${excludeMode.code ? " is-exclude" : ""}`} onClick={() => toggleExclude("code")}>
+                    <EyeOff size={11} /> {excludeMode.code ? "กำลังตัดออก" : "ตัดออก"}
+                  </button>
+                )}
+              </span>
+              <div className="hippo-mini-search">
+                <Search size={13} />
+                <input type="text" placeholder="ค้นหารหัส/ชื่อกลุ่มโรค..." value={codeSearch} onChange={(e) => setCodeSearch(e.target.value)} />
+              </div>
+              <div className="hippo-select-all-row">
+                <button type="button" className="hippo-select-all-btn" onClick={() => selectAll(setSelCode, codeOptions.map(([key]) => key))}>เลือกทั้งหมด</button>
+                <button type="button" className="hippo-select-all-btn" onClick={() => clearAll(setSelCode)}>ล้าง</button>
+              </div>
+              <div className="hippo-chip-list hippo-chip-list-scroll">
+                {codeOptions.map(([key, label]) => (
+                  <button key={key} type="button" className={selCode.has(key) ? "active" : ""} onClick={() => toggleSet(selCode, setSelCode, key)}>{label}</button>
+                ))}
               </div>
             </div>
           </div>
-        )}
+        </div>
 
         <div className="hippo-filter-section">
           <p className="hippo-filter-section-title"><Users size={12} /> กลุ่มประชากร</p>
@@ -5299,8 +5169,8 @@ function HippoHdcSection() {
       <section className="panel hippo-step-panel">
         <div className="panel-heading">
           <div>
-            <p className="eyebrow"><span className="hippo-step-badge">3</span> จัดรูปแบบมุมมอง</p>
-            <h2>ลากมิติข้อมูลไปวางที่แกนแถว/คอลัมน์</h2>
+            <p className="eyebrow"><span className="hippo-step-badge">2</span> จัดรูปแบบมุมมอง</p>
+            <h2>ลากมิติข้อมูลไปวางที่แกนแถว/คอลัมน์ (หมุนได้ทุกมิติ)</h2>
           </div>
         </div>
 
@@ -5310,7 +5180,8 @@ function HippoHdcSection() {
             <div className="hippo-shelf-fields-list">
               <HippoFieldChip dim="ampur" />
               <HippoFieldChip dim="facility" />
-              <HippoFieldChip dim="disease" disabled={level === "overall"} />
+              <HippoFieldChip dim="category" />
+              <HippoFieldChip dim="code" />
               <HippoFieldChip dim="typearea" />
               <HippoFieldChip dim="age_band" />
               <HippoFieldChip dim="source" />
@@ -5318,29 +5189,11 @@ function HippoHdcSection() {
           </div>
 
           <div className="hippo-shelf-zones">
-            <HippoShelfZone
-              zoneId="shelf-row"
-              label="แกนแถว"
-              icon={Rows3}
-              activeDim={rowDim}
-              placeholder="ลากมิติมาวางที่นี่"
-              onClear={() => setRowDim("ampur")}
-            />
+            <HippoShelfZone zoneId="shelf-row" label="แกนแถว" icon={Rows3} activeDim={rowDim} placeholder="ลากมิติมาวางที่นี่" onClear={() => setRowDim("ampur")} />
             <ArrowLeftRight size={18} className="hippo-axis-swap-icon" />
-            <HippoShelfZone
-              zoneId="shelf-col"
-              label="แกนคอลัมน์"
-              icon={Columns3}
-              activeDim={colDim}
-              placeholder="— ไม่แยกคอลัมน์ —"
-              onClear={() => setColDim("none")}
-            />
+            <HippoShelfZone zoneId="shelf-col" label="แกนคอลัมน์" icon={Columns3} activeDim={colDim} placeholder="— ไม่แยกคอลัมน์ —" onClear={() => setColDim("none")} />
           </div>
         </DndContext>
-
-        {diseaseMarginalized && (
-          <p className="hippo-warning"><CircleAlert size={13} /> แกนที่เลือกไม่ได้แยกตามกลุ่มโรค/รหัส และเลือกไว้มากกว่า 1 กลุ่ม — ตัวเลขรวมอาจ<strong>นับคนซ้ำ</strong> (คนหนึ่งอาจมีหลายกลุ่มโรค) หากต้องการยอดรวมที่ไม่ซ้ำคน ให้เปลี่ยนระดับข้อมูลเป็น &quot;ภาพรวม&quot; แทน</p>
-        )}
       </section>
 
       <div className="overview-two-col">
@@ -5437,8 +5290,6 @@ function HippoHdcSection() {
           </table>
         </div>
       </section>
-
-      <HippoCrosstabSection />
     </motion.div>
   );
 }
