@@ -4487,6 +4487,7 @@ type HippoRecord = {
   hosname: string;
   code: string;
   category: string;
+  date_serv: string; // "YYYY-MM-DD", may be "" if unknown
   typearea: string;
   typearea_label: string;
   age_band: string;
@@ -4642,6 +4643,7 @@ function useHippoRecords() {
         const idx = (key: string) => header.indexOf(key);
         const iPerson = idx("person_id"), iSource = idx("source"), iAmpur = idx("ampur"),
           iHoscode = idx("HOSCODE"), iHosname = idx("HOSNAME"), iCode = idx("code"),
+          iDateServ = idx("date_serv"),
           iTypearea = idx("typearea"), iTypeareaLabel = idx("typearea_label"), iAgeBand = idx("age_band");
         const parsed: HippoRecord[] = table.slice(1)
           .filter((r) => r.length >= header.length && r[iAmpur])
@@ -4657,6 +4659,7 @@ function useHippoRecords() {
               hosname: r[iHosname] ?? "",
               code,
               category,
+              date_serv: iDateServ >= 0 ? (r[iDateServ] ?? "") : "",
               typearea: r[iTypearea],
               typearea_label: r[iTypeareaLabel],
               age_band: r[iAgeBand],
@@ -4752,6 +4755,8 @@ function HippoHdcSection() {
   const [codeSearch, setCodeSearch] = useState("");
   const [selTypearea, setSelTypearea] = useState<Set<string>>(new Set());
   const [selAgeBand, setSelAgeBand] = useState<Set<string>>(new Set());
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [combineTypearea13, setCombineTypearea13] = useState(false);
   const [rowDim, setRowDim] = useState<HippoDim>("ampur");
   const [colDim, setColDim] = useState<HippoDim | "none">("category");
@@ -4777,6 +4782,16 @@ function HippoHdcSection() {
   const safeRows = useMemo(() => rows ?? [], [rows]);
 
   const ampurOptions = useMemo(() => Array.from(new Set(safeRows.map((r) => r.ampur))).sort((a, b) => a.localeCompare(b, "th")), [safeRows]);
+  const dateBounds = useMemo(() => {
+    let min = "";
+    let max = "";
+    for (const r of safeRows) {
+      if (!r.date_serv) continue;
+      if (!min || r.date_serv < min) min = r.date_serv;
+      if (!max || r.date_serv > max) max = r.date_serv;
+    }
+    return { min, max };
+  }, [safeRows]);
   const facilityByAmpur = useMemo(() => {
     const relevant = selAmpur.size > 0 ? safeRows.filter((r) => selAmpur.has(r.ampur)) : safeRows;
     const groups = new Map<string, Map<string, { hoscode: string; hosname: string; ampur: string }>>();
@@ -4843,9 +4858,11 @@ function HippoHdcSection() {
       if (!passSet(!!excludeMode.code, selCode, r.code)) return false;
       if (!passSet(!!excludeMode.typearea, selTypearea, r.typearea)) return false;
       if (!passSet(!!excludeMode.age_band, selAgeBand, r.age_band)) return false;
+      if (dateFrom && (!r.date_serv || r.date_serv < dateFrom)) return false;
+      if (dateTo && (!r.date_serv || r.date_serv > dateTo)) return false;
       return true;
     });
-  }, [safeRows, selSource, selAmpur, selFacility, selCategory, selCode, selTypearea, selAgeBand, excludeMode]);
+  }, [safeRows, selSource, selAmpur, selFacility, selCategory, selCode, selTypearea, selAgeBand, dateFrom, dateTo, excludeMode]);
 
   const dimKeyOf = (r: HippoRecord, dim: HippoDim): string => {
     if (dim === "ampur") return r.ampur;
@@ -4933,6 +4950,7 @@ function HippoHdcSection() {
     setSelSource(new Set()); setSelAmpur(new Set()); setSelFacility(new Set()); setFacilitySearch("");
     setSelCategory(new Set()); setSelCode(new Set()); setCodeSearch("");
     setSelTypearea(new Set()); setSelAgeBand(new Set()); setCombineTypearea13(false);
+    setDateFrom(""); setDateTo("");
     setExcludeMode({});
   };
 
@@ -4971,8 +4989,8 @@ function HippoHdcSection() {
       <div className="hippo-live-caption">
         <span>กำลังแสดง:</span>
         <strong>{HIPPO_DIM_LABEL[rowDim]} × {colDim === "none" ? "รวม" : HIPPO_DIM_LABEL[colDim]}</strong>
-        {(selSource.size > 0 || selAmpur.size > 0 || selFacility.size > 0 || selCategory.size > 0 || selCode.size > 0 || selTypearea.size > 0 || selAgeBand.size > 0) && (
-          <span className="hippo-live-caption-filters"><Funnel size={11} /> มีตัวกรองอยู่ {selSource.size + selAmpur.size + selFacility.size + selCategory.size + selCode.size + selTypearea.size + selAgeBand.size} รายการ</span>
+        {(selSource.size > 0 || selAmpur.size > 0 || selFacility.size > 0 || selCategory.size > 0 || selCode.size > 0 || selTypearea.size > 0 || selAgeBand.size > 0 || dateFrom || dateTo) && (
+          <span className="hippo-live-caption-filters"><Funnel size={11} /> มีตัวกรองอยู่ {selSource.size + selAmpur.size + selFacility.size + selCategory.size + selCode.size + selTypearea.size + selAgeBand.size + (dateFrom || dateTo ? 1 : 0)} รายการ</span>
         )}
       </div>
 
@@ -5006,6 +5024,29 @@ function HippoHdcSection() {
               <button type="button" className={selSource.has("DIAGNOSIS_OPD") ? "active" : ""} onClick={() => toggleSet(selSource, setSelSource, "DIAGNOSIS_OPD")}><Brain size={13} /> จำแนกตามการวินิจฉัย (DIAGNOSIS_OPD)</button>
               <button type="button" className={selSource.has("SPECIALPP") ? "active" : ""} onClick={() => toggleSet(selSource, setSelSource, "SPECIALPP")}><ShieldCheck size={13} /> ประเมินความเสี่ยง SMI-V (SPECIALPP)</button>
             </div>
+          </div>
+        </div>
+
+        <div className="hippo-filter-section">
+          <p className="hippo-filter-section-title"><CalendarClock size={12} /> ช่วงวันที่ให้บริการ (DATE_SERV)</p>
+          <div className="hippo-filter-group">
+            <div className="hippo-date-range-row">
+              <label className="hippo-date-field">
+                <span>ตั้งแต่วันที่</span>
+                <input type="date" value={dateFrom} min={dateBounds.min} max={dateBounds.max} onChange={(e) => setDateFrom(e.target.value)} />
+              </label>
+              <ArrowLeftRight size={14} className="hippo-axis-swap-icon" />
+              <label className="hippo-date-field">
+                <span>ถึงวันที่</span>
+                <input type="date" value={dateTo} min={dateBounds.min} max={dateBounds.max} onChange={(e) => setDateTo(e.target.value)} />
+              </label>
+              {(dateFrom || dateTo) && (
+                <button type="button" className="hippo-select-all-btn" onClick={() => { setDateFrom(""); setDateTo(""); }}>ล้างช่วงวันที่</button>
+              )}
+            </div>
+            {dateBounds.min && dateBounds.max && (
+              <p className="hippo-crosstab-note">ข้อมูลมีตั้งแต่ {dateBounds.min} ถึง {dateBounds.max} — เว้นว่างช่องใดช่องหนึ่งเพื่อไม่จำกัดฝั่งนั้น</p>
+            )}
           </div>
         </div>
 

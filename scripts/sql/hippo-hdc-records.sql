@@ -31,6 +31,8 @@
 --   code           -> EXACT diagcode (DIAGNOSIS_OPD, full code incl.
 --                      decimal e.g. 'F32.1') or ppspecial (SPECIALPP,
 --                      e.g. '1B030') — raw, ungrouped
+--   date_serv      -> วันที่ให้บริการ (YYYY-MM-DD) — เพิ่มเพื่อให้ frontend
+--                      กรองตามช่วงวันที่ได้ (date range filter)
 --   typearea       -> 1 | 2 | 3 | 4 | 9 (raw person.TYPEAREA code)
 --   typearea_label -> Thai label for the above
 --   age_band       -> 0-14 / 15-29 / 30-44 / 45-59 / 60-74 / 75+ / ไม่ทราบ
@@ -75,7 +77,7 @@ WITH dx_base AS (
 -- used here as an inclusion filter instead of a re-label.
 dx_scoped AS (
     SELECT
-        ampurname, hoscode, hosname, person_key, typearea, diagcode_raw,
+        ampurname, hoscode, hosname, person_key, typearea, diagcode_raw, date_serv,
         date_diff('year', birth, date_serv) AS age_years,
         CASE WHEN diagcode_norm LIKE 'F341%' THEN 'F341'
              WHEN diagcode_norm LIKE 'F638%' THEN 'F638'
@@ -89,6 +91,7 @@ dx_records AS (
         'DIAGNOSIS_OPD' AS source,
         ampurname AS ampur, hoscode, hosname,
         diagcode_raw AS code,
+        date_serv,
         typearea,
         CASE
             WHEN age_years IS NULL THEN 'ไม่ทราบ'
@@ -147,6 +150,7 @@ pp_records AS (
         'SPECIALPP' AS source,
         ampurname AS ampur, hoscode, hosname,
         code,
+        date_serv,
         typearea,
         CASE
             WHEN date_diff('year', birth, date_serv) IS NULL THEN 'ไม่ทราบ'
@@ -170,7 +174,7 @@ all_records AS (
 with_anon_id AS (
     SELECT
         dense_rank() OVER (ORDER BY person_key) AS person_id,
-        source, ampur, hoscode, hosname, code, typearea, age_band
+        source, ampur, hoscode, hosname, code, date_serv, typearea, age_band
     FROM all_records
 )
 
@@ -181,6 +185,7 @@ SELECT
     hoscode,
     hosname,
     code,
+    date_serv,
     typearea,
     CASE typearea
         WHEN '1' THEN '1: ในเขต มีชื่อ+อยู่จริง'
