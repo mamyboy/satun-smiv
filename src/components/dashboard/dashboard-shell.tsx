@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { DndContext, PointerSensor, useDraggable, useDroppable, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
 import {
   Activity,
   ArrowDown,
@@ -20,12 +21,15 @@ import {
   CircleAlert,
   ClipboardList,
   Clock,
+  Columns3,
   Command,
   Database,
   Download,
+  EyeOff,
   ExternalLink,
   Funnel,
   Gauge,
+  GripVertical,
   HeartCrack,
   HeartPulse,
   Hospital,
@@ -4584,6 +4588,72 @@ function downloadCsv(filename: string, headers: string[], data: (string | number
 
 type HippoDim = "ampur" | "facility" | "disease" | "typearea" | "age_band";
 
+const HIPPO_DIM_ICON: Record<HippoDim, typeof MapPin> = {
+  ampur: MapPin,
+  facility: Hospital,
+  disease: Brain,
+  typearea: Layers,
+  age_band: Users,
+};
+
+function HippoFieldChip({ dim, disabled }: { dim: HippoDim; disabled?: boolean }) {
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: `field-${dim}`,
+    data: { dim },
+    disabled,
+  });
+  const Icon = HIPPO_DIM_ICON[dim];
+  const style = transform ? { transform: `translate(${transform.x}px, ${transform.y}px)`, zIndex: 50 } : undefined;
+  return (
+    <button
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
+      type="button"
+      className={`hippo-field-chip${isDragging ? " is-dragging" : ""}${disabled ? " is-disabled" : ""}`}
+      title={disabled ? "ใช้ได้เมื่อเลือกระดับ รายกลุ่มโรค/รายรหัส" : "ลากไปวางที่แกนแถวหรือคอลัมน์"}
+    >
+      <GripVertical size={12} className="hippo-field-chip-grip" />
+      <Icon size={13} />
+      {HIPPO_DIM_LABEL[dim]}
+    </button>
+  );
+}
+
+function HippoShelfZone({
+  zoneId,
+  label,
+  icon: Icon,
+  activeDim,
+  onClear,
+  placeholder,
+}: {
+  zoneId: string;
+  label: string;
+  icon: typeof MapPin;
+  activeDim: HippoDim | "none";
+  onClear: () => void;
+  placeholder: string;
+}) {
+  const { setNodeRef, isOver } = useDroppable({ id: zoneId });
+  const ActiveIcon = activeDim !== "none" ? HIPPO_DIM_ICON[activeDim] : null;
+  return (
+    <div ref={setNodeRef} className={`hippo-shelf-zone${isOver ? " is-over" : ""}${activeDim !== "none" ? " has-value" : ""}`}>
+      <span className="hippo-shelf-zone-label"><Icon size={13} /> {label}</span>
+      {activeDim !== "none" ? (
+        <div className="hippo-shelf-zone-value">
+          {ActiveIcon && <ActiveIcon size={13} />}
+          <span>{HIPPO_DIM_LABEL[activeDim]}</span>
+          <button type="button" className="hippo-shelf-zone-clear" onClick={onClear} aria-label="ล้างแกนนี้"><X size={12} /></button>
+        </div>
+      ) : (
+        <div className="hippo-shelf-zone-empty">{placeholder}</div>
+      )}
+    </div>
+  );
+}
+
 function HippoHdcSection() {
   const { rows, error } = useHippoData();
 
@@ -4600,6 +4670,32 @@ function HippoHdcSection() {
   const [colDim, setColDim] = useState<HippoDim | "none">("disease");
   const [diseaseSearch, setDiseaseSearch] = useState("");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const [excludeMode, setExcludeMode] = useState<Record<string, boolean>>({});
+
+  const toggleExclude = (key: string) => setExcludeMode((prev) => ({ ...prev, [key]: !prev[key] }));
+
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
+
+  const handleLevelChange = (next: HippoRow["level"]) => {
+    setLevel(next);
+    if (next === "overall") {
+      setRowDim((d) => (d === "disease" ? "ampur" : d));
+      setColDim((d) => (d === "disease" ? "none" : d));
+    }
+  };
+
+  const handleShelfDragEnd = (event: DragEndEvent) => {
+    const dim = event.active.data.current?.dim as HippoDim | undefined;
+    const zone = event.over?.id as string | undefined;
+    if (!dim || !zone) return;
+    if (zone === "shelf-row") {
+      if (colDim === dim) setColDim(rowDim === dim ? "none" : rowDim);
+      setRowDim(dim);
+    } else if (zone === "shelf-col") {
+      if (rowDim === dim) setRowDim(colDim === dim ? "ampur" : (colDim as HippoDim));
+      setColDim(dim);
+    }
+  };
 
   // Scoped to current level + source (before user filters) — drives the available filter options.
   const scoped = useMemo(() => {
@@ -4643,21 +4739,27 @@ function HippoHdcSection() {
   const diseaseLabel = (r: HippoRow) => (level === "code" ? `${r.code}` : r.category);
   const diseaseFullLabel = (r: HippoRow) => (level === "code" ? `${r.code} — ${r.category}` : r.category);
 
+  const passSet = (excluded: boolean, sel: Set<string>, value: string) => {
+    if (sel.size === 0) return true;
+    const has = sel.has(value);
+    return excluded ? !has : has;
+  };
+
   const filtered = useMemo(() => {
     return scoped.filter((r) => {
-      if (selAmpur.size > 0 && !selAmpur.has(r.ampur)) return false;
-      if (selFacility.size > 0 && !selFacility.has(r.hoscode)) return false;
-      if (selTypearea.size > 0 && !selTypearea.has(r.typearea)) return false;
-      if (selAgeBand.size > 0 && !selAgeBand.has(r.age_band)) return false;
+      if (!passSet(!!excludeMode.ampur, selAmpur, r.ampur)) return false;
+      if (!passSet(!!excludeMode.facility, selFacility, r.hoscode)) return false;
+      if (!passSet(!!excludeMode.typearea, selTypearea, r.typearea)) return false;
+      if (!passSet(!!excludeMode.age_band, selAgeBand, r.age_band)) return false;
       if (level !== "overall") {
         const key = diseaseLabel(r);
-        if (selDisease.size > 0 && !selDisease.has(key)) return false;
+        if (!passSet(!!excludeMode.disease, selDisease, key)) return false;
         if (diseaseSearch.trim() && !diseaseFullLabel(r).toLowerCase().includes(diseaseSearch.trim().toLowerCase())) return false;
       }
       return true;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scoped, selAmpur, selFacility, selTypearea, selAgeBand, selDisease, diseaseSearch, level]);
+  }, [scoped, selAmpur, selFacility, selTypearea, selAgeBand, selDisease, diseaseSearch, level, excludeMode]);
 
   const dimKeyOf = (r: HippoRow, dim: HippoDim): string => {
     if (dim === "ampur") return r.ampur;
@@ -4735,6 +4837,7 @@ function HippoHdcSection() {
     setSelAmpur(new Set()); setSelFacility(new Set()); setFacilitySearch("");
     setSelDisease(new Set()); setSelTypearea(new Set());
     setSelAgeBand(new Set()); setDiseaseSearch(""); setCombineTypearea13(false);
+    setExcludeMode({});
   };
 
   if (error) {
@@ -4797,9 +4900,9 @@ function HippoHdcSection() {
         <div className="hippo-control-row">
           <span className="hippo-control-label">ระดับความละเอียด</span>
           <div className="indicator-table-filters">
-            <button type="button" className={level === "overall" ? "active" : ""} onClick={() => setLevel("overall")}>ภาพรวม (ไม่แยกโรค)</button>
-            <button type="button" className={level === "category" ? "active" : ""} onClick={() => setLevel("category")}>รายกลุ่มโรค</button>
-            <button type="button" className={level === "code" ? "active" : ""} onClick={() => setLevel("code")}>{source === "SPECIALPP" ? "รายรหัส PPSPECIAL" : "รายรหัส ICD-10-TM"}</button>
+            <button type="button" className={level === "overall" ? "active" : ""} onClick={() => handleLevelChange("overall")}>ภาพรวม (ไม่แยกโรค)</button>
+            <button type="button" className={level === "category" ? "active" : ""} onClick={() => handleLevelChange("category")}>รายกลุ่มโรค</button>
+            <button type="button" className={level === "code" ? "active" : ""} onClick={() => handleLevelChange("code")}>{source === "SPECIALPP" ? "รายรหัส PPSPECIAL" : "รายรหัส ICD-10-TM"}</button>
           </div>
         </div>
 
@@ -4825,7 +4928,13 @@ function HippoHdcSection() {
           <p className="hippo-filter-section-title"><MapPin size={12} /> พื้นที่</p>
           <div className="hippo-filter-groups">
             <div className="hippo-filter-group">
-              <span className="hippo-filter-title">อำเภอ {selAmpur.size > 0 && <b>({selAmpur.size})</b>}</span>
+              <span className="hippo-filter-title">อำเภอ {selAmpur.size > 0 && <b>({selAmpur.size})</b>}
+                {selAmpur.size > 0 && (
+                  <button type="button" className={`hippo-exclude-toggle${excludeMode.ampur ? " is-exclude" : ""}`} onClick={() => toggleExclude("ampur")}>
+                    <EyeOff size={11} /> {excludeMode.ampur ? "กำลังตัดออก" : "ตัดออก"}
+                  </button>
+                )}
+              </span>
               <div className="hippo-chip-list">
                 {ampurOptions.map((a) => (
                   <button key={a} type="button" className={selAmpur.has(a) ? "active" : ""} onClick={() => toggleAmpur(a)}>{a}</button>
@@ -4834,7 +4943,13 @@ function HippoHdcSection() {
             </div>
 
             <div className="hippo-filter-group">
-              <span className="hippo-filter-title">หน่วยบริการ {selFacility.size > 0 && <b>({selFacility.size})</b>}</span>
+              <span className="hippo-filter-title">หน่วยบริการ {selFacility.size > 0 && <b>({selFacility.size})</b>}
+                {selFacility.size > 0 && (
+                  <button type="button" className={`hippo-exclude-toggle${excludeMode.facility ? " is-exclude" : ""}`} onClick={() => toggleExclude("facility")}>
+                    <EyeOff size={11} /> {excludeMode.facility ? "กำลังตัดออก" : "ตัดออก"}
+                  </button>
+                )}
+              </span>
               <div className="hippo-mini-search">
                 <Search size={13} />
                 <input type="text" placeholder="ค้นหาชื่อ/รหัสหน่วยบริการ..." value={facilitySearch} onChange={(e) => setFacilitySearch(e.target.value)} />
@@ -4856,7 +4971,13 @@ function HippoHdcSection() {
             <p className="hippo-filter-section-title"><Brain size={12} /> ทางคลินิก</p>
             <div className="hippo-filter-groups">
               <div className="hippo-filter-group hippo-filter-group-wide">
-                <span className="hippo-filter-title">{level === "code" ? "รหัส ICD-10-TM / PPSPECIAL" : "กลุ่มโรค"} {selDisease.size > 0 && <b>({selDisease.size})</b>}</span>
+                <span className="hippo-filter-title">{level === "code" ? "รหัส ICD-10-TM / PPSPECIAL" : "กลุ่มโรค"} {selDisease.size > 0 && <b>({selDisease.size})</b>}
+                  {selDisease.size > 0 && (
+                    <button type="button" className={`hippo-exclude-toggle${excludeMode.disease ? " is-exclude" : ""}`} onClick={() => toggleExclude("disease")}>
+                      <EyeOff size={11} /> {excludeMode.disease ? "กำลังตัดออก" : "ตัดออก"}
+                    </button>
+                  )}
+                </span>
                 <div className="hippo-mini-search">
                   <Search size={13} />
                   <input type="text" placeholder="ค้นหา..." value={diseaseSearch} onChange={(e) => setDiseaseSearch(e.target.value)} />
@@ -4875,7 +4996,13 @@ function HippoHdcSection() {
           <p className="hippo-filter-section-title"><Users size={12} /> กลุ่มประชากร</p>
           <div className="hippo-filter-groups hippo-filter-group-inline-list">
             <div className="hippo-filter-group">
-              <span className="hippo-filter-title">Typearea {selTypearea.size > 0 && <b>({selTypearea.size})</b>}</span>
+              <span className="hippo-filter-title">Typearea {selTypearea.size > 0 && <b>({selTypearea.size})</b>}
+                {selTypearea.size > 0 && (
+                  <button type="button" className={`hippo-exclude-toggle${excludeMode.typearea ? " is-exclude" : ""}`} onClick={() => toggleExclude("typearea")}>
+                    <EyeOff size={11} /> {excludeMode.typearea ? "กำลังตัดออก" : "ตัดออก"}
+                  </button>
+                )}
+              </span>
               <div className="hippo-chip-list">
                 {typeareaOptions.map((t) => (
                   <button key={t || "unknown"} type="button" className={selTypearea.has(t) ? "active" : ""} onClick={() => toggleSet(selTypearea, setSelTypearea, t)}>
@@ -4890,7 +5017,13 @@ function HippoHdcSection() {
             </div>
 
             <div className="hippo-filter-group">
-              <span className="hippo-filter-title">ช่วงอายุ {selAgeBand.size > 0 && <b>({selAgeBand.size})</b>}</span>
+              <span className="hippo-filter-title">ช่วงอายุ {selAgeBand.size > 0 && <b>({selAgeBand.size})</b>}
+                {selAgeBand.size > 0 && (
+                  <button type="button" className={`hippo-exclude-toggle${excludeMode.age_band ? " is-exclude" : ""}`} onClick={() => toggleExclude("age_band")}>
+                    <EyeOff size={11} /> {excludeMode.age_band ? "กำลังตัดออก" : "ตัดออก"}
+                  </button>
+                )}
+              </span>
               <div className="hippo-chip-list">
                 {ageBandOptions.map((a) => (
                   <button key={a} type="button" className={selAgeBand.has(a) ? "active" : ""} onClick={() => toggleSet(selAgeBand, setSelAgeBand, a)}>{a}</button>
@@ -4905,35 +5038,42 @@ function HippoHdcSection() {
         <div className="panel-heading">
           <div>
             <p className="eyebrow"><span className="hippo-step-badge">3</span> จัดรูปแบบมุมมอง</p>
-            <h2>เลือกแกนแถว/คอลัมน์สำหรับกราฟและตาราง</h2>
+            <h2>ลากมิติข้อมูลไปวางที่แกนแถว/คอลัมน์</h2>
           </div>
         </div>
 
-        <div className="hippo-control-row">
-          <span className="hippo-control-label">แกนแถว × แกนคอลัมน์ (หมุนมิติ)</span>
-          <div className="hippo-axis-pickers">
-            <label>แถว
-              <select value={rowDim} onChange={(e) => setRowDim(e.target.value as HippoDim)}>
-                <option value="ampur">อำเภอ</option>
-                <option value="facility">หน่วยบริการ</option>
-                {level !== "overall" && <option value="disease">กลุ่มโรค/รหัส</option>}
-                <option value="typearea">Typearea</option>
-                <option value="age_band">ช่วงอายุ</option>
-              </select>
-            </label>
-            <ArrowLeftRight size={16} className="hippo-axis-swap-icon" />
-            <label>คอลัมน์
-              <select value={colDim} onChange={(e) => setColDim(e.target.value as HippoDim | "none")}>
-                <option value="none">— ไม่แยกคอลัมน์ —</option>
-                <option value="ampur">อำเภอ</option>
-                <option value="facility">หน่วยบริการ</option>
-                {level !== "overall" && <option value="disease">กลุ่มโรค/รหัส</option>}
-                <option value="typearea">Typearea</option>
-                <option value="age_band">ช่วงอายุ</option>
-              </select>
-            </label>
+        <DndContext sensors={sensors} onDragEnd={handleShelfDragEnd}>
+          <div className="hippo-shelf-fields">
+            <span className="hippo-control-label">มิติข้อมูลทั้งหมด (ลากไปวาง)</span>
+            <div className="hippo-shelf-fields-list">
+              <HippoFieldChip dim="ampur" />
+              <HippoFieldChip dim="facility" />
+              <HippoFieldChip dim="disease" disabled={level === "overall"} />
+              <HippoFieldChip dim="typearea" />
+              <HippoFieldChip dim="age_band" />
+            </div>
           </div>
-        </div>
+
+          <div className="hippo-shelf-zones">
+            <HippoShelfZone
+              zoneId="shelf-row"
+              label="แกนแถว"
+              icon={Rows3}
+              activeDim={rowDim}
+              placeholder="ลากมิติมาวางที่นี่"
+              onClear={() => setRowDim("ampur")}
+            />
+            <ArrowLeftRight size={18} className="hippo-axis-swap-icon" />
+            <HippoShelfZone
+              zoneId="shelf-col"
+              label="แกนคอลัมน์"
+              icon={Columns3}
+              activeDim={colDim}
+              placeholder="— ไม่แยกคอลัมน์ —"
+              onClear={() => setColDim("none")}
+            />
+          </div>
+        </DndContext>
 
         {diseaseMarginalized && (
           <p className="hippo-warning"><CircleAlert size={13} /> แกนที่เลือกไม่ได้แยกตามกลุ่มโรค/รหัส และเลือกไว้มากกว่า 1 กลุ่ม — ตัวเลขรวมอาจ<strong>นับคนซ้ำ</strong> (คนหนึ่งอาจมีหลายกลุ่มโรค) หากต้องการยอดรวมที่ไม่ซ้ำคน ให้เปลี่ยนระดับข้อมูลเป็น &quot;ภาพรวม&quot; แทน</p>
