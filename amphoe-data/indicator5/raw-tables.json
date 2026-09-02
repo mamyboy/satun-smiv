@@ -4013,7 +4013,7 @@
       ],
       [
         {
-          "text": "09634:โรงพยาบาลส่งเสริมสุขภาพตำบลละงู",
+          "text": "09643:โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านนาทอน ตำบลนาทอน",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -4075,7 +4075,7 @@
       ],
       [
         {
-          "text": "09635:โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านห้วยไทร ตำบลละงู",
+          "text": "09644:โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านวังตง ตำบลนาทอน",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -4137,7 +4137,7 @@
       ],
       [
         {
-          "text": "09636:โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านในเมือง ตำบลละงู",
+          "text": "09645:โรงพยาบาลส่งเสริมสุขภาพตำบลขอนคลาน",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -4199,7 +4199,7 @@
       ],
       [
         {
-          "text": "09637:โรงพยาบาลส่งเสริมสุขภาพตำบลเขาขาว",
+          "text": "09646:โรงพยาบาลส่งเสริมสุขภาพตำบลทุ่งบุหลัง",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -4261,7 +4261,7 @@
       ],
       [
         {
-          "text": "09638:โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านบ่อเจ็ดลูก",
+          "text": "09647:โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านทุ่งดินลุ่ม ตำบลป่าแก่บ่อหิน",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -4323,131 +4323,7 @@
       ],
       [
         {
-          "text": "09639:โรงพยาบาลส่งเสริมสุขภาพตำบลปากน้ำ",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "1,216",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "1,216",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        }
-      ],
-      [
-        {
-          "text": "09640:โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านทุ่งไหม้  ตำบลน้ำผุด",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "344",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "344",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        }
-      ],
-      [
-        {
-          "text": "09641:โรงพยาบาลส่งเสริมสุขภาพตำบลน้ำผุด",
+          "text": "09648:โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านเขาแดง ตำบลป่าแก่บ่อหิน",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -4509,93 +4385,43 @@
       ],
       [
         {
-          "text": "09642:โรงพยาบาลส่งเสริมสุขภาพตำบลแหลมสน",
+          "text": "11406:โรงพยาบาลทุ่งหว้า",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "0",
+          "text": "19",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "0",
+          "text": "19",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "0.00",
+          "text": "100.00",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "0",
+          "text": "14",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "0",
+          "text": "14",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        }
-      ],
-      [
-        {
-          "text": "11405:โรงพยาบาลละงู",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "21",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "8",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "38.10",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "17",
+          "text": "14.00",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -4607,25 +4433,13 @@
           "tag": "td"
         },
         {
-          "text": "13.13",
+          "text": "5",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "4",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "3",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "75.00",
+          "text": "100.00",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -4633,69 +4447,7 @@
       ],
       [
         {
-          "text": "22015:โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านตันหยงละไน้ ตำบลแหลมสน",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        }
-      ],
-      [
-        {
-          "text": "77707:ศูนย์สุขภาพชุมชนกำแพง",
+          "text": "14715:โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านคีรีวง ตำบลทุ่งหว้า",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -4763,25 +4515,37 @@
           "tag": "td"
         },
         {
-          "text": "1,581",
+          "text": "19",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "8",
+          "text": "19",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "0.51",
+          "text": "100.00",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "1,577",
+          "text": "14",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        },
+        {
+          "text": "14",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        },
+        {
+          "text": "14.00",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -4793,25 +4557,13 @@
           "tag": "td"
         },
         {
-          "text": "988.13",
+          "text": "5",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "4",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "3",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "75.00",
+          "text": "100.00",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -4899,7 +4651,7 @@
       ],
       [
         {
-          "text": "09634:โรงพยาบาลส่งเสริมสุขภาพตำบลละงู",
+          "text": "09649:โรงพยาบาลส่งเสริมสุขภาพตำบลปาล์มพัฒนา",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -4961,7 +4713,7 @@
       ],
       [
         {
-          "text": "09635:โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านห้วยไทร ตำบลละงู",
+          "text": "09650:โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านมะนัง ตำบลปาล์มพัฒนา",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -5023,7 +4775,7 @@
       ],
       [
         {
-          "text": "09636:โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านในเมือง ตำบลละงู",
+          "text": "09651:โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านผัง 50 ตำบลนิคมพัฒนา",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -5085,7 +4837,7 @@
       ],
       [
         {
-          "text": "09637:โรงพยาบาลส่งเสริมสุขภาพตำบลเขาขาว",
+          "text": "09652:สถานีอนามัยเฉลิมพระเกียรติ 60 พรรษา นวมินทราชินี",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -5147,483 +4899,49 @@
       ],
       [
         {
-          "text": "09638:โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านบ่อเจ็ดลูก",
+          "text": "28786:โรงพยาบาลมะนัง",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "0",
+          "text": "13",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "0",
+          "text": "1",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "0.00",
+          "text": "7.69",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "0",
+          "text": "12",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "0",
+          "text": "1",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "0.00",
+          "text": "13.00",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        }
-      ],
-      [
-        {
-          "text": "09639:โรงพยาบาลส่งเสริมสุขภาพตำบลปากน้ำ",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "1,216",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "1,216",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        }
-      ],
-      [
-        {
-          "text": "09640:โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านทุ่งไหม้  ตำบลน้ำผุด",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "344",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "344",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        }
-      ],
-      [
-        {
-          "text": "09641:โรงพยาบาลส่งเสริมสุขภาพตำบลน้ำผุด",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        }
-      ],
-      [
-        {
-          "text": "09642:โรงพยาบาลส่งเสริมสุขภาพตำบลแหลมสน",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        }
-      ],
-      [
-        {
-          "text": "11405:โรงพยาบาลละงู",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "21",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "8",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "38.10",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "17",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "5",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "13.13",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "4",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "3",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "75.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        }
-      ],
-      [
-        {
-          "text": "22015:โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านตันหยงละไน้ ตำบลแหลมสน",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        }
-      ],
-      [
-        {
-          "text": "77707:ศูนย์สุขภาพชุมชนกำแพง",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0.00",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "0",
+          "text": "1",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -5649,55 +4967,55 @@
           "tag": "td"
         },
         {
-          "text": "1,581",
+          "text": "13",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "8",
+          "text": "1",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "0.51",
+          "text": "7.69",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "1,577",
+          "text": "12",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "5",
+          "text": "1",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "988.13",
+          "text": "13.00",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "4",
+          "text": "1",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "3",
+          "text": "0",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "75.00",
+          "text": "0.00",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
