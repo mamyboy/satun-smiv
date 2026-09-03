@@ -4515,6 +4515,7 @@ const HIPPO_SPECIALPP_LABEL: Record<string, string> = {
   "1B033": "ประเมินความเสี่ยง SMI-V: ก่อคดีอาชญากรรมรุนแรง (1B033)",
   "1B036": "ประเมินความเสี่ยง SMI-V: พบว่าปกติ (1B036)",
   "1B037": "ประเมินความเสี่ยง SMI-V: ก่อเหตุรุนแรงแล้ว ได้รับการติดตาม (1B037)",
+  "1B038": "ประเมินความเสี่ยง SMI-V: สถานพยาบาลรับส่งต่อเพื่อปรับพฤติกรรม (1B038)",
 };
 
 // Same clinical grouping as scripts/sql/hippo-hdc-records.sql's WHERE scope —
@@ -4553,7 +4554,7 @@ function hippoIcdCategory(code: string): string | null {
 // codes first in their own fixed screening order, then ICD-10-TM (รหัสวินิจฉัย)
 // groups in the same order hippoIcdCategory() checks them, so rows/columns read
 // top-to-bottom the way a clinician expects (1B030→1B037, then F00→F99, X60-X84, G40-G41).
-const HIPPO_SPECIALPP_ORDER = ["1B030", "1B031", "1B032", "1B033", "1B036", "1B037"];
+const HIPPO_SPECIALPP_ORDER = ["1B030", "1B031", "1B032", "1B033", "1B036", "1B037", "1B038"];
 const HIPPO_CATEGORY_ORDER = [
   "ประเมินความเสี่ยง SMI-V: ทำร้ายตนเองรุนแรง (1B030)",
   "ประเมินความเสี่ยง SMI-V: ทำร้ายผู้อื่น/ก่อเหตุรุนแรง (1B031)",
@@ -4561,6 +4562,7 @@ const HIPPO_CATEGORY_ORDER = [
   "ประเมินความเสี่ยง SMI-V: ก่อคดีอาชญากรรมรุนแรง (1B033)",
   "ประเมินความเสี่ยง SMI-V: พบว่าปกติ (1B036)",
   "ประเมินความเสี่ยง SMI-V: ก่อเหตุรุนแรงแล้ว ได้รับการติดตาม (1B037)",
+  "ประเมินความเสี่ยง SMI-V: สถานพยาบาลรับส่งต่อเพื่อปรับพฤติกรรม (1B038)",
   "โรคสมองเสื่อม (F00-F03)",
   "ติดแอลกอฮอล์ (F10)",
   "ติดยาบ้า Amphetamine (F15)",

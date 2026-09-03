@@ -15,7 +15,7 @@
 --                    in RELEVANT_ICD_PREFIXES below (same clinical scope
 --                    as hippo-hdc-summary.sql, just not re-labeled).
 --   SPECIALPP     -> ppspecial IN ('1B030','1B031','1B032','1B033',
---                    '1B036','1B037') (SMI-V risk screening codes)
+--                    '1B036','1B037','1B038') (SMI-V risk screening codes)
 --
 -- OUTPUT SCHEMA:
 --   person_id      -> anonymized per-person integer id (dense_rank over
@@ -142,7 +142,7 @@ specialpp_base AS (
         ON concat(ch.provcode, ch.distcode) = ca.ampurcodefull
     WHERE
         s.pid IS NOT NULL
-        AND upper(trim(s.ppspecial)) IN ('1B030', '1B031', '1B032', '1B033', '1B036', '1B037')
+        AND upper(trim(s.ppspecial)) IN ('1B030', '1B031', '1B032', '1B033', '1B036', '1B037', '1B038')
 ),
 
 pp_records AS (
