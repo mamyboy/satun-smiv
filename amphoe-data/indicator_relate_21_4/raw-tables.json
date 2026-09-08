@@ -288,7 +288,19 @@
         "tag": "td"
       },
       {
-        "text": "81",
+        "text": "79",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "3",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "3.80",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -300,55 +312,19 @@
         "tag": "td"
       },
       {
-        "text": "4.94",
+        "text": "5.06",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "5",
+        "text": "6",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "6.17",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "7",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "8.64",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "0",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "0.00",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "7",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "8.64",
+        "text": "7.59",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -372,19 +348,43 @@
         "tag": "td"
       },
       {
-        "text": "7.41",
+        "text": "7.59",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "11",
+        "text": "0",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "13.58",
+        "text": "0.00",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "5",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "6.33",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "10",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "12.66",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -420,19 +420,19 @@
         "tag": "td"
       },
       {
-        "text": "6.17",
+        "text": "6.33",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "53",
+        "text": "52",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "65.43",
+        "text": "65.82",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -476,7 +476,7 @@
         "tag": "td"
       },
       {
-        "text": "4",
+        "text": "3",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -488,7 +488,127 @@
         "tag": "td"
       },
       {
-        "text": "25.00",
+        "text": "33.33",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "1",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "33.33",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0.00",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0.00",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0.00",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0.00",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "1",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "33.33",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "1",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "33.33",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0.00",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0.00",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "0.00",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -500,127 +620,7 @@
         "tag": "td"
       },
       {
-        "text": "50.00",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "1",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "25.00",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "0",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "0.00",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "1",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "25.00",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "0",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "0.00",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "1",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "25.00",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "2",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "50.00",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "0",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "0.00",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "0",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "0.00",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "0",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "0.00",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "2",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "50.00",
+        "text": "66.67",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -1040,7 +1040,7 @@
         "tag": "td"
       },
       {
-        "text": "57",
+        "text": "56",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -1052,7 +1052,7 @@
         "tag": "td"
       },
       {
-        "text": "36.84",
+        "text": "37.50",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -1064,7 +1064,7 @@
         "tag": "td"
       },
       {
-        "text": "42.11",
+        "text": "42.86",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -1076,7 +1076,7 @@
         "tag": "td"
       },
       {
-        "text": "5.26",
+        "text": "5.36",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -1100,7 +1100,7 @@
         "tag": "td"
       },
       {
-        "text": "5.26",
+        "text": "5.36",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -1124,19 +1124,19 @@
         "tag": "td"
       },
       {
-        "text": "7.02",
+        "text": "7.14",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "33",
+        "text": "32",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "57.89",
+        "text": "57.14",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -1196,7 +1196,7 @@
         "tag": "td"
       },
       {
-        "text": "3.51",
+        "text": "3.57",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -1208,7 +1208,7 @@
         "tag": "td"
       },
       {
-        "text": "66.67",
+        "text": "67.86",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -1792,79 +1792,31 @@
         "tag": "td"
       },
       {
-        "text": "604",
+        "text": "594",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "222",
+        "text": "219",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "36.75",
+        "text": "36.87",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "267",
+        "text": "263",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "44.21",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "44",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "7.28",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "3",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "0.50",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "42",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "6.95",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "6",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "0.99",
+        "text": "44.28",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -1876,19 +1828,67 @@
         "tag": "td"
       },
       {
-        "text": "7.12",
+        "text": "7.24",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "307",
+        "text": "3",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "50.83",
+        "text": "0.51",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "41",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "6.90",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "6",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "1.01",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "42",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "7.07",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "295",
+        "colspan": 1,
+        "rowspan": 1,
+        "tag": "td"
+      },
+      {
+        "text": "49.66",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -1960,7 +1960,7 @@
         "tag": "td"
       },
       {
-        "text": "5.96",
+        "text": "6.06",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -2920,67 +2920,67 @@
         "tag": "td"
       },
       {
-        "text": "691",
+        "text": "658",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "200",
+        "text": "191",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "28.94",
+        "text": "29.03",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "253",
+        "text": "239",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "36.61",
+        "text": "36.32",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "31",
+        "text": "29",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "4.49",
+        "text": "4.41",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "3",
+        "text": "2",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "0.43",
+        "text": "0.30",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "28",
+        "text": "27",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "4.05",
+        "text": "4.10",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -2992,31 +2992,31 @@
         "tag": "td"
       },
       {
-        "text": "1.01",
+        "text": "1.06",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "89",
+        "text": "88",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "12.88",
+        "text": "13.37",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "472",
+        "text": "439",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "68.31",
+        "text": "66.72",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -3040,7 +3040,7 @@
         "tag": "td"
       },
       {
-        "text": "0.29",
+        "text": "0.30",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -3064,7 +3064,7 @@
         "tag": "td"
       },
       {
-        "text": "0.43",
+        "text": "0.46",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -3088,7 +3088,7 @@
         "tag": "td"
       },
       {
-        "text": "4.05",
+        "text": "4.26",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -3108,7 +3108,7 @@
         "tag": "td"
       },
       {
-        "text": "32",
+        "text": "31",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -3120,7 +3120,7 @@
         "tag": "td"
       },
       {
-        "text": "6.25",
+        "text": "6.45",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -3132,7 +3132,7 @@
         "tag": "td"
       },
       {
-        "text": "15.63",
+        "text": "16.13",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -3144,7 +3144,7 @@
         "tag": "td"
       },
       {
-        "text": "12.50",
+        "text": "12.90",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -3168,7 +3168,7 @@
         "tag": "td"
       },
       {
-        "text": "12.50",
+        "text": "12.90",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -3180,7 +3180,7 @@
         "tag": "td"
       },
       {
-        "text": "3.13",
+        "text": "3.23",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -3192,19 +3192,19 @@
         "tag": "td"
       },
       {
-        "text": "28.13",
+        "text": "29.03",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "13",
+        "text": "12",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "40.63",
+        "text": "38.71",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -3252,7 +3252,7 @@
         "tag": "td"
       },
       {
-        "text": "6.25",
+        "text": "6.45",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -3276,7 +3276,7 @@
         "tag": "td"
       },
       {
-        "text": "3.13",
+        "text": "3.23",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -3296,67 +3296,67 @@
         "tag": "td"
       },
       {
-        "text": "1,633",
+        "text": "1,585",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "460",
+        "text": "447",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "28.17",
+        "text": "28.20",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "575",
+        "text": "555",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "35.21",
+        "text": "35.02",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "102",
+        "text": "97",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "6.25",
+        "text": "6.12",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "7",
+        "text": "6",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "0.43",
+        "text": "0.38",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "96",
+        "text": "92",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "5.88",
+        "text": "5.80",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -3368,31 +3368,31 @@
         "tag": "td"
       },
       {
-        "text": "0.98",
+        "text": "1.01",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "158",
+        "text": "155",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "9.68",
+        "text": "9.78",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "866",
+        "text": "817",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "53.03",
+        "text": "51.55",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -3416,7 +3416,7 @@
         "tag": "td"
       },
       {
-        "text": "0.31",
+        "text": "0.32",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -3428,19 +3428,19 @@
         "tag": "td"
       },
       {
-        "text": "0.37",
+        "text": "0.38",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "63",
+        "text": "62",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "3.86",
+        "text": "3.91",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -3452,7 +3452,7 @@
         "tag": "td"
       },
       {
-        "text": "0.18",
+        "text": "0.19",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -3464,7 +3464,7 @@
         "tag": "td"
       },
       {
-        "text": "6.31",
+        "text": "6.50",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
