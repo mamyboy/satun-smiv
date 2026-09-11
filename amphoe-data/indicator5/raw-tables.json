@@ -575,6 +575,68 @@
       ],
       [
         {
+          "text": "09612:ศูนย์สุขภาพชุมชนบ้านเกาะหลีเป๊ะ",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        },
+        {
+          "text": "0",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        },
+        {
+          "text": "0",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        },
+        {
+          "text": "0.00",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        },
+        {
+          "text": "0",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        },
+        {
+          "text": "0",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        },
+        {
+          "text": "0.00",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        },
+        {
+          "text": "0",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        },
+        {
+          "text": "0",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        },
+        {
+          "text": "0.00",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        }
+      ],
+      [
+        {
           "text": "09613:โรงพยาบาลส่งเสริมสุขภาพตำบลตันหยงโป",
           "colspan": 1,
           "rowspan": 1,
@@ -3443,7 +3505,7 @@
           "tag": "td"
         },
         {
-          "text": "513",
+          "text": "3",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -3461,7 +3523,7 @@
           "tag": "td"
         },
         {
-          "text": "513",
+          "text": "3",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -3505,7 +3567,7 @@
           "tag": "td"
         },
         {
-          "text": "344",
+          "text": "0",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -3523,7 +3585,7 @@
           "tag": "td"
         },
         {
-          "text": "344",
+          "text": "0",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -3691,25 +3753,37 @@
           "tag": "td"
         },
         {
-          "text": "17",
+          "text": "23",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "8",
+          "text": "10",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "47.06",
+          "text": "43.48",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "14",
+          "text": "18",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        },
+        {
+          "text": "6",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        },
+        {
+          "text": "13.80",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -3721,25 +3795,13 @@
           "tag": "td"
         },
         {
-          "text": "10.63",
+          "text": "4",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "3",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "3",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "100.00",
+          "text": "80.00",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -3877,25 +3939,37 @@
           "tag": "td"
         },
         {
-          "text": "874",
+          "text": "26",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "8",
+          "text": "10",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "0.92",
+          "text": "38.46",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "871",
+          "text": "21",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        },
+        {
+          "text": "6",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        },
+        {
+          "text": "15.60",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -3907,25 +3981,13 @@
           "tag": "td"
         },
         {
-          "text": "546.25",
+          "text": "4",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "3",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "3",
-          "colspan": 1,
-          "rowspan": 1,
-          "tag": "td"
-        },
-        {
-          "text": "100.00",
+          "text": "80.00",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -4391,7 +4453,7 @@
           "tag": "td"
         },
         {
-          "text": "22",
+          "text": "21",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -4403,7 +4465,7 @@
           "tag": "td"
         },
         {
-          "text": "95.45",
+          "text": "100.00",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -4415,25 +4477,25 @@
           "tag": "td"
         },
         {
-          "text": "15",
+          "text": "16",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "15.71",
+          "text": "16.00",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "6",
+          "text": "5",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "6",
+          "text": "5",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -4515,7 +4577,7 @@
           "tag": "td"
         },
         {
-          "text": "22",
+          "text": "21",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -4527,7 +4589,7 @@
           "tag": "td"
         },
         {
-          "text": "95.45",
+          "text": "100.00",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -4539,25 +4601,25 @@
           "tag": "td"
         },
         {
-          "text": "15",
+          "text": "16",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "15.71",
+          "text": "16.00",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "6",
+          "text": "5",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
         },
         {
-          "text": "6",
+          "text": "5",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"

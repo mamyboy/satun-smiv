@@ -461,6 +461,56 @@
       ],
       [
         {
+          "text": "09612:ศูนย์สุขภาพชุมชนบ้านเกาะหลีเป๊ะ",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        },
+        {
+          "text": "0",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        },
+        {
+          "text": "0",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        },
+        {
+          "text": "0",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        },
+        {
+          "text": "0.00",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        },
+        {
+          "text": "0",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        },
+        {
+          "text": "0",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        },
+        {
+          "text": "0.00",
+          "colspan": 1,
+          "rowspan": 1,
+          "tag": "td"
+        }
+      ],
+      [
+        {
           "text": "09613:โรงพยาบาลส่งเสริมสุขภาพตำบลตันหยงโป",
           "colspan": 1,
           "rowspan": 1,
@@ -2771,7 +2821,7 @@
           "tag": "td"
         },
         {
-          "text": "513",
+          "text": "3",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -2821,7 +2871,7 @@
           "tag": "td"
         },
         {
-          "text": "344",
+          "text": "0",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -2971,7 +3021,7 @@
           "tag": "td"
         },
         {
-          "text": "8",
+          "text": "9",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -2983,7 +3033,7 @@
           "tag": "td"
         },
         {
-          "text": "9.09",
+          "text": "8.33",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -3121,7 +3171,7 @@
           "tag": "td"
         },
         {
-          "text": "865",
+          "text": "12",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
@@ -3133,7 +3183,7 @@
           "tag": "td"
         },
         {
-          "text": "0.12",
+          "text": "6.67",
           "colspan": 1,
           "rowspan": 1,
           "tag": "td"
