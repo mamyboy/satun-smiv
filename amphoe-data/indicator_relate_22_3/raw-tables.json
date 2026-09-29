@@ -72,62 +72,6 @@
     ],
     [
       {
-        "text": "1.0",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "F00.xx-F09.xx",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "ความผิดปกติและอาการทางจิตที่เกิดจากโรคทางกาย",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "178",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "208",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "386",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "335",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "459",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "794",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      }
-    ],
-    [
-      {
         "text": "1.1",
         "colspan": 1,
         "rowspan": 1,
@@ -177,62 +121,6 @@
       },
       {
         "text": "602",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      }
-    ],
-    [
-      {
-        "text": "2.0",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "F10.xx-F19.xx",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "ความผิดปกติทางจิตและพฤติกรรมที่เกิดจากการใช้สารออกฤทธิ์ต่อจิตประสาท",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "1,673",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "89",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "1,762",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "4,287",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "240",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "4,527",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -388,7 +276,7 @@
         "tag": "td"
       },
       {
-        "text": "1,631",
+        "text": "1,632",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -400,7 +288,7 @@
         "tag": "td"
       },
       {
-        "text": "1,775",
+        "text": "1,776",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -520,62 +408,6 @@
     ],
     [
       {
-        "text": "3.0",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "F20.xx-F29.xx",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "โรคจิตเภท พฤติกรรมแบบโรคจิตเภท และโรคหลงผิด",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "1,369",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "366",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "1,735",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "4,348",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "1,321",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "5,669",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      }
-    ],
-    [
-      {
         "text": "3.1",
         "colspan": 1,
         "rowspan": 1,
@@ -612,75 +444,19 @@
         "tag": "td"
       },
       {
-        "text": "3,681",
+        "text": "3,690",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "1,058",
+        "text": "1,059",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "4,739",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      }
-    ],
-    [
-      {
-        "text": "4.0",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "F30.xx-F39.xx",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "ความผิดปกติทางอารมณ์",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "530",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "1,788",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "2,318",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "1,757",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "5,580",
-        "colspan": 1,
-        "rowspan": 1,
-        "tag": "td"
-      },
-      {
-        "text": "7,337",
+        "text": "4,749",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -768,31 +544,31 @@
         "tag": "td"
       },
       {
-        "text": "1,666",
+        "text": "1,668",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "2,124",
+        "text": "2,126",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "1,453",
+        "text": "1,455",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "5,114",
+        "text": "5,122",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "6,567",
+        "text": "6,577",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -818,37 +594,37 @@
         "tag": "td"
       },
       {
-        "text": "783",
+        "text": "64",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "1,640",
+        "text": "137",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "2,423",
+        "text": "201",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "2,035",
+        "text": "187",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "4,067",
+        "text": "372",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "6,102",
+        "text": "559",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -992,13 +768,13 @@
         "tag": "td"
       },
       {
-        "text": "654",
+        "text": "655",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "982",
+        "text": "983",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -1010,13 +786,13 @@
         "tag": "td"
       },
       {
-        "text": "1,137",
+        "text": "1,140",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "1,721",
+        "text": "1,724",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
@@ -1714,37 +1490,37 @@
         "tag": "td"
       },
       {
-        "text": "10,935",
+        "text": "6,466",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "8,343",
+        "text": "4,392",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "19,278",
+        "text": "10,858",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "28,779",
+        "text": "16,216",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "22,547",
+        "text": "11,264",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
       },
       {
-        "text": "51,326",
+        "text": "27,480",
         "colspan": 1,
         "rowspan": 1,
         "tag": "td"
