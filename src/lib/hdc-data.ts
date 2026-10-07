@@ -1,5 +1,7 @@
 import indicator1Raw from "../../amphoe-data/indicator1/data.json";
 import indicator2Raw from "../../amphoe-data/indicator2/data.json";
+import indicator2HistoryRaw from "../../amphoe-data/indicator2/history.json";
+import { aggregateWeekly, withRunDeltas, type HistoryFile } from "./indicator-history";
 import indicator3Raw from "../../amphoe-data/indicator3/data.json";
 import indicator4Raw from "../../amphoe-data/indicator4/data.json";
 import indicator5Raw from "../../amphoe-data/indicator5/data.json";
@@ -283,6 +285,11 @@ export const indicator2Name = indicator2.name;
 export const indicator2ExtractedAt = indicator2.extractedAt;
 export const indicator2ProcessedDate = indicator2.processedDate;
 export const indicator2TemplateUrl = "https://fileex.moph.go.th/media/r3yveog8x2yk4ug0tca4z-2569.pdf";
+
+/** ประวัติตัวชี้วัด 2 รายครั้งที่ประมวลผล + สรุปรายสัปดาห์ (scripts/record-history.mjs) */
+export const indicator2History = (indicator2HistoryRaw as HistoryFile).snapshots;
+export const indicator2Weekly = aggregateWeekly(indicator2History);
+export const indicator2Runs = withRunDeltas(indicator2History);
 export const indicator1Name: string = (indicatorsConfig as { indicator1: { name: string } }).indicator1.name;
 
 /** ตารางเต็มตัวชี้วัด 2 — ตรงกับคอลัมน์บนหน้า HDC (คอลัมน์ leaf ที่ align กับข้อมูลจริงแล้ว) */

@@ -684,3 +684,41 @@ a:focus-visible { outline: 3px solid rgba(67, 56, 202, .3); outline-offset: 2px;
 .watchlist-row { cursor: pointer; padding: 6px 8px; margin: 0 -8px; border-radius: 10px; transition: background .12s ease; }
 .watchlist-row:hover { background: rgba(67, 56, 202, .05); }
 .watchlist-value { color: #4338ca; font-size: 15px; }
+
+/* ===== Indicator history trend (รายสัปดาห์ / รายครั้ง) ===== */
+.trend-card { display: flex; flex-direction: column; gap: 14px; }
+.trend-card .panel-heading { flex-wrap: wrap; }
+.trend-caption, .trend-footnote { margin: 0; font-size: 11.5px; color: #64748b; line-height: 1.6; }
+.trend-toggle { display: inline-flex; padding: 3px; border-radius: 999px; background: #eef2ff; border: 1px solid #e0e7ff; }
+.trend-toggle button { display: inline-flex; align-items: center; gap: 5px; border: 0; background: transparent; color: #4338ca; font: inherit; font-size: 12px; padding: 6px 12px; border-radius: 999px; cursor: pointer; transition: background .2s ease, color .2s ease; }
+.trend-toggle button.active { background: #4338ca; color: #fff; box-shadow: 0 4px 12px rgba(67,56,202,.25); }
+.trend-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.trend-kpi { text-align: left; display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border-radius: 16px; border: 1px solid rgba(15,23,42,.07); background: rgba(248,250,252,.8); font: inherit; cursor: pointer; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+.trend-kpi:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15,23,42,.08); }
+.trend-kpi.active { border-color: #a5b4fc; box-shadow: 0 0 0 3px rgba(99,102,241,.15); background: #fff; }
+.trend-kpi-label { font-size: 11px; color: #64748b; }
+.trend-kpi strong { font-size: 24px; font-weight: 700; color: #1e1b4b; letter-spacing: -.5px; }
+.trend-kpi-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 10.5px; color: #94a3b8; }
+.trend-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.trend-chips button { border: 1px solid #e2e8f0; background: #fff; color: #475569; font: inherit; font-size: 11px; padding: 5px 10px; border-radius: 999px; cursor: pointer; }
+.trend-chips button.active { border-color: #4338ca; background: #4338ca; color: #fff; }
+.trend-chart { height: 260px; }
+.trend-delta { display: inline-flex; align-items: center; gap: 2px; font-size: 10.5px; font-weight: 600; padding: 1px 6px; border-radius: 999px; white-space: nowrap; }
+.trend-delta-up { color: #047857; background: #ecfdf5; }
+.trend-delta-down { color: #b91c1c; background: #fef2f2; }
+.trend-delta-flat { color: #64748b; background: #f1f5f9; }
+.trend-delta-none { color: #cbd5e1; }
+.trend-table-wrap { overflow-x: auto; border: 1px solid rgba(15,23,42,.06); border-radius: 14px; }
+.trend-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.trend-table th, .trend-table td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; text-align: right; vertical-align: top; white-space: nowrap; }
+.trend-table th:first-child, .trend-table td:first-child { text-align: left; position: sticky; left: 0; background: #fff; z-index: 1; }
+.trend-table thead th { background: #f8fafc; color: #334155; font-weight: 650; }
+.trend-table thead th:first-child { background: #f8fafc; }
+.trend-table th small, .trend-table td small { display: block; font-size: 10px; font-weight: 400; color: #94a3b8; white-space: normal; max-width: 120px; margin-left: auto; }
+.trend-table td:first-child small { margin-left: 0; max-width: none; }
+.trend-table td { display: table-cell; }
+.trend-table td .trend-value { display: block; font-variant-numeric: tabular-nums; color: #0f172a; margin-bottom: 2px; }
+.trend-table tbody tr:hover td { background: #f8faff; }
+.trend-table td.trend-col-active { background: rgba(238,242,255,.6); }
+.trend-table tbody tr:first-child td { font-weight: 600; }
+@media (max-width: 760px) { .trend-kpis { grid-template-columns: 1fr 1fr; } .trend-kpi strong { font-size: 20px; } .trend-chart { height: 220px; } }

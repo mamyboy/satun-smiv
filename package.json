@@ -8,6 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test:visual": "node tests/visual-check.mjs",
+    "test:unit": "node --test tests/indicator-history.test.mjs",
+    "history:backfill": "node scripts/record-history.mjs --backfill",
     "extract:indicator1": "node scripts/extract-indicator.js indicator1",
     "extract:indicator2": "node scripts/extract-indicator.js indicator2",
     "extract:indicator3": "node scripts/extract-indicator.js indicator3",

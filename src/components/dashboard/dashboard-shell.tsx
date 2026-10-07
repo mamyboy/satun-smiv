@@ -63,6 +63,7 @@ import {
 } from "lucide-react";
 import { Bar, BarChart, Cell, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { mainNavItems, utilityItems } from "@/lib/dashboard-data";
+import Indicator2TrendSection from "@/components/dashboard/indicator2-trend";
 import {
   amphoeDiagnosisMatrix,
   amphoeList,
@@ -2689,6 +2690,9 @@ function Indicator2AnalysisBody() {
           </div>
         </div>
       </section>
+
+      {/* ===== SECTION: Weekly / per-run progress history ===== */}
+      <Indicator2TrendSection />
 
       {/* ===== SECTION: Composition & Follow-up ===== */}
       <div id="indicator2-composition-followup" className="overview-two-col">

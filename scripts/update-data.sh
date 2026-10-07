@@ -32,6 +32,10 @@ fi
 
 STILL_FAILED=$(tail -n 200 "$LOG_FILE" | grep -oE '^\[[a-z0-9_]+\] ล้มเหลว' | sed -E 's/^\[([a-z0-9_]+)\].*/\1/' | sort -u)
 
+# ---- 2b. Record per-run history snapshots (weekly trend on indicator pages) ----
+echo "==> Recording indicator history ..." | tee -a "$LOG_FILE"
+node scripts/record-history.mjs 2>&1 | grep -v -e MODULE_TYPELESS -e 'Reparsing as ES' -e 'add "type"' -e 'trace-warnings' | tee -a "$LOG_FILE"
+
 # ---- 3. Build to verify data compiles cleanly ----
 echo "==> Running npm run build ..." | tee -a "$LOG_FILE"
 if ! npm run build >> "$LOG_FILE" 2>&1; then
