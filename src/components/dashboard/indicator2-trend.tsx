@@ -143,10 +143,10 @@ export default function Indicator2TrendSection() {
         <table className="trend-table">
           <thead>
             <tr>
-              <th>{mode === "weekly" ? "สัปดาห์" : "วันที่ประมวลผล"}</th>
+              <th><span className="trend-th-code">{mode === "weekly" ? "สัปดาห์" : "วันที่ประมวลผล"}</span></th>
               {METRICS.map((m) => (
                 <th key={m.idx} title={m.label}>
-                  {m.code}
+                  <span className="trend-th-code">{m.code}</span>
                   <small>{m.label}</small>
                 </th>
               ))}
