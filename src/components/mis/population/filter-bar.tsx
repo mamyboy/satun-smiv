@@ -78,7 +78,7 @@ export function FilterBar({
                 size="sm"
                 value={value.typeSet}
                 onChange={(t) => set({ typeSet: t })}
-                items={[{ value: "13", label: "1,3 อยู่จริง" }, { value: "12", label: "1,2 ตามทะเบียนบ้าน" }]}
+                items={[{ value: "13", label: "1,3 อยู่จริง" }, { value: "12", label: "1,2 ตามทะเบียนบ้าน" }, { value: "4", label: "4 นอกเขต" }]}
               />
             </div>
           )}

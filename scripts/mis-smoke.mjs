@@ -6,6 +6,7 @@ const base = process.argv[2] ?? "http://localhost:3100";
 const out = process.env.SHOT_DIR ?? ".";
 const data = JSON.parse(readFileSync(new URL("../public/data/mis/population.json", import.meta.url), "utf8"));
 const p13 = data.hdc.cube.reduce((a, r) => a + r[6], 0);
+const p4 = data.hdc.cube.reduce((a, r) => a + r[10], 0);
 const bora = data.bora.prov["1"].concat(data.bora.prov["2"]).reduce((a, b) => a + b, 0);
 const th = (n) => n.toLocaleString("th-TH");
 
@@ -49,6 +50,8 @@ async function run(name, viewport) {
 
   check((await page.locator("h1").innerText()).includes("ประชากร"), "hero title");
   check((await page.locator("aside").first().locator("text=ข้อมูลพื้นฐาน").count()) === 1, "sidebar category ข้อมูลพื้นฐาน");
+  check((await page.locator("text=องค์ประกอบประชากรตาม TYPEAREA 1–4").count()) === 1, "TYPEAREA 1–4 panel renders");
+  check(await hasText(page, th(p4)), `TYPEAREA 4 distinct CID ${th(p4)} shown`);
   check(await hasText(page, th(p13)), `HDC province total ${th(p13)} shown (CID dedup, TYPEAREA 1,3)`);
 
   for (const [key, label] of TABS) {
@@ -87,6 +90,9 @@ async function run(name, viewport) {
   await page.getByRole("tab", { name: "หญิง", exact: true }).first().click();
   await page.waitForTimeout(500);
   check((await page.locator("[data-testid=pop-view-hdc]").innerText()) !== after, "sex filter updates figures");
+  await page.getByRole("tab", { name: "4 นอกเขต", exact: true }).click();
+  await page.waitForTimeout(600);
+  check((await page.locator("[data-testid=pop-view-hdc]").innerText()).includes("TYPEAREA 4 (อาศัยนอกเขต"), "TYPEAREA 4 filter switches dataset");
   await page.locator("text=ล้างตัวกรอง").click();
   await page.waitForTimeout(500);
   check(await hasText(page, th(p13)), "reset filters restores province total");

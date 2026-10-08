@@ -2,10 +2,10 @@
 
 import * as React from "react";
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Building2, Droplet, Home, PieChart, Target, Users } from "lucide-react";
+import { Building2, Droplet, Home, Layers, PieChart, Target, Users } from "lucide-react";
 import { fmtNum } from "@/lib/mis/format";
 import {
-  TARGET_GROUPS, TYPESET_LABEL, hdcAttr, hdcByAmp, hdcByHosp, hdcByTambon, hdcSummary, indices, targetCount,
+  TARGET_GROUPS, TYPESET_LABEL, hdcAttr, hdcByAmp, hdcByHosp, hdcByTambon, hdcSummary, hdcType4ByAmp, hdcTypeMix, indices, targetCount,
   type Filters, type PopulationData,
 } from "@/lib/mis/population";
 import { Panel, PanelHeader } from "../panel";
@@ -34,7 +34,7 @@ export function HdcView({ d, f, src }: { d: PopulationData; f: Filters; src: Sou
       : sum.level === "amp"
         ? `HOSPCODE+PID → map หน่วยบริการเข้าอำเภอ (chospital → campur) แล้วนับ CID ไม่ซ้ำภายในอำเภอที่เลือก — ${TYPESET_LABEL[f.typeSet]}`
         : `นับ HOSPCODE+PID ของหน่วยบริการที่เลือก (คนเดียวอยู่หลายหน่วยนับทุกหน่วย) — ${TYPESET_LABEL[f.typeSet]}`;
-  const sqlFormula = `-- scripts/sql/mis-population-hdc.sql\nWHERE ${src.commonWhere}\n  AND TYPEAREA IN (${f.typeSet === "13" ? "'1','3'" : "'1','2'"})\nINNER JOIN chospital ch ON ch.HOSCODE = p.HOSPCODE\nINNER JOIN campur ca ON ca.AMPURCODEFULL = CONCAT(ch.PROVCODE, ch.DISTCODE)\nจังหวัด : ROW_NUMBER() OVER (PARTITION BY CID ...) = 1\nอำเภอ   : ROW_NUMBER() OVER (PARTITION BY CID, DISTCODE ...) = 1\nหน่วย   : COUNT(*) ต่อ HOSPCODE+PID\n${src.repRule}\n${src.ageRule}`;
+  const sqlFormula = `-- scripts/sql/mis-population-hdc.sql\nWHERE ${src.commonWhere}\n  AND TYPEAREA IN (${f.typeSet === "13" ? "'1','3'" : f.typeSet === "12" ? "'1','2'" : "'4'"})\nINNER JOIN chospital ch ON ch.HOSCODE = p.HOSPCODE\nINNER JOIN campur ca ON ca.AMPURCODEFULL = CONCAT(ch.PROVCODE, ch.DISTCODE)\nจังหวัด : ROW_NUMBER() OVER (PARTITION BY CID ...) = 1\nอำเภอ   : ROW_NUMBER() OVER (PARTITION BY CID, DISTCODE ...) = 1\nหน่วย   : COUNT(*) ต่อ HOSPCODE+PID\n${src.repRule}\n${src.ageRule}`;
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:gap-5 xl:grid-cols-12">
@@ -57,6 +57,9 @@ export function HdcView({ d, f, src }: { d: PopulationData; f: Filters; src: Sou
           formula={sqlFormula}
         />
       </Panel>
+
+      {/* TYPEAREA 1–4 */}
+      <TypeAreaPanel d={d} f={f} src={src} />
 
       {/* Pyramid */}
       <Panel index={2} className="xl:col-span-7">
@@ -142,17 +145,18 @@ export function HdcView({ d, f, src }: { d: PopulationData; f: Filters; src: Sou
               { key: "code", label: "รหัส" },
               { key: "name", label: "หน่วยบริการ", render: (r) => <span className="line-clamp-1" title={String(r.name)}>{String(r.name)}</span> },
               { key: "amp", label: "อำเภอ", render: (r) => d.hdc.amp.find((a) => a.code === r.amp)?.name ?? String(r.amp) },
-              { key: "total", label: `รวม (${f.typeSet === "13" ? "1,3" : "1,2"})`, num: true },
+              { key: "total", label: `รวม (${f.typeSet === "13" ? "1,3" : f.typeSet === "12" ? "1,2" : "4"})`, num: true },
               { key: "t1", label: "TYPE 1", num: true },
               { key: "t2", label: "TYPE 2", num: true },
               { key: "t3", label: "TYPE 3", num: true },
+              { key: "t4", label: "TYPE 4", num: true },
               { key: "old", label: "60+", num: true },
             ]}
           />
         </div>
         <SourceNote
           source={src.hdc("person, chospital")}
-          method="นับแถว HOSPCODE+PID ของแต่ละหน่วยบริการ (ไม่ตัดซ้ำข้ามหน่วย) — คอลัมน์ TYPE 1/2/3 แสดงจำนวนแต่ละ TYPEAREA แยกกัน, คอลัมน์รวมใช้ชุด TYPEAREA ที่เลือก"
+          method="นับแถว HOSPCODE+PID ของแต่ละหน่วยบริการ (ไม่ตัดซ้ำข้ามหน่วย) — คอลัมน์ TYPE 1/2/3/4 แสดงจำนวนแต่ละ TYPEAREA แยกกัน, คอลัมน์รวมใช้ชุด TYPEAREA ที่เลือก"
           formula={`SELECT HOSPCODE, TYPEAREA, COUNT(*) FROM person WHERE ${src.commonWhere} GROUP BY ALL`}
         />
       </Panel>
@@ -238,5 +242,80 @@ export function HdcView({ d, f, src }: { d: PopulationData; f: Filters; src: Sou
         />
       </Panel>
     </div>
+  );
+}
+
+const TYPE_META: { t: 1 | 2 | 3 | 4; label: string; desc: string; color: string }[] = [
+  { t: 1, label: "TYPE 1", desc: "มีชื่ออยู่ตามทะเบียนบ้านในเขต และตัวอยู่จริง", color: "#02b8c8" },
+  { t: 2, label: "TYPE 2", desc: "มีชื่ออยู่ตามทะเบียนบ้านในเขต แต่ตัวไม่อยู่จริง", color: "#7a6ff0" },
+  { t: 3, label: "TYPE 3", desc: "มาอาศัยอยู่ในเขต แต่ทะเบียนบ้านอยู่นอกเขต", color: "#3fbf9f" },
+  { t: 4, label: "TYPE 4", desc: "ที่อยู่นอกเขต — เข้ามารับบริการ/เคยอยู่ในเขต", color: "#f2a541" },
+];
+
+function TypeAreaPanel({ d, f, src }: { d: PopulationData; f: Filters; src: Sources }) {
+  const mix = React.useMemo(() => hdcTypeMix(d, f), [d, f]);
+  const t4amp = React.useMemo(() => hdcType4ByAmp(d, f), [d, f]);
+  const totalRows = mix.rows[1] + mix.rows[2] + mix.rows[3] + mix.rows[4];
+  const lvl = mix.level === "prov" ? "CID ไม่ซ้ำทั้งจังหวัด" : mix.level === "amp" ? "CID ไม่ซ้ำภายในอำเภอ" : "HOSPCODE+PID";
+  return (
+    <Panel index={2} className="xl:col-span-12">
+      <PanelHeader icon={<Layers />} title="องค์ประกอบประชากรตาม TYPEAREA 1–4" description="ทุกประเภทการอยู่อาศัยในแฟ้ม person — ตามตัวกรองพื้นที่/หน่วยบริการ/เพศ/อายุ" />
+      <div className="grid gap-5 px-5 pt-4 sm:px-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
+        <div className="min-w-0">
+          <div className="flex h-3.5 overflow-hidden rounded-full bg-mis-ink/[0.06]" role="img" aria-label="สัดส่วนแถวตาม TYPEAREA">
+            {TYPE_META.map((m) => (
+              <div key={m.t} className="h-full transition-[width] duration-300" style={{ width: `${totalRows ? (mix.rows[m.t] / totalRows) * 100 : 0}%`, background: m.color }} />
+            ))}
+          </div>
+          <ul className="mt-4 grid gap-2.5 sm:grid-cols-2">
+            {TYPE_META.map((m) => (
+              <li key={m.t} className="rounded-2xl border border-mis-line/70 bg-white/70 px-3.5 py-3">
+                <div className="flex items-center gap-2 text-[12.5px] font-semibold text-mis-ink">
+                  <span className="size-2.5 rounded-full" style={{ background: m.color }} />
+                  {m.label}
+                  <span className="ml-auto tabular-nums">{fmtNum(mix.rows[m.t])}</span>
+                </div>
+                <p className="mt-1 text-[11.5px] leading-snug text-mis-muted">{m.desc}</p>
+                <p className="mt-1 text-[11px] text-mis-faint">{totalRows ? ((mix.rows[m.t] / totalRows) * 100).toFixed(1) : "0.0"}% ของแถว HOSPCODE+PID</p>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+            {[
+              { k: "1,3 (อยู่จริง)", v: mix.cid13 },
+              { k: "1,2 (ตามทะเบียนบ้าน)", v: mix.cid12 },
+              { k: "4 (นอกเขต)", v: mix.cid4 },
+              { k: "4 เท่านั้น (ไม่มี 1–3 ในจังหวัด)", v: mix.only4 },
+            ].map((x) => (
+              <div key={x.k} className="rounded-2xl bg-mis-ink/[0.035] px-3 py-2.5">
+                <p className="text-[11px] text-mis-muted">{x.k}</p>
+                <p className="mt-0.5 text-[17px] font-semibold tabular-nums text-mis-ink">{x.v === null ? "—" : fmtNum(x.v)}</p>
+                <p className="text-[10.5px] text-mis-faint">{x.v === null ? "เฉพาะภาพจังหวัด" : lvl}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="min-w-0">
+          <p className="mb-2 text-[12.5px] font-semibold text-mis-ink">TYPEAREA 4 รายอำเภอ (ตามที่ตั้งหน่วยบริการ · แถว = HOSPCODE+PID, CID ไม่ซ้ำภายในอำเภอ)</p>
+          <SortTable
+            maxHeight={330}
+            rows={t4amp}
+            initialSort={{ key: "cid", dir: -1 }}
+            columns={[
+              { key: "name", label: "อำเภอ" },
+              { key: "rows", label: "แถว", num: true },
+              { key: "cid", label: "CID ไม่ซ้ำ", num: true },
+              { key: "m", label: "ชาย", num: true },
+              { key: "f", label: "หญิง", num: true },
+            ]}
+          />
+        </div>
+      </div>
+      <SourceNote
+        source={src.hdc("person, chospital, campur")}
+        method={<>แถว = HOSPCODE+PID ของแต่ละ TYPEAREA (ไม่ตัดซ้ำ). ตัวเลข CID ใช้ระดับตามตัวกรอง ({lvl}) แยกตามชุด TYPEAREA — คนเดียวกันอาจอยู่ได้หลายชุด เช่น เป็น TYPE 1 ที่ รพ.สต. หนึ่งและเป็น TYPE 4 ที่ รพ. อีกแห่ง จึงห้ามนำชุดมารวมกัน. “4 เท่านั้น” = CID ที่มี TYPEAREA 4 และไม่มี TYPEAREA 1,2,3 ที่หน่วยบริการใดในจังหวัดเลย (ใกล้เคียงผู้รับบริการจากนอกจังหวัด/ไม่มีที่อยู่ในเขต)</>}
+        formula={`WHERE ${src.commonWhere} AND TYPEAREA IN ('1','2','3','4')\nrp4 = ROW_NUMBER() OVER (PARTITION BY CID, TYPEAREA='4' ORDER BY D_UPDATE DESC, HOSPCODE)\nra4 = ROW_NUMBER() OVER (PARTITION BY CID, DISTCODE, TYPEAREA='4' ...)\nhas123 = MAX(TYPEAREA IN ('1','2','3')) OVER (PARTITION BY CID)\np4 = SUM(rp4 = 1);  a4 = SUM(ra4 = 1);  p4x = SUM(rp4 = 1 AND has123 = 0)`}
+      />
+    </Panel>
   );
 }

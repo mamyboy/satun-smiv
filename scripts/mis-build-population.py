@@ -54,6 +54,7 @@ for r in c["rows"]:
     cube.append([
         hosp_ix[r[ci["h"]]], int(r[ci["t"]]), sex, int(r[ci["g"]]),
         int(r[ci["u"]]), int(r[ci["a13"]]), int(r[ci["p13"]]), int(r[ci["a12"]]), int(r[ci["p12"]]),
+        int(r[ci["a4"]]), int(r[ci["p4"]]), int(r[ci["p4x"]]),
     ])
 
 v = hdc["village"]
@@ -222,8 +223,11 @@ p13 = sum(r[6] for r in cube)
 p12 = sum(r[8] for r in cube)
 assert p13 == q["thai_alive_13_rows"][1], (p13, q["thai_alive_13_rows"])
 assert p12 == q["thai_alive_12_rows"][1], (p12, q["thai_alive_12_rows"])
+p4 = sum(r[10] for r in cube)
+p4x = sum(r[11] for r in cube)
+assert p4x <= p4 and sum(r[9] for r in cube) >= p4
 prov_total = sum(map(sum, data["bora"]["prov"].values()))
 assert prov_total == sum(sum(map(sum, (o["1"], o["2"]))) for o in data["bora"]["office"].values())
 assert prov_total == sum(sum(t["1"]) + sum(t["2"]) for t in tambon_bora.values())
 print(f"wrote {OUT} ({os.path.getsize(OUT)/1024:.0f} KB)")
-print(f"HDC p13={p13:,} p12={p12:,} | BORA Thai {bora['latest']}={prov_total:,} | FY deaths={list(deaths_fy)} midyear={list(midyear)}")
+print(f"HDC p13={p13:,} p12={p12:,} p4={p4:,} p4x={p4x:,} | BORA Thai {bora['latest']}={prov_total:,} | FY deaths={list(deaths_fy)} midyear={list(midyear)}")

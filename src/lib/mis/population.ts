@@ -7,8 +7,8 @@ import { LT_GROUPS, groupSingleAges, lifeTable, sullivanHale, type LifeTable, ty
 // ------------------------------------------------------------------ types (ตรงกับ JSON)
 export type SexArr = { "1": number[]; "2": number[] };
 export interface Hosp { code: string; name: string; type: string; amp: string; tmb: string }
-/** cube row: [hospIdx, typearea, sex(1|2|9), age(-1|0..100), u, a13, p13, a12, p12] */
-export type CubeRow = [number, number, number, number, number, number, number, number, number];
+/** cube row: [hospIdx, typearea(1-4), sex(1|2|9), age(-1|0..100), u, a13, p13, a12, p12, a4, p4, p4x] */
+export type CubeRow = [number, number, number, number, number, number, number, number, number, number, number, number];
 /** village row: [villageCode8, sex, ageBand5(-1|0..20), v13, t13] */
 export type VillageRow = [string, number, number, number, number];
 /** attr row: [amp, key, code, sex, a13, p13] */
@@ -69,12 +69,13 @@ export interface PopulationData {
 // ------------------------------------------------------------------ dimensions
 export const AGE_BANDS = Array.from({ length: 21 }, (_, i) => (i === 20 ? "100+" : `${i * 5}–${i * 5 + 4}`));
 
-export type TypeSet = "13" | "12";
+export type TypeSet = "13" | "12" | "4";
 export type Level = "prov" | "amp" | "unit";
 
 export const TYPESET_LABEL: Record<TypeSet, string> = {
   "13": "TYPEAREA 1,3 (อาศัยอยู่จริงในเขต)",
   "12": "TYPEAREA 1,2 (มีชื่อตามทะเบียนบ้านในเขต)",
+  "4": "TYPEAREA 4 (อาศัยนอกเขต — มารับบริการ)",
 };
 export const LEVEL_LABEL: Record<Level, string> = {
   prov: "ภาพจังหวัด — ตัดซ้ำ CID ทั้งจังหวัด",
@@ -109,11 +110,11 @@ export function levelOf(f: Filters): Level {
   return "prov";
 }
 
-const inSet = (t: number, s: TypeSet) => (s === "13" ? t === 1 || t === 3 : t === 1 || t === 2);
+const inSet = (t: number, s: TypeSet) => (s === "13" ? t === 1 || t === 3 : s === "12" ? t === 1 || t === 2 : t === 4);
+const MEASURE: Record<TypeSet, { amp: number; prov: number }> = { "13": { amp: 5, prov: 6 }, "12": { amp: 7, prov: 8 }, "4": { amp: 9, prov: 10 } };
 function measureIx(level: Level, s: TypeSet) {
   if (level === "unit") return 4;
-  if (level === "amp") return s === "13" ? 5 : 7;
-  return s === "13" ? 6 : 8;
+  return MEASURE[s][level];
 }
 
 function hospOk(d: PopulationData, f: Filters, hi: number) {
@@ -183,19 +184,57 @@ export function hdcByAmp(d: PopulationData, f: Filters) {
 
 /** ตาราง: รายหน่วยบริการ (ตัววัด u = HOSPCODE+PID) */
 export function hdcByHosp(d: PopulationData, f: Filters) {
-  const acc = d.hdc.hosp.map(() => ({ m: 0, f: 0, t1: 0, t2: 0, t3: 0, old: 0 }));
+  const acc = d.hdc.hosp.map(() => ({ m: 0, f: 0, t1: 0, t2: 0, t3: 0, t4: 0, old: 0 }));
   for (const r of d.hdc.cube) {
     if (!hospOk(d, f, r[0]) || !sexOk(f, r[2])) continue;
     if (r[3] >= 0 ? !ageOk(f, r[3]) : !(f.ageMin === 0 && f.ageMax === 100)) continue;
     const a = acc[r[0]];
-    if (r[1] === 1) a.t1 += r[4]; else if (r[1] === 2) a.t2 += r[4]; else if (r[1] === 3) a.t3 += r[4];
+    if (r[1] === 1) a.t1 += r[4]; else if (r[1] === 2) a.t2 += r[4]; else if (r[1] === 3) a.t3 += r[4]; else if (r[1] === 4) a.t4 += r[4];
     if (!inSet(r[1], f.typeSet)) continue;
     if (r[2] === 1) a.m += r[4]; else if (r[2] === 2) a.f += r[4];
     if (r[3] >= 60) a.old += r[4];
   }
   return d.hdc.hosp
     .map((h, i) => ({ ...h, ...acc[i], total: acc[i].m + acc[i].f }))
-    .filter((r, i) => hospOk(d, f, i) && r.t1 + r.t2 + r.t3 > 0);
+    .filter((r, i) => hospOk(d, f, i) && r.t1 + r.t2 + r.t3 + r.t4 > 0);
+}
+
+/**
+ * องค์ประกอบ TYPEAREA 1–4 ตามตัวกรองพื้นที่/หน่วย/เพศ/อายุ
+ * rows = HOSPCODE+PID ต่อ TYPEAREA; cid13/cid12/cid4 = ตัดซ้ำ CID ตามระดับ (จังหวัด/อำเภอ/หน่วย)
+ * only4 = CID ที่เป็น TYPEAREA 4 และไม่มี TYPEAREA 1,2,3 ที่หน่วยใดในจังหวัด (มีเฉพาะภาพจังหวัด)
+ */
+export function hdcTypeMix(d: PopulationData, f: Filters) {
+  const level = levelOf(f);
+  const rows = { 1: 0, 2: 0, 3: 0, 4: 0 } as Record<1 | 2 | 3 | 4, number>;
+  let cid13 = 0, cid12 = 0, cid4 = 0, only4 = 0;
+  const allAges = f.ageMin === 0 && f.ageMax === 100;
+  for (const r of d.hdc.cube) {
+    if (!hospOk(d, f, r[0]) || !sexOk(f, r[2])) continue;
+    if (r[3] >= 0 ? !ageOk(f, r[3]) : !allAges) continue;
+    rows[r[1] as 1 | 2 | 3 | 4] += r[4];
+    cid13 += r[measureIx(level, "13")];
+    cid12 += r[measureIx(level, "12")];
+    cid4 += r[measureIx(level, "4")];
+    only4 += r[11];
+  }
+  return { level, rows, cid13, cid12, cid4, only4: level === "prov" ? only4 : null };
+}
+
+/** TYPEAREA 4 รายอำเภอ: a4 (ตัดซ้ำ CID ในอำเภอ) */
+export function hdcType4ByAmp(d: PopulationData, f: Filters) {
+  const out = new Map<string, { rows: number; cid: number; m: number; f: number }>();
+  const allAges = f.ageMin === 0 && f.ageMax === 100;
+  for (const r of d.hdc.cube) {
+    if (r[1] !== 4 || !hospOk(d, f, r[0]) || !sexOk(f, r[2])) continue;
+    if (r[3] >= 0 ? !ageOk(f, r[3]) : !allAges) continue;
+    const amp = d.hdc.hosp[r[0]].amp;
+    const c = out.get(amp) ?? { rows: 0, cid: 0, m: 0, f: 0 };
+    c.rows += r[4]; c.cid += r[9];
+    if (r[2] === 1) c.m += r[9]; else if (r[2] === 2) c.f += r[9];
+    out.set(amp, c);
+  }
+  return d.hdc.amp.filter((a) => out.has(a.code)).map((a) => ({ code: a.code, name: a.name, ...out.get(a.code)! }));
 }
 
 /** คุณลักษณะ (ศาสนา/หมู่เลือด/…): จังหวัด = p13, เมื่อกรองอำเภอ = a13 (ไม่รองรับตัวกรองหน่วยบริการ/อายุ) */
