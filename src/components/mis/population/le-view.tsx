@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { CartesianGrid, ComposedChart, ErrorBar, Legend as RLegend, Line, ResponsiveContainer, Scatter, Tooltip, XAxis, YAxis } from "recharts";
-import { HeartPulse, LineChart, Table2 } from "lucide-react";
-import { computeLe, fyList, type PopulationData } from "@/lib/mis/population";
+import { CartesianGrid, ComposedChart, ErrorBar, LineChart as RLineChart, Legend as RLegend, Line, ResponsiveContainer, Scatter, Tooltip, XAxis, YAxis } from "recharts";
+import { Activity, HeartPulse, LineChart, Table2 } from "lucide-react";
+import { asdr, computeLe, fyList, type PopulationData } from "@/lib/mis/population";
 import { Panel, PanelHeader } from "../panel";
 import { SegmentedTabs } from "../segmented-tabs";
 import { CHART_MS } from "../motion";
@@ -23,6 +23,7 @@ export function LeView({ d, src }: { d: PopulationData; src: Sources }) {
     [d, pooled],
   );
   const cur = res[Number(sex) as 1 | 2 | 3];
+  const asdrRows = React.useMemo(() => asdr(d, pooled).map((r) => ({ ...r, ชาย: r.ชาย || null, หญิง: r.หญิง || null, รวม: r.รวม || null })), [d, pooled]);
 
   // แนวโน้ม: ค่าทางการ BOD (2562–ล่าสุด) + ค่าที่คำนวณรายปีงบจากทะเบียนราษฎร
   const trend = React.useMemo(() => {
@@ -171,6 +172,28 @@ export function LeView({ d, src }: { d: PopulationData; src: Sources }) {
           source={src.bora("การตายรายอายุ + ประชากรรายอายุ")}
           method="ตาย = ผลรวมการตายรายอายุทุกเดือนในปีงบที่เลือก (ทุกสัญชาติที่แจ้งตายในจังหวัด); PY = ผลรวมประชากรกลางปี (สัญชาติไทยในทะเบียนบ้าน ณ สิ้น มี.ค.) — ข้อจำกัด: ตัวตั้งรวมทุกสัญชาติแต่ตัวหารเป็นสัญชาติไทย (ไม่ใช่ไทยราว 0.4%) อาจทำให้ LE ต่ำกว่าจริงเล็กน้อย"
           formula={formula}
+        />
+      </Panel>
+      <Panel index={3} className="xl:col-span-12">
+        <PanelHeader icon={<Activity />} title={`อัตราตายรายกลุ่มอายุ (ASDR) — ${fyText}`} description="ต่อประชากร 1,000 คน · แกนตั้งแบบลอการิทึม" />
+        <div className="h-[340px] px-3 pt-3 sm:px-5">
+          <ResponsiveContainer width="100%" height="100%">
+            <RLineChart data={asdrRows} margin={{ left: 0, right: 16, top: 8 }}>
+              <CartesianGrid vertical={false} stroke="rgba(6,25,35,.07)" />
+              <XAxis dataKey="band" tick={{ fontSize: 11, fill: "#6b7f8a" }} axisLine={false} tickLine={false} interval={0} />
+              <YAxis scale="log" domain={[0.05, "auto"]} allowDataOverflow tickFormatter={(v) => (Number(v) < 1 ? Number(v).toFixed(2) : Number(v).toFixed(0))} tick={{ fontSize: 11, fill: "#6b7f8a" }} width={44} axisLine={false} tickLine={false} />
+              <Tooltip formatter={(v) => `${Number(v).toFixed(2)} ต่อ 1,000`} />
+              <RLegend wrapperStyle={{ fontSize: 11.5 }} />
+              <Line dataKey="ชาย" stroke={MALE} strokeWidth={2.2} animationDuration={CHART_MS.draw} />
+              <Line dataKey="หญิง" stroke={FEMALE} strokeWidth={2.2} animationDuration={CHART_MS.draw} />
+              <Line dataKey="รวม" stroke="#061923" strokeDasharray="4 3" strokeWidth={1.6} dot={false} animationDuration={CHART_MS.draw} />
+            </RLineChart>
+          </ResponsiveContainer>
+        </div>
+        <SourceNote
+          source={src.bora("จำนวนการตายรายอายุ (รายเดือน) + ประชากรรายอายุ")}
+          method="ASDR(กลุ่มอายุ) = จำนวนตายในกลุ่มอายุ (รวมปีงบที่เลือก) ÷ ผลรวมประชากรกลางปีกลุ่มอายุเดียวกัน × 1,000 · ใช้กลุ่มอายุเดียวกับตารางชีพ (0, 1–4, 5–9 … 85+) · ข้อจำกัดเดียวกับ LE: การตายนับตามสำนักทะเบียนที่รับแจ้ง กลุ่มที่มีอัตรา 0 (ไม่มีผู้ตาย) จะไม่แสดงจุดบนแกนลอการิทึม"
+          formula={"nMx × 1,000 = Σ ตาย ÷ Σ ประชากรกลางปี × 1,000   (เท่ากับคอลัมน์ nMx ในตารางชีพ × 1,000)"}
         />
       </Panel>
     </div>

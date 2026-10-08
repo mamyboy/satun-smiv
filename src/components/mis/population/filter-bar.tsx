@@ -22,6 +22,18 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
 
 const toggle = <T,>(arr: T[], v: T) => (arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
 
+function natValue(nats: string[]) {
+  if (!nats.length) return "all";
+  if (nats.length === 1) return nats[0] === "099" ? "099" : `c:${nats[0]}`;
+  return "non";
+}
+function natFromValue(v: string, data: PopulationData): string[] {
+  if (v === "all") return [];
+  if (v === "099") return ["099"];
+  if (v === "non") return data.hdc.nations.map((n) => n.code).filter((c) => c !== "099");
+  return [v.slice(2)];
+}
+
 /** ตัวกรองมิติประชากร: อำเภอ / ประเภทหน่วยบริการ / หน่วยบริการ / TYPEAREA / เพศ / ช่วงอายุ */
 export function FilterBar({
   data,
@@ -122,6 +134,22 @@ export function FilterBar({
         </div>
         {showHosp && (
           <div className="flex min-w-0 flex-wrap items-end gap-2">
+            <label className="min-w-0 flex-1">
+              <span className="mb-1.5 block text-[11px] font-medium text-mis-faint">สัญชาติ</span>
+              <select
+                aria-label="สัญชาติ"
+                value={natValue(value.nats)}
+                onChange={(e) => set({ nats: natFromValue(e.target.value, data) })}
+                className="h-8 w-full rounded-xl border border-mis-line bg-white px-2 text-[12px]"
+              >
+                <option value="099">ไทย</option>
+                <option value="all">ทุกสัญชาติ</option>
+                <option value="non">ไม่ใช่สัญชาติไทย (ทั้งหมด)</option>
+                {data.hdc.nations.filter((n) => n.code !== "099").slice(0, 30).map((n) => (
+                  <option key={n.code} value={`c:${n.code}`}>{n.name}{n.code ? ` (${n.code})` : ""}</option>
+                ))}
+              </select>
+            </label>
             <label className="min-w-0 flex-1">
               <span className="mb-1.5 block text-[11px] font-medium text-mis-faint">ประเภทหน่วยบริการ</span>
               <select

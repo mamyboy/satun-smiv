@@ -33,9 +33,9 @@ export function useSources(d: PopulationData) {
           <a href={m.bod.url} target="_blank" rel="noreferrer" className="text-mis-accent-strong underline-offset-2 hover:underline">le-hale.bodthai.net</a>
         </>
       ),
-      commonWhere: "person.NATION = '099' (ไทย) AND person.DISCHARGE = '9' (ยังไม่จำหน่าย) AND chospital.PROVCODE = '91' AND CID IS NOT NULL",
+      commonWhere: "person.DISCHARGE = '9' (ยังไม่จำหน่าย) AND chospital.PROVCODE = '91' AND CID IS NOT NULL — สัญชาติ (NATION) ตามตัวกรอง ค่าเริ่มต้น '099' ไทย",
       ageRule: `อายุเต็มปี ณ ${thDate(m.hdc.ageRefDate)} จาก BIRTH (BIRTH ว่าง/อายุ <0 หรือ >120 = ไม่ทราบอายุ ไม่อยู่ในพีระมิด)`,
-      repRule: "แถวตัวแทนของ CID: TYPEAREA น้อยก่อน → D_UPDATE ล่าสุด → HOSPCODE น้อยสุด (ใช้กำหนดเพศ/อายุ/หน่วยบริการของคนนั้น)",
+      repRule: "แถวตัวแทนของ CID: NATION '099' ก่อน → TYPEAREA น้อยก่อน → D_UPDATE ล่าสุด → HOSPCODE น้อยสุด (ใช้กำหนดเพศ/อายุ/สัญชาติ/หน่วยบริการของคนนั้น)",
     };
   }, [d]);
 }

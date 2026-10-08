@@ -5,8 +5,11 @@ import { readFileSync } from "node:fs";
 const base = process.argv[2] ?? "http://localhost:3100";
 const out = process.env.SHOT_DIR ?? ".";
 const data = JSON.parse(readFileSync(new URL("../public/data/mis/population.json", import.meta.url), "utf8"));
-const p13 = data.hdc.cube.reduce((a, r) => a + r[6], 0);
-const p4 = data.hdc.cube.reduce((a, r) => a + r[10], 0);
+const TH = data.hdc.nations.findIndex((n) => n.code === "099");
+const p13 = data.hdc.cube.reduce((a, r) => a + (r[12] === TH ? r[6] : 0), 0);
+const p13all = data.hdc.cube.reduce((a, r) => a + r[6], 0);
+const houses = data.bora.house.month.at(-1).n;
+const p4 = data.hdc.cube.reduce((a, r) => a + (r[12] === TH ? r[10] : 0), 0);
 const bora = data.bora.prov["1"].concat(data.bora.prov["2"]).reduce((a, b) => a + b, 0);
 const th = (n) => n.toLocaleString("th-TH");
 
@@ -69,6 +72,17 @@ async function run(name, viewport) {
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     check(overflow <= 1, `[${key}] no horizontal page overflow (${overflow}px)`);
     if (key === "bora") check((await view.locator(`text=${th(bora)}`).count()) > 0, `[bora] BORA total ${th(bora)} shown`);
+    if (key === "bora") {
+      check((await view.locator("text=อัตราการเปลี่ยนแปลงประชากรรายปีงบ").count()) === 1, "[bora] change-rate panel");
+      check((await view.innerText()).includes(th(houses)), `[bora] BORA houses ${th(houses)} shown`);
+    }
+    if (key === "hdc") {
+      check((await view.locator("text=ประชากรจำแนกตามสัญชาติ").count()) === 1, "[hdc] nationality panel");
+      check((await view.locator("text=ครัวเรือน / บ้าน").count()) === 1, "[hdc] household panel");
+      check((await view.getByRole("tab", { name: "อาชีพ", exact: true }).count()) === 1, "[hdc] occupation attribute tab");
+      check((await view.getByRole("tab", { name: "เชื้อชาติ", exact: true }).count()) === 1, "[hdc] race attribute tab");
+    }
+    if (key === "le") check((await view.locator("text=อัตราตายรายกลุ่มอายุ (ASDR)").count()) === 1, "[le] ASDR panel");
     if (key === "le") {
       const txt = await view.innerText();
       const m = txt.match(/LE แรกเกิด \(รวมเพศ\)\s*([\d.]+)/);
@@ -96,6 +110,9 @@ async function run(name, viewport) {
   await page.locator("text=ล้างตัวกรอง").click();
   await page.waitForTimeout(500);
   check(await hasText(page, th(p13)), "reset filters restores province total");
+  await page.waitForTimeout(400);
+  await page.selectOption("select[aria-label=สัญชาติ]", "all");
+  check(await hasText(page, th(p13all)), `nationality filter = all → ${th(p13all)}`);
 
   if (viewport.width < 1024) {
     await page.locator("button[aria-label='เปิดเมนู']").click();

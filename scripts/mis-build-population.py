@@ -43,8 +43,20 @@ hosp = [
 ]
 hosp_ix = {h["code"]: i for i, h in enumerate(hosp)}
 
+# สัญชาติ: เรียงไทยก่อน แล้วตามจำนวนแถว (index ลงใน hdc.nations)
+nat_label = {r[0]: r[1] for r in lk["cnation"]}
 c = hdc["cube"]
 ci = {n: i for i, n in enumerate(c["cols"])}
+_nat_n = {}
+for r in c["rows"]:
+    _nat_n[r[ci["n"]]] = _nat_n.get(r[ci["n"]], 0) + int(r[ci["u"]])
+nations = sorted(_nat_n, key=lambda k: (k != "099", -_nat_n[k], k))
+for tbl in ("village", "attr"):
+    for r in hdc[tbl]["rows"]:
+        n = r[hdc[tbl]["cols"].index("n")]
+        if n not in nations:
+            nations.append(n)
+nat_ix = {k: i for i, k in enumerate(nations)}
 cube = []
 for r in c["rows"]:
     if r[ci["s"]] not in ("1", "2"):
@@ -54,7 +66,7 @@ for r in c["rows"]:
     cube.append([
         hosp_ix[r[ci["h"]]], int(r[ci["t"]]), sex, int(r[ci["g"]]),
         int(r[ci["u"]]), int(r[ci["a13"]]), int(r[ci["p13"]]), int(r[ci["a12"]]), int(r[ci["p12"]]),
-        int(r[ci["a4"]]), int(r[ci["p4"]]), int(r[ci["p4x"]]),
+        int(r[ci["a4"]]), int(r[ci["p4"]]), int(r[ci["p4x"]]), nat_ix[r[ci["n"]]],
     ])
 
 v = hdc["village"]
@@ -62,14 +74,18 @@ vi = {n: i for i, n in enumerate(v["cols"])}
 village = []
 for r in v["rows"]:
     sex = int(r[vi["s"]]) if r[vi["s"]] in ("1", "2") else 9
-    village.append([r[vi["v"]], sex, int(r[vi["g"]]), int(r[vi["v13"]]), int(r[vi["t13"]])])
+    village.append([r[vi["v"]], sex, int(r[vi["g"]]), int(r[vi["v13"]]), int(r[vi["t13"]]), nat_ix[r[vi["n"]]]])
 
 a = hdc["attr"]
 ai = {n: i for i, n in enumerate(a["cols"])}
 attr = []
 for r in a["rows"]:
     sex = int(r[ai["s"]]) if r[ai["s"]] in ("1", "2") else 9
-    attr.append([r[ai["a"]], r[ai["k"]], r[ai["c"]] or "", sex, int(r[ai["a13"]]), int(r[ai["p13"]])])
+    attr.append([r[ai["a"]], r[ai["k"]], r[ai["c"]] or "", sex, int(r[ai["a13"]]), int(r[ai["p13"]]), nat_ix[r[ai["n"]]]])
+
+hh = hdc["household"]
+hi = {n: i for i, n in enumerate(hh["cols"])}
+household = [[r[hi["v"]], int(r[hi["sz"]]), int(r[hi["houses"]]), int(r[hi["persons"]])] for r in hh["rows"]]
 
 attr_labels = {
     "religion": {x[0]: x[1] for x in lk["creligion"]},
@@ -77,9 +93,11 @@ attr_labels = {
     "rh": {x[0]: ("Rh+" if x[1] == "positive" else "Rh−") for x in lk["crhgroup"]},
     "mstatus": {x[0]: x[1] for x in lk["cmstatus"]},
     "education": {x[0]: x[1] for x in lk["ceducation"]},
+    "occupation": {x[0]: x[1] for x in lk["coccupation_new"]},
+    "race": {x[0]: x[2] for x in lk["crace"]},
 }
 
-villages_used = sorted({r[0] for r in village})
+villages_used = sorted({r[0] for r in village} | {r[0] for r in household})
 tambons_used = sorted({x[:6] for x in villages_used} | {h["tmb"] for h in hosp})
 
 # ---------------------------------------------------------------- BORA
@@ -142,6 +160,19 @@ for key, src in (("birth", "statbirth"), ("death", "statdeath"), ("movein", "sta
             row[key] = [r["lssumtotMale"], r["lssumtotFemale"]]
 vital_month = [vital[k] for k in sorted(vital)]
 
+# จำนวนบ้าน (stathouse, ค่า "หลัง" = lssumnotTermDate) — สำนักทะเบียน / ตำบล / รายเดือน
+office_amp = {o["rcode"]: amp for o, amp in ((o, str(o["aa"][0]).zfill(2)) for o in bora["offices"])}
+house_tambon = {}
+for rc, rows in bora["house"]["tambon"].items():
+    for tt, _desc, n in rows:
+        code = "91" + office_amp[rc] + str(tt).zfill(2)
+        house_tambon[code] = house_tambon.get(code, 0) + n
+house = {
+    "office": bora["house"]["office"],
+    "tambon": house_tambon,
+    "month": [{"ym": ym, "n": n} for ym, n in bora["house"]["month"]],
+}
+
 # ---------------------------------------------------------------- LE/HALE (BOD)
 def bod_rows(rows, prov=None):
     out = []
@@ -168,6 +199,7 @@ data = {
                 "scripts/sql/mis-population-hdc.sql",
                 "scripts/sql/mis-population-hdc-village.sql",
                 "scripts/sql/mis-population-hdc-attr.sql",
+                "scripts/sql/mis-population-hdc-household.sql",
             ],
         },
         "bora": {
@@ -191,6 +223,9 @@ data = {
         "hosp": hosp,
         "cube": cube,
         "village": village,
+        "household": household,
+        "householdMeta": hdc["household_meta"],
+        "nations": [{"code": k, "name": nat_label.get(k, "ไม่บันทึก" if k == "" else f"รหัส {k}")} for k in nations],
         "attr": attr,
         "attrLabels": attr_labels,
         "quality": q,
@@ -207,6 +242,7 @@ data = {
         "vitalMonth": vital_month,
         "deathsFY": {k: {"1": v["1"], "2": v["2"]} for k, v in sorted(deaths_fy.items())},
         "midyearFY": dict(sorted(midyear.items())),
+        "house": house,
     },
     "bod": {
         "satun": bod_rows(bod["province"], 91.0),
@@ -219,8 +255,9 @@ with open(OUT, "w", encoding="utf-8") as f:
     json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
 
 # ---------------------------------------------------------------- self-checks (ตรวจกระทบยอดกับแหล่ง)
-p13 = sum(r[6] for r in cube)
-p12 = sum(r[8] for r in cube)
+TH = nat_ix["099"]
+p13 = sum(r[6] for r in cube if r[12] == TH)
+p12 = sum(r[8] for r in cube if r[12] == TH)
 assert p13 == q["thai_alive_13_rows"][1], (p13, q["thai_alive_13_rows"])
 assert p12 == q["thai_alive_12_rows"][1], (p12, q["thai_alive_12_rows"])
 p4 = sum(r[10] for r in cube)
@@ -229,5 +266,8 @@ assert p4x <= p4 and sum(r[9] for r in cube) >= p4
 prov_total = sum(map(sum, data["bora"]["prov"].values()))
 assert prov_total == sum(sum(map(sum, (o["1"], o["2"]))) for o in data["bora"]["office"].values())
 assert prov_total == sum(sum(t["1"]) + sum(t["2"]) for t in tambon_bora.values())
+assert sum(house["office"].values()) == sum(house_tambon.values()) == house["month"][-1]["n"]
+assert set(house_tambon) <= set(tambon_bora), set(house_tambon) - set(tambon_bora)
 print(f"wrote {OUT} ({os.path.getsize(OUT)/1024:.0f} KB)")
-print(f"HDC p13={p13:,} p12={p12:,} p4={p4:,} p4x={p4x:,} | BORA Thai {bora['latest']}={prov_total:,} | FY deaths={list(deaths_fy)} midyear={list(midyear)}")
+print(f"nations={len(nations)} households={sum(r[2] for r in household):,} BORA houses={sum(house['office'].values()):,}")
+print(f"HDC(ไทย) p13={p13:,} p12={p12:,} | all p4={p4:,} p4x={p4x:,} | BORA Thai {bora['latest']}={prov_total:,} | FY deaths={list(deaths_fy)} midyear={list(midyear)}")

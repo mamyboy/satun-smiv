@@ -2,10 +2,10 @@
 
 import * as React from "react";
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Building2, Droplet, Home, Layers, PieChart, Target, Users } from "lucide-react";
+import { Building2, Droplet, Flag, Home, House, Layers, PieChart, Target, Users } from "lucide-react";
 import { fmtNum } from "@/lib/mis/format";
 import {
-  TARGET_GROUPS, TYPESET_LABEL, hdcAttr, hdcByAmp, hdcByHosp, hdcByTambon, hdcSummary, hdcTypeMix, indices, targetCount,
+  TARGET_GROUPS, TYPESET_LABEL, hdcAttr, hdcByAmp, hdcByHosp, hdcByTambon, hdcSummary, hdcTypeMix, hdcByNation, hdcHouseholds, boraHouses, indices, targetCount,
   type Filters, type PopulationData,
 } from "@/lib/mis/population";
 import { Panel, PanelHeader } from "../panel";
@@ -161,6 +161,9 @@ export function HdcView({ d, f, src }: { d: PopulationData; f: Filters; src: Sou
         />
       </Panel>
 
+      <NationPanel d={d} f={f} src={src} />
+      <HouseholdPanel d={d} f={f} src={src} />
+
       {/* Attributes */}
       <Panel index={6} className="xl:col-span-5">
         <PanelHeader
@@ -170,27 +173,27 @@ export function HdcView({ d, f, src }: { d: PopulationData; f: Filters; src: Sou
           actions={
             <SegmentedTabs
               id="hdc-attr" size="sm" value={attrKey} onChange={setAttrKey}
-              items={[{ value: "religion", label: "ศาสนา" }, { value: "abo", label: "หมู่เลือด" }, { value: "rh", label: "Rh" }, { value: "mstatus", label: "สมรส" }, { value: "education", label: "การศึกษา" }]}
+              items={[{ value: "religion", label: "ศาสนา" }, { value: "abo", label: "หมู่เลือด" }, { value: "rh", label: "Rh" }, { value: "mstatus", label: "สมรส" }, { value: "education", label: "การศึกษา" }, { value: "occupation", label: "อาชีพ" }, { value: "race", label: "เชื้อชาติ" }]}
             />
           }
         />
-        <div className="h-[300px] px-3 pt-3 sm:px-5">
+        <div className="h-[360px] px-3 pt-3 sm:px-5">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={attr.slice(0, 10)} layout="vertical" margin={{ left: 8, right: 24 }}>
+            <BarChart data={attr.slice(0, 12)} layout="vertical" margin={{ left: 8, right: 24 }}>
               <CartesianGrid horizontal={false} stroke="rgba(6,25,35,.07)" />
               <XAxis type="number" tickFormatter={(v) => fmtNum(v)} tick={{ fontSize: 11, fill: "#6b7f8a" }} axisLine={false} tickLine={false} />
-              <YAxis type="category" dataKey="label" width={150} tick={{ fontSize: 11, fill: "#3d5260" }} axisLine={false} tickLine={false} interval={0} />
+              <YAxis type="category" dataKey="label" width={170} tickFormatter={(v: string) => (v.length > 26 ? v.slice(0, 25) + "…" : v)} tick={{ fontSize: 11, fill: "#3d5260" }} axisLine={false} tickLine={false} interval={0} />
               <Tooltip formatter={(v) => [`${fmtNum(Number(v))} คน`, "จำนวน"]} cursor={{ fill: "rgba(2,184,200,.06)" }} />
               <Bar dataKey="n" radius={[0, 8, 8, 0]} animationDuration={CHART_MS.grow}>
-                {attr.slice(0, 10).map((a, i) => <Cell key={a.code} fill={a.code === "" ? "#c3ced4" : SERIES_COLORS[i % SERIES_COLORS.length]} />)}
+                {attr.slice(0, 12).map((a, i) => <Cell key={a.code} fill={a.code === "" ? "#c3ced4" : SERIES_COLORS[i % SERIES_COLORS.length]} />)}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
         <SourceNote
-          source={src.hdc("person, chospital, campur, creligion, cabogroup, crhgroup, cmstatus, ceducation")}
+          source={src.hdc("person, chospital, campur, creligion, cabogroup, crhgroup, cmstatus, ceducation, coccupation_new, crace")}
           method={`ค่าจากแถวตัวแทนของ CID — ทั้งจังหวัดนับ CID ไม่ซ้ำ, เมื่อเลือกอำเภอนับ CID ไม่ซ้ำภายในอำเภอ; ชื่อรหัสจากตารางรหัสมาตรฐาน; ค่าว่าง = "ไม่บันทึก"`}
-          formula={"-- scripts/sql/mis-population-hdc-attr.sql\nUNPIVOT ranked ON religion, abo, rh, mstatus, education INTO NAME attr VALUE code"}
+          formula={"-- scripts/sql/mis-population-hdc-attr.sql\nUNPIVOT ranked ON religion, abo, rh, mstatus, education, occupation, race INTO NAME attr VALUE code\nอาชีพ = OCCUPATION_NEW → coccupation_new · เชื้อชาติ = RACE → crace · แสดง 12 อันดับแรก"}
         />
       </Panel>
 
@@ -300,4 +303,107 @@ function TypeAreaPanel({ d, f, src }: { d: PopulationData; f: Filters; src: Sour
       />
     </Panel>
   );
+}
+
+function NationPanel({ d, f, src }: { d: PopulationData; f: Filters; src: Sources }) {
+  const rows = React.useMemo(() => hdcByNation(d, f), [d, f]);
+  const total = rows.reduce((a, r) => a + r.total, 0);
+  const th = rows.find((r) => r.code === "099")?.total ?? 0;
+  return (
+    <Panel index={8} className="xl:col-span-5">
+      <PanelHeader icon={<Flag />} title="ประชากรจำแนกตามสัญชาติ" description={`${TYPESET_LABEL[f.typeSet]} · ไม่ใช้ตัวกรองสัญชาติ`} />
+      <div className="px-5 pt-4 sm:px-6">
+        <div className="mb-3 grid grid-cols-3 gap-2.5">
+          {[
+            { k: "ทุกสัญชาติ", v: fmtNum(total) },
+            { k: "ไทย", v: fmtNum(th) },
+            { k: "ไม่ใช่ไทย", v: `${fmtNum(total - th)} (${total ? (((total - th) / total) * 100).toFixed(2) : "0.00"}%)` },
+          ].map((x) => (
+            <div key={x.k} className="rounded-2xl bg-mis-ink/[0.035] px-3 py-2.5">
+              <p className="text-[11px] text-mis-muted">{x.k}</p>
+              <p className="mt-0.5 text-[15px] font-semibold tabular-nums text-mis-ink">{x.v}</p>
+            </div>
+          ))}
+        </div>
+        <SortTable
+          maxHeight={300}
+          rows={rows.map((r) => ({ ...r, pct: total ? (r.total / total) * 100 : 0, label: `${r.name}${r.code ? ` (${r.code})` : ""}` }))}
+          initialSort={{ key: "total", dir: -1 }}
+          columns={[
+            { key: "label", label: "สัญชาติ (NATION)" },
+            { key: "m", label: "ชาย", num: true },
+            { key: "f", label: "หญิง", num: true },
+            { key: "total", label: "รวม", num: true },
+            { key: "pct", label: "%", num: true, render: (r) => (r.pct < 0.01 ? "<0.01" : r.pct.toFixed(2)) },
+          ]}
+        />
+      </div>
+      <SourceNote
+        source={src.hdc("person, chospital, campur, cnation")}
+        method="สัญชาติ = NATION ของแถวตัวแทนของ CID (CID ที่มีแถวสัญชาติไทยอย่างน้อย 1 แถวนับเป็นไทย) · ระดับการนับตามตัวกรองพื้นที่/หน่วยบริการ (จังหวัด = CID ไม่ซ้ำ, อำเภอ = CID ไม่ซ้ำในอำเภอ, หน่วย = HOSPCODE+PID) · ข้อจำกัด: แรงงานต่างด้าวที่ไม่มีเลขประจำตัว (CID ว่าง) ไม่ถูกนับ"
+        formula={"ROW_NUMBER() OVER (PARTITION BY CID ORDER BY (NATION <> '099'), TYPEAREA, D_UPDATE DESC, HOSPCODE) = 1\nGROUP BY NATION → cnation.NATIONNAME"}
+      />
+    </Panel>
+  );
+}
+
+function HouseholdPanel({ d, f, src }: { d: PopulationData; f: Filters; src: Sources }) {
+  const hh = React.useMemo(() => hdcHouseholds(d, f.amps), [d, f.amps]);
+  const bora = boraHouses(d, f.amps);
+  const tmbRows = hh.tambon.map((t) => ({ ...t, ampName: d.hdc.amp.find((a) => a.code === t.amp)?.name ?? t.amp, bora: d.bora.house.tambon[t.code] ?? 0 }));
+  return (
+    <Panel index={9} className="xl:col-span-7">
+      <PanelHeader icon={<House />} title="ครัวเรือน / บ้าน" description="HDC (บ้านที่มีคน TYPEAREA 1,3 อาศัย) เทียบจำนวนบ้านทะเบียนราษฎร · ตามตัวกรองอำเภอ" />
+      <div className="grid gap-4 px-5 pt-4 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)]">
+        <div className="min-w-0">
+          <div className="grid grid-cols-2 gap-2.5">
+            {[
+              { k: "บ้าน HDC (มีผู้อาศัย 1,3)", v: fmtNum(hh.houses) },
+              { k: "ขนาดครัวเรือนเฉลี่ย", v: `${hh.avg.toFixed(2)} คน` },
+              { k: `บ้านทะเบียนราษฎร (${src.boraMonth})`, v: fmtNum(bora) },
+              { k: "คนเฉลี่ยต่อบ้าน (ทะเบียนราษฎร)", v: bora ? `${(boraSummaryTotal(d, f.amps) / bora).toFixed(2)} คน` : "—" },
+            ].map((x) => (
+              <div key={x.k} className="rounded-2xl bg-mis-ink/[0.035] px-3 py-2.5">
+                <p className="text-[11px] text-mis-muted">{x.k}</p>
+                <p className="mt-0.5 text-[16px] font-semibold tabular-nums text-mis-ink">{x.v}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-3 h-[220px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={hh.size} margin={{ left: 0, right: 8, top: 8 }}>
+                <CartesianGrid vertical={false} stroke="rgba(6,25,35,.07)" />
+                <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#6b7f8a" }} axisLine={false} tickLine={false} label={{ value: "จำนวนสมาชิก (คน)", position: "insideBottom", offset: -2, fontSize: 10.5, fill: "#6b7f8a" }} />
+                <YAxis tickFormatter={(v) => fmtNum(v)} tick={{ fontSize: 11, fill: "#6b7f8a" }} width={52} axisLine={false} tickLine={false} />
+                <Tooltip formatter={(v) => [`${fmtNum(Number(v))} หลัง`, "บ้าน"]} cursor={{ fill: "rgba(2,184,200,.06)" }} />
+                <Bar dataKey="houses" fill="#02b8c8" radius={[6, 6, 0, 0]} animationDuration={CHART_MS.grow} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+        <SortTable
+          maxHeight={330}
+          rows={tmbRows}
+          initialSort={{ key: "houses", dir: -1 }}
+          columns={[
+            { key: "name", label: "ตำบล" },
+            { key: "ampName", label: "อำเภอ" },
+            { key: "houses", label: "บ้าน HDC", num: true },
+            { key: "avg", label: "คน/บ้าน", num: true, render: (r) => r.avg.toFixed(2) },
+            { key: "bora", label: "บ้านทะเบียนฯ", num: true },
+          ]}
+        />
+      </div>
+      <SourceNote
+        source={<>{src.hdc("person, home, cvillage")} · {src.bora("จำนวนบ้าน (stathouse)")}</>}
+        method={<>HDC: แต่ละ CID (TYPEAREA 1,3 ทุกสัญชาติ) ถูกจัดเข้าบ้านเดียวตามแถวตัวแทน แล้วนับบ้าน (HOSPCODE+HID) ที่มีคนอย่างน้อย 1 คน; ขนาดครัวเรือน = จำนวนคนในบ้าน. ใน hippo ฟิลด์ HOUSE_ID ว่างทุกแถว จึงตัดซ้ำบ้านเดียวกันที่ขึ้นทะเบียนหลายหน่วยไม่ได้; แฟ้ม home ของจังหวัดมี {fmtNum(d.hdc.householdMeta.home_rows_91)} แถว (รวมบ้านที่ไม่มีคน 1,3). ทะเบียนราษฎร: จำนวนบ้าน (หลัง) ตามสำนักทะเบียน/ตำบล; คนเฉลี่ยต่อบ้าน = ประชากรสัญชาติไทยในทะเบียนบ้าน ÷ จำนวนบ้าน (บ้านว่างทำให้ค่าต่ำกว่าขนาดครัวเรือนจริง)</>}
+        formula={"-- scripts/sql/mis-population-hdc-household.sql\nrep = ROW_NUMBER() OVER (PARTITION BY CID ORDER BY (NATION<>'099'), TYPEAREA, D_UPDATE DESC, HOSPCODE) = 1\nhh = GROUP BY HOSPCODE+HID → n = COUNT(CID)\nขนาด = LEAST(n, 7)\nทะเบียนราษฎร: /api/statpophouse/v1/stathouse/list?action=33|34&yymmBegin=..&yymmEnd=..&statType=0&cc=91 (ค่า lssumnotTermDate = หลัง)"}
+      />
+    </Panel>
+  );
+}
+
+function boraSummaryTotal(d: PopulationData, amps: string[]) {
+  if (!amps.length) return d.bora.prov["1"].concat(d.bora.prov["2"]).reduce((a, b) => a + b, 0);
+  return d.bora.offices.filter((o) => amps.includes(o.amp)).reduce((a, o) => a + d.bora.office[o.rcode]["1"].concat(d.bora.office[o.rcode]["2"]).reduce((x, y) => x + y, 0), 0);
 }

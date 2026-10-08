@@ -2,9 +2,9 @@
 
 import * as React from "react";
 import { Bar, CartesianGrid, ComposedChart, Legend as RLegend, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Activity, Building2, Landmark, LineChart, Users } from "lucide-react";
+import { Activity, Building2, House, Landmark, LineChart, TrendingUp, Users } from "lucide-react";
 import { fmtNum } from "@/lib/mis/format";
-import { boraByAmp, boraSummary, indices, ymLabel, type Filters, type PopulationData } from "@/lib/mis/population";
+import { boraByAmp, boraChangeFY, boraSummary, indices, ymLabel, type Filters, type PopulationData } from "@/lib/mis/population";
 import { Panel, PanelHeader } from "../panel";
 import { SegmentedTabs } from "../segmented-tabs";
 import { CHART_MS } from "../motion";
@@ -29,23 +29,11 @@ export function BoraView({ d, f, src }: { d: PopulationData; f: Filters; src: So
     ย้ายเข้า: (v.movein?.[0] ?? 0) + (v.movein?.[1] ?? 0),
     ย้ายออก: (v.moveout?.[0] ?? 0) + (v.moveout?.[1] ?? 0),
   }));
-  const fy = (ym: number) => (ym % 100 >= 10 ? Math.floor(ym / 100) + 1 : Math.floor(ym / 100)) + 2500;
-  const fyRows = Object.values(
-    d.bora.vitalMonth.reduce<Record<number, { fy: number; birth: number; death: number; movein: number; moveout: number; months: number }>>((acc, v) => {
-      const k = fy(v.ym);
-      const r = (acc[k] ??= { fy: k, birth: 0, death: 0, movein: 0, moveout: 0, months: 0 });
-      r.birth += (v.birth?.[0] ?? 0) + (v.birth?.[1] ?? 0);
-      r.death += (v.death?.[0] ?? 0) + (v.death?.[1] ?? 0);
-      r.movein += (v.movein?.[0] ?? 0) + (v.movein?.[1] ?? 0);
-      r.moveout += (v.moveout?.[0] ?? 0) + (v.moveout?.[1] ?? 0);
-      r.months += 1;
-      return acc;
-    }, {}),
-  ).map((r) => {
-    const mid = d.bora.midyearFY[String(r.fy)];
-    const P = mid ? mid["1"].concat(mid["2"]).reduce((a, b) => a + b, 0) : 0;
-    return { ...r, P, cbr: P ? (r.birth / P) * 1000 : 0, cdr: P ? (r.death / P) * 1000 : 0, net: r.birth - r.death + r.movein - r.moveout };
-  });
+  const fyRows = boraChangeFY(d);
+  const rateChart = fyRows.map((r) => ({ fy: `${r.fy}${r.months < 12 ? "*" : ""}`, CBR: +r.cbr.toFixed(2), CDR: +r.cdr.toFixed(2), "เพิ่มตามธรรมชาติ": +r.rni.toFixed(2), "ย้ายถิ่นสุทธิ": +r.nmr.toFixed(2) }));
+  const houseTrend = d.bora.house.month.map((h) => ({ ym: ymLabel(h.ym), บ้าน: h.n }));
+  const lastHouse = d.bora.house.month[d.bora.house.month.length - 1].n;
+  const firstHouse = d.bora.house.month[0];
 
   const amp = boraByAmp(d);
 
@@ -127,7 +115,30 @@ export function BoraView({ d, f, src }: { d: PopulationData; f: Filters; src: So
       </Panel>
 
       <Panel index={5} className="xl:col-span-6">
-        <PanelHeader icon={<Landmark />} title="สถิติชีพรายปีงบประมาณ" description="อัตราเกิด/ตายหยาบ ต่อประชากร 1,000 คน" />
+        <PanelHeader icon={<TrendingUp />} title="อัตราการเปลี่ยนแปลงประชากรรายปีงบ" description="ต่อประชากรกลางปี 1,000 คน (* = ปีงบยังไม่ครบ 12 เดือน)" />
+        <div className="h-[300px] px-3 pt-3 sm:px-5">
+          <ResponsiveContainer width="100%" height="100%">
+            <ComposedChart data={rateChart} margin={{ left: 0, right: 12, top: 8 }}>
+              <CartesianGrid vertical={false} stroke="rgba(6,25,35,.07)" />
+              <XAxis dataKey="fy" tick={{ fontSize: 11, fill: "#6b7f8a" }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: "#6b7f8a" }} width={40} axisLine={false} tickLine={false} />
+              <Tooltip formatter={(v) => `${Number(v).toFixed(2)} ‰`} />
+              <RLegend wrapperStyle={{ fontSize: 11.5 }} />
+              <Bar dataKey="CBR" fill="#3fbf9f" radius={[4, 4, 0, 0]} animationDuration={CHART_MS.grow} />
+              <Bar dataKey="CDR" fill="#e5616f" radius={[4, 4, 0, 0]} animationDuration={CHART_MS.grow} />
+              <Line dataKey="เพิ่มตามธรรมชาติ" stroke="#02b8c8" strokeWidth={2.2} animationDuration={CHART_MS.draw} />
+              <Line dataKey="ย้ายถิ่นสุทธิ" stroke="#f2a541" strokeWidth={2.2} animationDuration={CHART_MS.draw} />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
+        <SourceNote
+          source={src.bora("การเกิด/การตาย/การย้าย รายเดือน + ประชากรรายอายุ")}
+          method="CBR = เกิด ÷ P × 1,000 · CDR = ตาย ÷ P × 1,000 · อัตราเพิ่มตามธรรมชาติ (RNI) = (เกิด − ตาย) ÷ P × 1,000 · อัตราย้ายถิ่นสุทธิ (NMR) = (ย้ายเข้า − ย้ายออก) ÷ P × 1,000 · P = ประชากรกลางปี (สัญชาติไทยในทะเบียนบ้าน ณ สิ้น มี.ค. ของปีงบ)"
+        />
+      </Panel>
+
+      <Panel index={6} className="xl:col-span-12">
+        <PanelHeader icon={<Landmark />} title="สถิติชีพและสมการดุลประชากร รายปีงบประมาณ" description="ปีงบ = ต.ค.–ก.ย. · อัตราต่อ 1,000 · อัตราเพิ่มจากประชากรสิ้นปีงบ" />
         <div className="px-5 pt-4 sm:px-6">
           <SortTable
             rows={fyRows}
@@ -136,26 +147,48 @@ export function BoraView({ d, f, src }: { d: PopulationData; f: Filters; src: So
               { key: "fy", label: "ปีงบ", render: (r) => `${r.fy}${r.months < 12 ? ` (${r.months} ด.)` : ""}` },
               { key: "birth", label: "เกิด", num: true },
               { key: "death", label: "ตาย", num: true },
-              { key: "cbr", label: "CBR ‰", num: true, render: (r) => r.cbr.toFixed(2) },
-              { key: "cdr", label: "CDR ‰", num: true, render: (r) => r.cdr.toFixed(2) },
+              { key: "rni", label: "RNI ‰", num: true, render: (r) => r.rni.toFixed(2) },
               { key: "movein", label: "ย้ายเข้า", num: true },
               { key: "moveout", label: "ย้ายออก", num: true },
-              { key: "net", label: "เปลี่ยนแปลงสุทธิ", num: true, render: (r) => <span className={r.net < 0 ? "text-[#c8414f]" : "text-[#1f8a6e]"}>{r.net > 0 ? "+" : ""}{fmtNum(r.net)}</span> },
+              { key: "nmr", label: "NMR ‰", num: true, render: (r) => r.nmr.toFixed(2) },
+              { key: "net", label: "เกิด−ตาย+ย้ายสุทธิ", num: true, render: (r) => { const n = r.natural + r.netMig; return <span className={n < 0 ? "text-[#c8414f]" : "text-[#1f8a6e]"}>{n > 0 ? "+" : ""}{fmtNum(n)}</span>; } },
+              { key: "registryChange", label: "ประชากรเปลี่ยน (ทะเบียน)", num: true, render: (r) => (r.registryChange === null ? "—" : `${r.registryChange > 0 ? "+" : ""}${fmtNum(r.registryChange)}`) },
+              { key: "growth", label: "อัตราเพิ่ม %", num: true, render: (r) => (r.growth === null ? "—" : r.growth.toFixed(2)) },
             ]}
           />
         </div>
         <SourceNote
-          source={src.bora("การเกิด/การตาย/การย้าย รายเดือน + ประชากรรายอายุ")}
-          method="ปีงบประมาณ = ต.ค.–ก.ย.; CBR = เกิด ÷ ประชากรกลางปี × 1,000; CDR = ตาย ÷ ประชากรกลางปี × 1,000; ประชากรกลางปี = ประชากรสัญชาติไทยในทะเบียนบ้าน ณ สิ้นเดือนมีนาคมของปีงบ; เปลี่ยนแปลงสุทธิ = เกิด − ตาย + ย้ายเข้า − ย้ายออก"
+          source={src.bora("การเกิด/การตาย/การย้าย รายเดือน + ประชากรรายอายุรายเดือน")}
+          method="เกิด−ตาย+ย้ายสุทธิ = องค์ประกอบการเปลี่ยนแปลงจากเหตุการณ์ที่แจ้งทะเบียน · ประชากรเปลี่ยน (ทะเบียน) = ประชากรสัญชาติไทยในทะเบียนบ้าน สิ้น ก.ย. ปีงบ − สิ้น ก.ย. ปีงบก่อน · อัตราเพิ่ม (%) = ส่วนต่างนั้น ÷ ประชากรต้นปี × 100 · สองคอลัมน์ไม่เท่ากันเพราะเหตุการณ์นับทุกสัญชาติและรวมการย้ายเข้า/ออกทะเบียนบ้านกลาง ขณะที่ยอดประชากรเป็นสัญชาติไทยในทะเบียนบ้าน"
         />
       </Panel>
 
-      <Panel index={6} className="xl:col-span-12">
+      <Panel index={7} className="xl:col-span-12">
+        <PanelHeader icon={<House />} title="จำนวนบ้านทะเบียนราษฎร" description={`ล่าสุด ${fmtNum(lastHouse)} หลัง · เพิ่มขึ้น ${fmtNum(lastHouse - firstHouse.n)} หลัง จาก ${ymLabel(firstHouse.ym)}`} />
+        <div className="h-[240px] px-3 pt-3 sm:px-5">
+          <ResponsiveContainer width="100%" height="100%">
+            <ComposedChart data={houseTrend} margin={{ left: 8, right: 12, top: 8 }}>
+              <CartesianGrid vertical={false} stroke="rgba(6,25,35,.07)" />
+              <XAxis dataKey="ym" tick={{ fontSize: 10.5, fill: "#6b7f8a" }} interval={7} axisLine={false} tickLine={false} />
+              <YAxis domain={["dataMin - 300", "dataMax + 300"]} tickFormatter={(v) => fmtNum(v)} tick={{ fontSize: 11, fill: "#6b7f8a" }} width={60} axisLine={false} tickLine={false} />
+              <Tooltip formatter={(v) => `${fmtNum(Number(v))} หลัง`} />
+              <Line dataKey="บ้าน" stroke="#7a6ff0" strokeWidth={2.4} dot={false} animationDuration={CHART_MS.draw} />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
+        <SourceNote
+          source={src.bora("จำนวนบ้าน (stathouse)")}
+          method="จำนวนบ้าน (หลัง) ณ สิ้นเดือน ระดับจังหวัด = ผลรวมทุกสำนักทะเบียน (ค่า lssumnotTermDate ที่เว็บกรมการปกครองแสดงในคอลัมน์ “หลัง”) · ตรวจกระทบยอดแล้ว: ผลรวมสำนักทะเบียน = ผลรวมตำบล = ยอดจังหวัด"
+          formula={"/api/statpophouse/v1/stathouse/list?action=33&yymmBegin=<ปปดด>&yymmEnd=<ปปดด>&statType=0&statSubType=999&subType=99&cc=91"}
+        />
+      </Panel>
+
+      <Panel index={8} className="xl:col-span-12">
         <PanelHeader icon={<Building2 />} title="ประชากรทะเบียนราษฎรรายอำเภอ / ตำบล" description="รวมสำนักทะเบียนอำเภอ + ท้องถิ่น (เทศบาล) ตามอำเภอที่ BORA ระบุ" />
         <div className="grid gap-4 px-5 pt-4 sm:px-6 lg:grid-cols-2">
           <SortTable
             maxHeight={380}
-            rows={amp.map((a) => ({ name: a.name, m: a.m, f: a.f, total: a.m + a.f, old: a.single["1"].slice(60).concat(a.single["2"].slice(60)).reduce((x, y) => x + y, 0) }))}
+            rows={amp.map((a) => ({ name: a.name, m: a.m, f: a.f, total: a.m + a.f, old: a.single["1"].slice(60).concat(a.single["2"].slice(60)).reduce((x, y) => x + y, 0), house: d.bora.offices.filter((o) => o.amp === a.code).reduce((x, o) => x + (d.bora.house.office[o.rcode] ?? 0), 0) }))}
             initialSort={{ key: "total", dir: -1 }}
             columns={[
               { key: "name", label: "อำเภอ" },
@@ -163,6 +196,7 @@ export function BoraView({ d, f, src }: { d: PopulationData; f: Filters; src: So
               { key: "f", label: "หญิง", num: true },
               { key: "total", label: "รวม", num: true },
               { key: "old", label: "60+", num: true },
+              { key: "house", label: "บ้าน", num: true },
             ]}
           />
           <SortTable
@@ -170,7 +204,7 @@ export function BoraView({ d, f, src }: { d: PopulationData; f: Filters; src: So
             rows={Object.entries(d.bora.tambon)
               .filter(([, t]) => !f.amps.length || f.amps.includes(t.amp))
               .map(([code, t]) => ({ code, name: t.name, amp: d.hdc.amp.find((a) => a.code === t.amp)?.name ?? t.amp, m: t["1"].reduce((a, b) => a + b, 0), f: t["2"].reduce((a, b) => a + b, 0) }))
-              .map((r) => ({ ...r, total: r.m + r.f }))}
+              .map((r) => ({ ...r, total: r.m + r.f, house: d.bora.house.tambon[r.code] ?? 0 }))}
             initialSort={{ key: "total", dir: -1 }}
             columns={[
               { key: "name", label: "ตำบล" },
@@ -178,11 +212,12 @@ export function BoraView({ d, f, src }: { d: PopulationData; f: Filters; src: So
               { key: "m", label: "ชาย", num: true },
               { key: "f", label: "หญิง", num: true },
               { key: "total", label: "รวม", num: true },
+              { key: "house", label: "บ้าน", num: true },
             ]}
           />
         </div>
         <SourceNote
-          source={src.bora("ประชากรรายอายุ ระดับสำนักทะเบียน/อำเภอ และตำบล")}
+          source={src.bora("ประชากรรายอายุ และจำนวนบ้าน ระดับสำนักทะเบียน/อำเภอ และตำบล")}
           method="ตำบล = ผลรวมของตำบลเดียวกันจากทุกสำนักทะเบียน (อำเภอ + เทศบาล) ด้วยรหัสตำบล 6 หลัก; ตรวจกระทบยอดแล้ว ผลรวมสำนักทะเบียน = ผลรวมตำบล = ยอดจังหวัด"
         />
       </Panel>

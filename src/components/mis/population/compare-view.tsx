@@ -14,7 +14,7 @@ import type { Sources } from "./sources";
 const pct1 = (n: number) => n.toFixed(1);
 
 export function CompareView({ d, f, src }: { d: PopulationData; f: Filters; src: Sources }) {
-  const base: Filters = { ...f, hosps: [], hostypes: [] };
+  const base: Filters = { ...f, hosps: [], hostypes: [], nats: ["099"] }; // ทะเบียนราษฎรเทียบได้เฉพาะสัญชาติไทย
   const h13 = React.useMemo(() => hdcSummary(d, { ...base, typeSet: "13" }), [d, f]); // eslint-disable-line react-hooks/exhaustive-deps
   const h12 = React.useMemo(() => hdcSummary(d, { ...base, typeSet: "12" }), [d, f]); // eslint-disable-line react-hooks/exhaustive-deps
   const b = React.useMemo(() => boraSummary(d, base), [d, f]); // eslint-disable-line react-hooks/exhaustive-deps

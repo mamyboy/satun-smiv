@@ -7,12 +7,14 @@ import { LT_GROUPS, groupSingleAges, lifeTable, sullivanHale, type LifeTable, ty
 // ------------------------------------------------------------------ types (ตรงกับ JSON)
 export type SexArr = { "1": number[]; "2": number[] };
 export interface Hosp { code: string; name: string; type: string; amp: string; tmb: string }
-/** cube row: [hospIdx, typearea(1-4), sex(1|2|9), age(-1|0..100), u, a13, p13, a12, p12, a4, p4, p4x] */
-export type CubeRow = [number, number, number, number, number, number, number, number, number, number, number, number];
-/** village row: [villageCode8, sex, ageBand5(-1|0..20), v13, t13] */
-export type VillageRow = [string, number, number, number, number];
-/** attr row: [amp, key, code, sex, a13, p13] */
-export type AttrRow = [string, string, string, number, number, number];
+/** cube row: [hospIdx, typearea(1-4), sex(1|2|9), age(-1|0..100), u, a13, p13, a12, p12, a4, p4, p4x, natIdx] */
+export type CubeRow = [number, number, number, number, number, number, number, number, number, number, number, number, number];
+/** village row: [villageCode8, sex, ageBand5(-1|0..20), v13, t13, natIdx] */
+export type VillageRow = [string, number, number, number, number, number];
+/** attr row: [amp, key, code, sex, a13, p13, natIdx] */
+export type AttrRow = [string, string, string, number, number, number, number];
+/** household row: [villageCode8, size(1..6, 7 = 7+), houses, persons] */
+export type HouseholdRow = [string, number, number, number];
 
 export interface PopulationData {
   meta: {
@@ -31,6 +33,9 @@ export interface PopulationData {
     cube: CubeRow[];
     village: VillageRow[];
     attr: AttrRow[];
+    household: HouseholdRow[];
+    householdMeta: { home_rows_91: number; house_id_filled: number };
+    nations: { code: string; name: string }[];
     attrLabels: Record<string, Record<string, string>>;
     quality: Record<string, unknown> & {
       person_rows: number;
@@ -59,6 +64,7 @@ export interface PopulationData {
     vitalMonth: { ym: number; birth?: [number, number]; death?: [number, number]; movein?: [number, number]; moveout?: [number, number] }[];
     deathsFY: Record<string, SexArr>;
     midyearFY: Record<string, SexArr>;
+    house: { office: Record<string, number>; tambon: Record<string, number>; month: { ym: number; n: number }[] };
   };
   bod: {
     satun: { year: number; age: number; sex: number; le: number; hale: number }[];
@@ -97,11 +103,12 @@ export interface Filters {
   hosps: string[]; // [] = ทุกหน่วย
   typeSet: TypeSet;
   sexes: (1 | 2)[]; // [] = ทั้งสองเพศ
+  nats: string[]; // รหัส NATION; [] = ทุกสัญชาติ (ค่าเริ่มต้น ไทย '099')
   ageMin: number;
   ageMax: number;
 }
 
-export const DEFAULT_FILTERS: Filters = { amps: [], hostypes: [], hosps: [], typeSet: "13", sexes: [], ageMin: 0, ageMax: 100 };
+export const DEFAULT_FILTERS: Filters = { amps: [], hostypes: [], hosps: [], typeSet: "13", sexes: [], nats: ["099"], ageMin: 0, ageMax: 100 };
 
 /** ระดับการประมวลผลตามตัวกรอง: เลือกหน่วยบริการ/ประเภท → รายหน่วย, เลือกอำเภอ → อำเภอ, อื่น ๆ → จังหวัด */
 export function levelOf(f: Filters): Level {
@@ -125,6 +132,7 @@ function hospOk(d: PopulationData, f: Filters, hi: number) {
   return true;
 }
 const sexOk = (f: Filters, s: number) => !f.sexes.length || f.sexes.includes(s as 1 | 2);
+const natOk = (d: PopulationData, f: Filters, ni: number) => !f.nats.length || f.nats.includes(d.hdc.nations[ni].code);
 const ageOk = (f: Filters, g: number) => g >= f.ageMin && g <= f.ageMax;
 
 // ------------------------------------------------------------------ HDC aggregations
@@ -144,7 +152,7 @@ export function hdcSummary(d: PopulationData, f: Filters, levelOverride?: Level)
   const single = { "1": Array(101).fill(0), "2": Array(101).fill(0) };
   let total = 0, male = 0, female = 0, unknownAge = 0;
   for (const r of d.hdc.cube) {
-    if (!inSet(r[1], f.typeSet) || !hospOk(d, f, r[0]) || !sexOk(f, r[2])) continue;
+    if (!inSet(r[1], f.typeSet) || !hospOk(d, f, r[0]) || !sexOk(f, r[2]) || !natOk(d, f, r[12])) continue;
     const v = r[mi];
     if (!v) continue;
     if (r[3] < 0) {
@@ -172,7 +180,7 @@ export function hdcByAmp(d: PopulationData, f: Filters) {
   const mi = measureIx("amp", f.typeSet);
   const out = new Map<string, { m: number; f: number }>();
   for (const r of d.hdc.cube) {
-    if (!inSet(r[1], f.typeSet) || !hospOk(d, f, r[0]) || !sexOk(f, r[2]) || (r[3] >= 0 && !ageOk(f, r[3]))) continue;
+    if (!inSet(r[1], f.typeSet) || !hospOk(d, f, r[0]) || !sexOk(f, r[2]) || !natOk(d, f, r[12]) || (r[3] >= 0 && !ageOk(f, r[3]))) continue;
     if (r[3] < 0 && !(f.ageMin === 0 && f.ageMax === 100)) continue;
     const amp = d.hdc.hosp[r[0]].amp;
     const cur = out.get(amp) ?? { m: 0, f: 0 };
@@ -186,7 +194,7 @@ export function hdcByAmp(d: PopulationData, f: Filters) {
 export function hdcByHosp(d: PopulationData, f: Filters) {
   const acc = d.hdc.hosp.map(() => ({ m: 0, f: 0, t1: 0, t2: 0, t3: 0, t4: 0, old: 0 }));
   for (const r of d.hdc.cube) {
-    if (!hospOk(d, f, r[0]) || !sexOk(f, r[2])) continue;
+    if (!hospOk(d, f, r[0]) || !sexOk(f, r[2]) || !natOk(d, f, r[12])) continue;
     if (r[3] >= 0 ? !ageOk(f, r[3]) : !(f.ageMin === 0 && f.ageMax === 100)) continue;
     const a = acc[r[0]];
     if (r[1] === 1) a.t1 += r[4]; else if (r[1] === 2) a.t2 += r[4]; else if (r[1] === 3) a.t3 += r[4]; else if (r[1] === 4) a.t4 += r[4];
@@ -210,7 +218,7 @@ export function hdcTypeMix(d: PopulationData, f: Filters) {
   let cid13 = 0, cid12 = 0, cid4 = 0, only4 = 0;
   const allAges = f.ageMin === 0 && f.ageMax === 100;
   for (const r of d.hdc.cube) {
-    if (!hospOk(d, f, r[0]) || !sexOk(f, r[2])) continue;
+    if (!hospOk(d, f, r[0]) || !sexOk(f, r[2]) || !natOk(d, f, r[12])) continue;
     if (r[3] >= 0 ? !ageOk(f, r[3]) : !allAges) continue;
     rows[r[1] as 1 | 2 | 3 | 4] += r[4];
     cid13 += r[measureIx(level, "13")];
@@ -226,7 +234,7 @@ export function hdcType4ByAmp(d: PopulationData, f: Filters) {
   const out = new Map<string, { rows: number; cid: number; m: number; f: number }>();
   const allAges = f.ageMin === 0 && f.ageMax === 100;
   for (const r of d.hdc.cube) {
-    if (r[1] !== 4 || !hospOk(d, f, r[0]) || !sexOk(f, r[2])) continue;
+    if (r[1] !== 4 || !hospOk(d, f, r[0]) || !sexOk(f, r[2]) || !natOk(d, f, r[12])) continue;
     if (r[3] >= 0 ? !ageOk(f, r[3]) : !allAges) continue;
     const amp = d.hdc.hosp[r[0]].amp;
     const c = out.get(amp) ?? { rows: 0, cid: 0, m: 0, f: 0 };
@@ -242,7 +250,7 @@ export function hdcAttr(d: PopulationData, f: Filters, key: string) {
   const useAmp = f.amps.length > 0;
   const out = new Map<string, number>();
   for (const r of d.hdc.attr) {
-    if (r[1] !== key || !sexOk(f, r[3])) continue;
+    if (r[1] !== key || !sexOk(f, r[3]) || !natOk(d, f, r[6])) continue;
     if (useAmp && !f.amps.includes(r[0])) continue;
     out.set(r[2], (out.get(r[2]) ?? 0) + (useAmp ? r[4] : r[5]));
   }
@@ -260,7 +268,7 @@ export function hdcByTambon(d: PopulationData, f: Filters) {
   for (const r of d.hdc.village) {
     const tmb = r[0].slice(0, 6);
     if (f.amps.length && !f.amps.includes(tmb.slice(2, 4))) continue;
-    if (!sexOk(f, r[1])) continue;
+    if (!sexOk(f, r[1]) || !natOk(d, f, r[5])) continue;
     if (r[2] < 0 ? !allAge : r[2] < bandMin || r[2] > bandMax) continue;
     const cur = out.get(tmb) ?? { m: 0, f: 0, vil: new Map() };
     if (r[1] === 1) cur.m += r[4]; else if (r[1] === 2) cur.f += r[4];
@@ -273,6 +281,45 @@ export function hdcByTambon(d: PopulationData, f: Filters) {
       villages: [...v.vil.entries()].map(([vc, n]) => ({ code: vc, name: d.hdc.vil[vc] ?? vc, moo: Number(vc.slice(6)), n })).sort((a, b) => a.moo - b.moo),
     }))
     .sort((a, b) => a.code.localeCompare(b.code));
+}
+
+/** สัญชาติ: จำนวน CID ไม่ซ้ำต่อสัญชาติ ตามตัวกรอง (ไม่ใช้ตัวกรองสัญชาติ) */
+export function hdcByNation(d: PopulationData, f: Filters) {
+  const level = levelOf(f);
+  const mi = measureIx(level, f.typeSet);
+  const allAges = f.ageMin === 0 && f.ageMax === 100;
+  const n = new Map<number, { m: number; f: number }>();
+  for (const r of d.hdc.cube) {
+    if (!inSet(r[1], f.typeSet) || !hospOk(d, f, r[0]) || !sexOk(f, r[2])) continue;
+    if (r[3] >= 0 ? !ageOk(f, r[3]) : !allAges) continue;
+    const c = n.get(r[12]) ?? { m: 0, f: 0 };
+    if (r[2] === 1) c.m += r[mi]; else if (r[2] === 2) c.f += r[mi];
+    n.set(r[12], c);
+  }
+  return [...n.entries()]
+    .map(([i, v]) => ({ code: d.hdc.nations[i].code, name: d.hdc.nations[i].name, m: v.m, f: v.f, total: v.m + v.f }))
+    .filter((r) => r.total > 0)
+    .sort((a, b) => b.total - a.total);
+}
+
+/** ครัวเรือน HDC ตามที่อยู่ในแฟ้ม home (ทุกสัญชาติ, TYPEAREA 1,3) — กรองอำเภอได้ */
+export const HH_SIZES = ["1", "2", "3", "4", "5", "6", "7+"];
+export function hdcHouseholds(d: PopulationData, amps: string[]) {
+  const size = Array(7).fill(0) as number[];
+  const tmb = new Map<string, { houses: number; persons: number }>();
+  let houses = 0, persons = 0;
+  for (const [v, sz, h, p] of d.hdc.household) {
+    const t = v.slice(0, 6);
+    if (amps.length && !amps.includes(t.slice(2, 4))) continue;
+    size[sz - 1] += h; houses += h; persons += p;
+    const c = tmb.get(t) ?? { houses: 0, persons: 0 };
+    c.houses += h; c.persons += p; tmb.set(t, c);
+  }
+  return {
+    houses, persons, avg: houses ? persons / houses : 0,
+    size: HH_SIZES.map((label, i) => ({ label, houses: size[i] })),
+    tambon: [...tmb.entries()].map(([code, v]) => ({ code, name: d.hdc.tmb[code] ?? code, amp: code.slice(2, 4), ...v, avg: v.houses ? v.persons / v.houses : 0 })),
+  };
 }
 
 // ------------------------------------------------------------------ BORA aggregations
@@ -299,6 +346,60 @@ export function boraByAmp(d: PopulationData) {
   return d.hdc.amp.map((a) => {
     const s = sumSexArr(d.bora.offices.filter((o) => o.amp === a.code).map((o) => d.bora.office[o.rcode]));
     return { code: a.code, name: a.name, m: s["1"].reduce((x, y) => x + y, 0), f: s["2"].reduce((x, y) => x + y, 0), single: s };
+  });
+}
+
+/** จำนวนบ้านทะเบียนราษฎร (ค่า "หลัง") — จังหวัดหรือรวมสำนักทะเบียนในอำเภอที่เลือก */
+export function boraHouses(d: PopulationData, amps: string[]) {
+  if (!amps.length) return d.bora.house.month[d.bora.house.month.length - 1].n;
+  return d.bora.offices.filter((o) => amps.includes(o.amp)).reduce((a, o) => a + (d.bora.house.office[o.rcode] ?? 0), 0);
+}
+
+/** อัตราการเปลี่ยนแปลงประชากรรายปีงบ (ต่อประชากรกลางปี 1,000 คน) */
+export function boraChangeFY(d: PopulationData) {
+  const fyOf = (ym: number) => (ym % 100 >= 10 ? Math.floor(ym / 100) + 1 : Math.floor(ym / 100)) + 2500;
+  const popAt = new Map(d.bora.popMonth.map((p) => [p.ym, p.m + p.f]));
+  const acc = new Map<number, { birth: number; death: number; movein: number; moveout: number; months: number }>();
+  for (const v of d.bora.vitalMonth) {
+    const k = fyOf(v.ym);
+    const r = acc.get(k) ?? { birth: 0, death: 0, movein: 0, moveout: 0, months: 0 };
+    r.birth += (v.birth?.[0] ?? 0) + (v.birth?.[1] ?? 0);
+    r.death += (v.death?.[0] ?? 0) + (v.death?.[1] ?? 0);
+    r.movein += (v.movein?.[0] ?? 0) + (v.movein?.[1] ?? 0);
+    r.moveout += (v.moveout?.[0] ?? 0) + (v.moveout?.[1] ?? 0);
+    r.months += 1;
+    acc.set(k, r);
+  }
+  return [...acc.entries()].sort((a, b) => a[0] - b[0]).map(([fy, r]) => {
+    const yy = fy - 2500;
+    const mid = d.bora.midyearFY[String(fy)];
+    const P = mid ? mid["1"].concat(mid["2"]).reduce((a, b) => a + b, 0) : popAt.get(yy * 100 + 3) ?? 0;
+    const start = popAt.get((yy - 1) * 100 + 9) ?? null; // สิ้น ก.ย. ปีก่อน
+    const end = popAt.get(yy * 100 + 9) ?? null;
+    const per = (x: number) => (P ? (x / P) * 1000 : 0);
+    const natural = r.birth - r.death, netMig = r.movein - r.moveout;
+    return {
+      fy, ...r, P, start, end, natural, netMig,
+      cbr: per(r.birth), cdr: per(r.death), rni: per(natural), nmr: per(netMig),
+      growth: start && end ? ((end - start) / start) * 100 : null,
+      registryChange: start && end ? end - start : null,
+    };
+  });
+}
+
+/** อัตราตายรายกลุ่มอายุ (ASDR ต่อ 1,000) จากปีงบที่เลือก (รวมหลายปี) */
+export function asdr(d: PopulationData, fys: string[]) {
+  return LT_GROUPS.map((g, i) => {
+    const o: { band: string; ชาย: number; หญิง: number; รวม: number } = { band: g.label, ชาย: 0, หญิง: 0, รวม: 0 };
+    let dm = 0, pm = 0, df = 0, pf = 0;
+    for (const fy of fys) {
+      dm += groupSingleAges(d.bora.deathsFY[fy]["1"])[i]; pm += groupSingleAges(d.bora.midyearFY[fy]["1"])[i];
+      df += groupSingleAges(d.bora.deathsFY[fy]["2"])[i]; pf += groupSingleAges(d.bora.midyearFY[fy]["2"])[i];
+    }
+    o.ชาย = pm ? (dm / pm) * 1000 : 0;
+    o.หญิง = pf ? (df / pf) * 1000 : 0;
+    o.รวม = pm + pf ? ((dm + df) / (pm + pf)) * 1000 : 0;
+    return o;
   });
 }
 
