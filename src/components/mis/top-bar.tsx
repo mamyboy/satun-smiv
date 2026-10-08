@@ -10,8 +10,8 @@ export function TopBar({
   onRangeChange,
   onOpenMobileNav,
 }: {
-  range: YearRange;
-  onRangeChange: (r: YearRange) => void;
+  range?: YearRange;
+  onRangeChange?: (r: YearRange) => void;
   onOpenMobileNav: () => void;
 }) {
   return (
@@ -24,14 +24,14 @@ export function TopBar({
         <Menu className="size-5" />
       </button>
 
-      <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-mis-ink-2">MIS Health · มิติประชากร</span>
+      <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-mis-ink-2">MIS Health · ข้อมูลพื้นฐาน › ประชากร</span>
 
       <div className="ml-auto flex items-center gap-2">
-        <span className="hidden items-center gap-1.5 rounded-full bg-mis-accent-soft px-3 py-1.5 text-[11.5px] font-medium text-mis-accent-strong xl:inline-flex">
+        <span className="hidden items-center gap-1.5 rounded-full bg-mis-accent-soft px-3 py-1.5 text-[11.5px] font-medium text-mis-accent-strong sm:inline-flex">
           <RefreshCw className="size-3.5" />
-          HDC ประมวลผล {thaiDate(META.hdcProcessedDate)}
+          HDC ข้อมูล ณ {thaiDate(META.hdcProcessedDate)}
         </span>
-        <YearRangePicker value={range} onChange={onRangeChange} />
+        {range && onRangeChange && <YearRangePicker value={range} onChange={onRangeChange} />}
       </div>
     </div>
   );

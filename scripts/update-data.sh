@@ -49,13 +49,14 @@ if [[ "$NO_PUSH" == true ]]; then
   exit 0
 fi
 
-if git diff --quiet && git diff --cached --quiet; then
+if git diff --quiet -- amphoe-data && git diff --cached --quiet; then
   echo "==> No data changes detected, nothing to commit." | tee -a "$LOG_FILE"
   exit 0
 fi
 
 TODAY=$(date +%Y-%m-%d)
-git add -A
+# Stage ONLY data outputs — never sweep in unrelated work-in-progress source files.
+git add amphoe-data public/data/hippo-hdc-records.csv 2>/dev/null || git add amphoe-data
 git commit -m "Refresh HDC indicator data ($TODAY)
 
 Automated update via scripts/update-data.sh.
