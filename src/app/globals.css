@@ -724,3 +724,71 @@ a:focus-visible { outline: 3px solid rgba(67, 56, 202, .3); outline-offset: 2px;
 .trend-table td.trend-col-active { background: rgba(238,242,255,.6); }
 .trend-table tbody tr:first-child td { font-weight: 600; }
 @media (max-width: 760px) { .trend-kpis { grid-template-columns: 1fr 1fr; } .trend-kpi strong { font-size: 20px; } .trend-chart { height: 220px; } }
+
+/* ===== MIS Health design tokens (route: /mis) ===== */
+:root {
+  --mis-ink: #061923;            /* Deep Ocean Navy */
+  --mis-ink-2: #1d3340;
+  --mis-muted: #5b6f7a;
+  --mis-faint: #94a6b0;
+  --mis-line: #e3ebef;
+  --mis-canvas: #f4f8fa;
+  --mis-surface: #ffffff;
+  --mis-surface-2: #f8fbfc;
+  --mis-accent: #02b8c8;         /* Andaman Cyan */
+  --mis-accent-strong: #028c99;
+  --mis-accent-soft: #e2f7f9;
+  --mis-reef: #65e6d3;           /* Reef Aqua */
+  --mis-amber: #f2a541;
+  --mis-rose: #e5616f;
+  --mis-violet: #7a6ff0;
+  --mis-radius-lg: 24px;
+  --mis-radius-md: 18px;
+  --mis-radius-sm: 12px;
+  --mis-shadow: 0 1px 2px rgba(6,25,35,.04), 0 8px 24px -8px rgba(6,25,35,.08);
+  --mis-shadow-hover: 0 2px 4px rgba(6,25,35,.05), 0 18px 40px -12px rgba(6,25,35,.16);
+}
+@theme inline {
+  --color-mis-ink: var(--mis-ink);
+  --color-mis-ink-2: var(--mis-ink-2);
+  --color-mis-muted: var(--mis-muted);
+  --color-mis-faint: var(--mis-faint);
+  --color-mis-line: var(--mis-line);
+  --color-mis-canvas: var(--mis-canvas);
+  --color-mis-surface: var(--mis-surface);
+  --color-mis-surface-2: var(--mis-surface-2);
+  --color-mis-accent: var(--mis-accent);
+  --color-mis-accent-strong: var(--mis-accent-strong);
+  --color-mis-accent-soft: var(--mis-accent-soft);
+  --color-mis-reef: var(--mis-reef);
+  --color-mis-amber: var(--mis-amber);
+  --color-mis-rose: var(--mis-rose);
+  --color-mis-violet: var(--mis-violet);
+  --radius-mis-lg: var(--mis-radius-lg);
+  --radius-mis-md: var(--mis-radius-md);
+  --radius-mis-sm: var(--mis-radius-sm);
+  --shadow-mis: var(--mis-shadow);
+  --shadow-mis-hover: var(--mis-shadow-hover);
+  --font-mis: var(--font-mis-thai), var(--font-geist-sans), system-ui, sans-serif;
+}
+.mis-root {
+  font-family: var(--font-mis-thai), var(--font-geist-sans), system-ui, sans-serif;
+  font-feature-settings: "tnum" 1;
+  color: var(--mis-ink);
+  background:
+    radial-gradient(60rem 40rem at 100% -10%, rgba(2,184,200,.10), transparent 60%),
+    radial-gradient(40rem 30rem at -10% 30%, rgba(101,230,211,.10), transparent 60%),
+    var(--mis-canvas);
+}
+.mis-glass {
+  background: linear-gradient(160deg, rgba(255,255,255,.78), rgba(255,255,255,.52));
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid rgba(255,255,255,.85);
+}
+.mis-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+.mis-scroll::-webkit-scrollbar-thumb { background: #d3dee4; border-radius: 99px; }
+.mis-root .recharts-surface:focus, .mis-root .recharts-wrapper:focus { outline: none; }
+
+@keyframes mis-shimmer { to { transform: translateX(100%); } }
+@media (prefers-reduced-motion: reduce) { .mis-root *::after { animation: none !important; } }
