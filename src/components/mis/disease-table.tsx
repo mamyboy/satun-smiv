@@ -67,7 +67,11 @@ export function DiseaseTable({
     const on = sort.key === key;
     const Icon = !on ? ArrowUpDown : sort.dir === "asc" ? ChevronUp : ChevronDown;
     return (
-      <th scope="col" className={cn("px-3 py-3 font-medium", align === "right" ? "text-right" : "text-left")}>
+      <th
+        scope="col"
+        aria-sort={on ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}
+        className={cn("px-3 py-3 font-medium", align === "right" ? "text-right" : "text-left")}
+      >
         <button
           onClick={() => setSort((s) => ({ key, dir: s.key === key && s.dir === "desc" ? "asc" : "desc" }))}
           className={cn(
@@ -75,7 +79,6 @@ export function DiseaseTable({
             on ? "text-mis-ink" : "text-mis-muted",
             align === "right" && "flex-row-reverse",
           )}
-          aria-sort={on ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}
         >
           {label}
           <Icon className={cn("size-3.5", on ? "text-mis-accent-strong" : "text-mis-faint")} />

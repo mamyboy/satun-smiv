@@ -32,7 +32,7 @@ export function Panel({
       transition={{ duration: DUR.slow, ease: EASE_OUT, delay: Math.min(index, 8) * 0.05 }}
       whileHover={{ y: -2, boxShadow: "var(--mis-shadow-hover)" }}
       className={cn(
-        "relative scroll-mt-24 rounded-mis-lg shadow-mis",
+        "relative min-w-0 scroll-mt-24 rounded-mis-lg shadow-mis",
         glass
           ? "mis-glass"
           : "border border-mis-line/80 bg-[linear-gradient(180deg,#ffffff_0%,#fbfdfe_100%)]",
@@ -70,7 +70,7 @@ export function PanelHeader({
           {description && <p className="mt-0.5 text-[12.5px] leading-relaxed text-mis-muted">{description}</p>}
         </div>
       </div>
-      {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
+      {actions && <div className="flex max-w-full min-w-0 flex-wrap items-center gap-2">{actions}</div>}
     </header>
   );
 }

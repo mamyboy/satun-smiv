@@ -89,7 +89,7 @@ export function TrendChart({ range, ready, index }: { range: YearRange; ready: b
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: DUR.base, ease: EASE_OUT }}
-              className="h-[320px]"
+              className="h-[320px] xl:h-[420px]"
             >
               {singleYear && (
                 <p className="px-4 pb-1 text-[12px] text-mis-muted">ช่วงที่เลือกมีเพียง 1 ปี — ขยายช่วงปีเพื่อดูแนวโน้ม</p>

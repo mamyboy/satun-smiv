@@ -1,0 +1,117 @@
+"use client";
+
+import { useCallback, useState, useSyncExternalStore } from "react";
+import { motion } from "motion/react";
+import { Database, Filter } from "lucide-react";
+import { META, type YearRange } from "@/lib/mis/data";
+import { DUR, EASE_OUT, pageStagger, riseIn } from "./motion";
+import { PersonOverviewGrid } from "./person-overview";
+import { Sidebar, type NavAction } from "./sidebar";
+import { TopBar } from "./top-bar";
+import { presetRange } from "./year-range-picker";
+
+/**
+ * โหมดการทำงานปัจจุบัน: โฟกัสเฉพาะมิติ "ประชากร" (Person)
+ * ส่วนโรคไม่ติดต่อ/โรคติดต่อ/Top-10 ที่เคยทำไว้ถูกซ่อนไว้ชั่วคราว (โค้ดยังอยู่ครบใน
+ * kpi-card.tsx, trend-chart.tsx, top10-chart.tsx, composition-donut.tsx, disease-table.tsx,
+ * activity-feed.tsx, insight-panel.tsx) — สลับกลับมาแสดงได้ภายหลังโดยไม่ต้องเขียนใหม่
+ */
+
+const SIDEBAR_KEY = "mis:sidebar-collapsed";
+const SIDEBAR_EVENT = "mis:sidebar";
+
+/** Persisted sidebar state, SSR-safe (server snapshot = expanded). */
+function useSidebarCollapsed() {
+  const collapsed = useSyncExternalStore(
+    (cb) => {
+      window.addEventListener(SIDEBAR_EVENT, cb);
+      window.addEventListener("storage", cb);
+      return () => {
+        window.removeEventListener(SIDEBAR_EVENT, cb);
+        window.removeEventListener("storage", cb);
+      };
+    },
+    () => window.localStorage.getItem(SIDEBAR_KEY) === "1",
+    () => false,
+  );
+  const toggle = useCallback(() => {
+    window.localStorage.setItem(SIDEBAR_KEY, collapsed ? "0" : "1");
+    window.dispatchEvent(new Event(SIDEBAR_EVENT));
+  }, [collapsed]);
+  return [collapsed, toggle] as const;
+}
+
+export function MisDashboard() {
+  const [collapsed, toggleSidebar] = useSidebarCollapsed();
+  const [mobileNav, setMobileNav] = useState(false);
+  const [range, setRange] = useState<YearRange>(() => presetRange(4));
+  const [activeNav, setActiveNav] = useState("overview");
+
+  const scrollTo = useCallback((id: string) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
+  const onNavigate = useCallback(
+    (a: NavAction) => {
+      if (a.kind === "section") {
+        setActiveNav(a.target);
+        scrollTo(a.target);
+      }
+    },
+    [scrollTo],
+  );
+
+  return (
+    <div className="mis-root min-h-screen">
+      <div className="mx-auto flex max-w-[1680px] gap-4 p-3 sm:gap-5">
+        <Sidebar
+          collapsed={collapsed}
+          onToggle={toggleSidebar}
+          active={activeNav}
+          onNavigate={onNavigate}
+          mobileOpen={mobileNav}
+          onCloseMobile={() => setMobileNav(false)}
+        />
+
+        <div className="min-w-0 flex-1">
+          <TopBar range={range} onRangeChange={setRange} onOpenMobileNav={() => setMobileNav(true)} />
+
+          <motion.main variants={pageStagger} initial="hidden" animate="show" className="pb-10 pt-6 sm:px-1">
+            {/* Hero */}
+            <motion.div variants={riseIn} id="overview" className="flex scroll-mt-24 flex-wrap items-end justify-between gap-4 px-1">
+              <div className="min-w-0">
+                <p className="text-[12px] font-semibold uppercase tracking-[0.1em] text-mis-accent-strong">MIS Health · มิติประชากร</p>
+                <h1 className="mt-1.5 text-[26px] font-semibold leading-tight tracking-[-0.025em] text-mis-ink sm:text-[32px]">
+                  ข้อมูลประชากร จังหวัด{META.province}
+                </h1>
+                <p className="mt-1.5 max-w-[720px] text-[13.5px] leading-relaxed text-mis-muted">
+                  มุมมองประชากร (แฟ้ม person) ของหน่วยบริการในจังหวัด{META.province} — ปีงบประมาณ พ.ศ. {range.start}
+                  {range.start !== range.end ? `–${range.end}` : ""}
+                </p>
+              </div>
+              <div className="flex max-w-full items-start gap-2 rounded-2xl border border-mis-line/80 bg-white/70 px-3.5 py-2.5 text-[11.5px] leading-relaxed text-mis-muted">
+                <Filter className="mt-0.5 size-3.5 shrink-0 text-mis-accent-strong" />
+                <span className="max-w-[520px]">{META.filters}</span>
+              </div>
+            </motion.div>
+
+            {/* Person dimension — full bento grid (skeleton until the real query is wired) */}
+            <PersonOverviewGrid />
+
+            <motion.footer
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: DUR.slow, ease: EASE_OUT }}
+              className="mt-8 flex flex-wrap items-center gap-2 px-1 text-[11.5px] text-mis-faint"
+            >
+              <Database className="size-3.5" />
+              {META.source} · HDC ประมวลผล {META.hdcProcessedDate} · ดึงข้อมูล {META.extractedDate} · สำนักงานสาธารณสุขจังหวัด{META.province}
+            </motion.footer>
+          </motion.main>
+        </div>
+      </div>
+    </div>
+  );
+}

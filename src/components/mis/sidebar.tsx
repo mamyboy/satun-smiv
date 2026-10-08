@@ -1,19 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
-  Activity,
-  BarChart3,
-  Building2,
+  ChevronDown,
   ChevronsLeft,
-  Database,
-  ExternalLink,
   HeartPulse,
-  LayoutDashboard,
-  Lightbulb,
-  Microscope,
-  Table2,
+  LayoutGrid,
   Users,
   X,
 } from "lucide-react";
@@ -26,7 +20,7 @@ export type NavAction =
   | { kind: "section"; target: NavTarget }
   | { kind: "category"; category: "ncd" | "communicable" };
 
-interface NavItem {
+interface NavLeaf {
   id: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
@@ -35,32 +29,23 @@ interface NavItem {
   soon?: boolean;
 }
 
-const GROUPS: { label: string; items: NavItem[] }[] = [
+interface NavCategory {
+  id: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  children: NavLeaf[];
+}
+
+/**
+ * นำทางแบบ Category → Sub-category เพื่อรองรับการขยายตัวชี้วัดในอนาคต
+ * (เช่น ข้อมูลพื้นฐาน → ประชากร, หน่วยบริการ, ... / โรคไม่ติดต่อ → ... ฯลฯ)
+ */
+const CATEGORIES: NavCategory[] = [
   {
-    label: "ภาพรวม",
-    items: [
-      { id: "overview", label: "แดชบอร์ดหลัก", icon: LayoutDashboard, action: { kind: "section", target: "overview" } },
-      { id: "trend", label: "แนวโน้มโรค", icon: Activity, action: { kind: "section", target: "trend" } },
-      { id: "top10", label: "10 อันดับโรค", icon: BarChart3, action: { kind: "section", target: "top10" } },
-      { id: "table", label: "ตารางข้อมูลโรค", icon: Table2, action: { kind: "section", target: "table" } },
-      { id: "insights", label: "ข้อเสนอแนะ", icon: Lightbulb, action: { kind: "section", target: "insights" } },
-    ],
-  },
-  {
-    label: "หมวดข้อมูล",
-    items: [
-      { id: "cat-ncd", label: "โรคไม่ติดต่อ (NCD)", icon: HeartPulse, action: { kind: "category", category: "ncd" } },
-      { id: "cat-com", label: "โรคติดต่อ", icon: Microscope, action: { kind: "category", category: "communicable" } },
-      { id: "person", label: "ประชากร (Person)", icon: Users, soon: true },
-      { id: "facility", label: "หน่วยบริการ", icon: Building2, soon: true },
-    ],
-  },
-  {
-    label: "ระบบที่เชื่อมโยง",
-    items: [
-      { id: "kpi", label: "ตัวชี้วัด HDC", icon: Database, href: "/" },
-      { id: "hippo", label: "HIPPO HDC Explorer", icon: ExternalLink, href: "/hippo-hdc" },
-    ],
+    id: "basic",
+    label: "ข้อมูลพื้นฐาน",
+    icon: LayoutGrid,
+    children: [{ id: "overview", label: "ประชากร", icon: Users, action: { kind: "section", target: "overview" } }],
   },
 ];
 
@@ -172,22 +157,9 @@ function SidebarBody({
       </div>
 
       {/* Nav */}
-      <nav className="mis-scroll flex-1 space-y-5 overflow-y-auto overflow-x-hidden px-3 pb-4">
-        {GROUPS.map((g) => (
-          <div key={g.label}>
-            <div className="h-6 px-3">
-              {!collapsed && (
-                <p className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-white/35">{g.label}</p>
-              )}
-            </div>
-            <ul className="space-y-0.5">
-              {g.items.map((it) => (
-                <li key={it.id}>
-                  <NavRow item={it} collapsed={collapsed} active={active === it.id} onNavigate={onNavigate} />
-                </li>
-              ))}
-            </ul>
-          </div>
+      <nav className="mis-scroll flex-1 space-y-1.5 overflow-y-auto overflow-x-hidden px-3 pb-4">
+        {CATEGORIES.map((cat) => (
+          <CategoryBlock key={cat.id} category={cat} collapsed={collapsed} active={active} onNavigate={onNavigate} />
         ))}
       </nav>
 
@@ -220,16 +192,81 @@ function SidebarBody({
   );
 }
 
+function CategoryBlock({
+  category,
+  collapsed,
+  active,
+  onNavigate,
+}: {
+  category: NavCategory;
+  collapsed: boolean;
+  active: string;
+  onNavigate: (a: NavAction) => void;
+}) {
+  const [open, setOpen] = useState(true);
+  const CatIcon = category.icon;
+
+  if (collapsed) {
+    // Rail mode: no room for a category header — show children as flat icon buttons.
+    return (
+      <ul className="space-y-0.5">
+        {category.children.map((child) => (
+          <li key={child.id}>
+            <NavRow item={child} collapsed active={active === child.id} onNavigate={onNavigate} />
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
+  return (
+    <div>
+      <button
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        className="flex h-9 w-full items-center gap-2 rounded-lg px-3 text-left transition-colors hover:bg-white/[0.04]"
+      >
+        <CatIcon className="size-[15px] shrink-0 text-white/40" />
+        <span className="flex-1 truncate text-[10.5px] font-semibold uppercase tracking-[0.08em] text-white/40">
+          {category.label}
+        </span>
+        <motion.span animate={{ rotate: open ? 0 : -90 }} transition={{ duration: DUR.base, ease: EASE_OUT }}>
+          <ChevronDown className="size-3.5 text-white/35" />
+        </motion.span>
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.ul
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: DUR.base, ease: EASE_OUT }}
+            className="space-y-0.5 overflow-hidden pt-0.5"
+          >
+            {category.children.map((child) => (
+              <li key={child.id}>
+                <NavRow item={child} collapsed={false} active={active === child.id} onNavigate={onNavigate} indent />
+              </li>
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 function NavRow({
   item,
   collapsed,
   active,
   onNavigate,
+  indent = false,
 }: {
-  item: NavItem;
+  item: NavLeaf;
   collapsed: boolean;
   active: boolean;
   onNavigate: (a: NavAction) => void;
+  indent?: boolean;
 }) {
   const Icon = item.icon;
   const inner = (
@@ -264,6 +301,7 @@ function NavRow({
     "group relative flex h-10 w-full items-center gap-3 rounded-xl px-3 text-left text-[13px] font-medium transition-colors duration-200",
     active ? "text-white" : "text-white/70 hover:bg-white/[0.05] hover:text-white",
     collapsed && "justify-center px-0",
+    indent && !collapsed && "ml-2 w-[calc(100%-8px)]",
     item.soon && "cursor-not-allowed opacity-60 hover:bg-transparent",
   );
 

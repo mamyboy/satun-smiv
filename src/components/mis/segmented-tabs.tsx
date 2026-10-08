@@ -28,7 +28,7 @@ export function SegmentedTabs<T extends string>({
   return (
     <div
       role="tablist"
-      className={cn("inline-flex items-center gap-0.5 rounded-full bg-mis-ink/[0.045] p-1", className)}
+      className={cn("mis-scroll inline-flex max-w-full items-center gap-0.5 overflow-x-auto rounded-full bg-mis-ink/[0.045] p-1", className)}
     >
       {items.map((it) => {
         const active = it.value === value;
@@ -39,7 +39,7 @@ export function SegmentedTabs<T extends string>({
             aria-selected={active}
             onClick={() => onChange(it.value)}
             className={cn(
-              "relative rounded-full font-medium transition-colors duration-200",
+              "relative shrink-0 rounded-full font-medium transition-colors duration-200",
               size === "sm" ? "h-7 px-3 text-[11.5px]" : "h-8 px-3.5 text-[12.5px]",
               active ? "text-mis-ink" : "text-mis-muted hover:text-mis-ink",
             )}

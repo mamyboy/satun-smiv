@@ -79,7 +79,7 @@ export function CompositionDonut({ year, ready, index }: { year: Year; ready: bo
         />
       </div>
 
-      <div className="grid gap-4 px-5 pb-6 pt-2 sm:grid-cols-[220px_1fr] sm:px-6">
+      <div className="grid gap-4 px-5 pb-6 pt-2 sm:grid-cols-[220px_minmax(0,1fr)] sm:px-6">
         <Loadable
           ready={ready}
           skeleton={
@@ -145,7 +145,7 @@ export function CompositionDonut({ year, ready, index }: { year: Year; ready: bo
           </div>
         </Loadable>
 
-        <ul className="space-y-1 self-center">
+        <ul className="min-w-0 space-y-1 self-center">
           {slices.map((s, i) => {
             const pct = total ? (s.value / total) * 100 : 0;
             return (

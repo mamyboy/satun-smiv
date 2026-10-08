@@ -769,10 +769,10 @@ a:focus-visible { outline: 3px solid rgba(67, 56, 202, .3); outline-offset: 2px;
   --radius-mis-sm: var(--mis-radius-sm);
   --shadow-mis: var(--mis-shadow);
   --shadow-mis-hover: var(--mis-shadow-hover);
-  --font-mis: var(--font-mis-thai), var(--font-geist-sans), system-ui, sans-serif;
+  --font-mis: var(--font-noto-sans-thai), var(--font-geist-sans), system-ui, sans-serif;
 }
 .mis-root {
-  font-family: var(--font-mis-thai), var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-noto-sans-thai), var(--font-geist-sans), system-ui, sans-serif;
   font-feature-settings: "tnum" 1;
   color: var(--mis-ink);
   background:

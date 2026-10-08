@@ -23,9 +23,7 @@ export function CountUp({
   const [display, setDisplay] = useState(() => format(0));
 
   useEffect(() => {
-    if (!inView) return;
-    if (reduce) {
-      setDisplay(format(value));
+    if (!inView || reduce) {
       from.current = value;
       return;
     }
@@ -40,7 +38,7 @@ export function CountUp({
 
   return (
     <span ref={ref} className={className}>
-      {display}
+      {reduce ? format(value) : display}
     </span>
   );
 }
