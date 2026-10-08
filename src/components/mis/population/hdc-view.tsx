@@ -5,7 +5,7 @@ import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis
 import { Building2, Droplet, Home, Layers, PieChart, Target, Users } from "lucide-react";
 import { fmtNum } from "@/lib/mis/format";
 import {
-  TARGET_GROUPS, TYPESET_LABEL, hdcAttr, hdcByAmp, hdcByHosp, hdcByTambon, hdcSummary, hdcType4ByAmp, hdcTypeMix, indices, targetCount,
+  TARGET_GROUPS, TYPESET_LABEL, hdcAttr, hdcByAmp, hdcByHosp, hdcByTambon, hdcSummary, hdcTypeMix, indices, targetCount,
   type Filters, type PopulationData,
 } from "@/lib/mis/population";
 import { Panel, PanelHeader } from "../panel";
@@ -254,61 +254,43 @@ const TYPE_META: { t: 1 | 2 | 3 | 4; label: string; desc: string; color: string 
 
 function TypeAreaPanel({ d, f, src }: { d: PopulationData; f: Filters; src: Sources }) {
   const mix = React.useMemo(() => hdcTypeMix(d, f), [d, f]);
-  const t4amp = React.useMemo(() => hdcType4ByAmp(d, f), [d, f]);
   const totalRows = mix.rows[1] + mix.rows[2] + mix.rows[3] + mix.rows[4];
   const lvl = mix.level === "prov" ? "CID ไม่ซ้ำทั้งจังหวัด" : mix.level === "amp" ? "CID ไม่ซ้ำภายในอำเภอ" : "HOSPCODE+PID";
   return (
     <Panel index={2} className="xl:col-span-12">
       <PanelHeader icon={<Layers />} title="องค์ประกอบประชากรตาม TYPEAREA 1–4" description="ทุกประเภทการอยู่อาศัยในแฟ้ม person — ตามตัวกรองพื้นที่/หน่วยบริการ/เพศ/อายุ" />
-      <div className="grid gap-5 px-5 pt-4 sm:px-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
-        <div className="min-w-0">
-          <div className="flex h-3.5 overflow-hidden rounded-full bg-mis-ink/[0.06]" role="img" aria-label="สัดส่วนแถวตาม TYPEAREA">
-            {TYPE_META.map((m) => (
-              <div key={m.t} className="h-full transition-[width] duration-300" style={{ width: `${totalRows ? (mix.rows[m.t] / totalRows) * 100 : 0}%`, background: m.color }} />
-            ))}
-          </div>
-          <ul className="mt-4 grid gap-2.5 sm:grid-cols-2">
-            {TYPE_META.map((m) => (
-              <li key={m.t} className="rounded-2xl border border-mis-line/70 bg-white/70 px-3.5 py-3">
-                <div className="flex items-center gap-2 text-[12.5px] font-semibold text-mis-ink">
-                  <span className="size-2.5 rounded-full" style={{ background: m.color }} />
-                  {m.label}
-                  <span className="ml-auto tabular-nums">{fmtNum(mix.rows[m.t])}</span>
-                </div>
-                <p className="mt-1 text-[11.5px] leading-snug text-mis-muted">{m.desc}</p>
-                <p className="mt-1 text-[11px] text-mis-faint">{totalRows ? ((mix.rows[m.t] / totalRows) * 100).toFixed(1) : "0.0"}% ของแถว HOSPCODE+PID</p>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-            {[
-              { k: "1,3 (อยู่จริง)", v: mix.cid13 },
-              { k: "1,2 (ตามทะเบียนบ้าน)", v: mix.cid12 },
-              { k: "4 (นอกเขต)", v: mix.cid4 },
-              { k: "4 เท่านั้น (ไม่มี 1–3 ในจังหวัด)", v: mix.only4 },
-            ].map((x) => (
-              <div key={x.k} className="rounded-2xl bg-mis-ink/[0.035] px-3 py-2.5">
-                <p className="text-[11px] text-mis-muted">{x.k}</p>
-                <p className="mt-0.5 text-[17px] font-semibold tabular-nums text-mis-ink">{x.v === null ? "—" : fmtNum(x.v)}</p>
-                <p className="text-[10.5px] text-mis-faint">{x.v === null ? "เฉพาะภาพจังหวัด" : lvl}</p>
-              </div>
-            ))}
-          </div>
+      <div className="px-5 pt-4 sm:px-6">
+        <div className="flex h-3.5 overflow-hidden rounded-full bg-mis-ink/[0.06]" role="img" aria-label="สัดส่วนแถวตาม TYPEAREA">
+          {TYPE_META.map((m) => (
+            <div key={m.t} className="h-full transition-[width] duration-300" style={{ width: `${totalRows ? (mix.rows[m.t] / totalRows) * 100 : 0}%`, background: m.color }} />
+          ))}
         </div>
-        <div className="min-w-0">
-          <p className="mb-2 text-[12.5px] font-semibold text-mis-ink">TYPEAREA 4 รายอำเภอ (ตามที่ตั้งหน่วยบริการ · แถว = HOSPCODE+PID, CID ไม่ซ้ำภายในอำเภอ)</p>
-          <SortTable
-            maxHeight={330}
-            rows={t4amp}
-            initialSort={{ key: "cid", dir: -1 }}
-            columns={[
-              { key: "name", label: "อำเภอ" },
-              { key: "rows", label: "แถว", num: true },
-              { key: "cid", label: "CID ไม่ซ้ำ", num: true },
-              { key: "m", label: "ชาย", num: true },
-              { key: "f", label: "หญิง", num: true },
-            ]}
-          />
+        <ul className="mt-4 grid gap-2.5 sm:grid-cols-2 xl:grid-cols-4">
+          {TYPE_META.map((m) => (
+            <li key={m.t} className="rounded-2xl border border-mis-line/70 bg-white/70 px-3.5 py-3">
+              <div className="flex items-center gap-2 text-[12.5px] font-semibold text-mis-ink">
+                <span className="size-2.5 rounded-full" style={{ background: m.color }} />
+                {m.label}
+                <span className="ml-auto tabular-nums">{fmtNum(mix.rows[m.t])}</span>
+              </div>
+              <p className="mt-1 text-[11.5px] leading-snug text-mis-muted">{m.desc}</p>
+              <p className="mt-1 text-[11px] text-mis-faint">{totalRows ? ((mix.rows[m.t] / totalRows) * 100).toFixed(1) : "0.0"}% ของแถว HOSPCODE+PID</p>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+          {[
+            { k: "1,3 (อยู่จริง)", v: mix.cid13 },
+            { k: "1,2 (ตามทะเบียนบ้าน)", v: mix.cid12 },
+            { k: "4 (นอกเขต)", v: mix.cid4 },
+            { k: "4 เท่านั้น (ไม่มี 1–3 ในจังหวัด)", v: mix.only4 },
+          ].map((x) => (
+            <div key={x.k} className="rounded-2xl bg-mis-ink/[0.035] px-3 py-2.5">
+              <p className="text-[11px] text-mis-muted">{x.k}</p>
+              <p className="mt-0.5 text-[17px] font-semibold tabular-nums text-mis-ink">{x.v === null ? "—" : fmtNum(x.v)}</p>
+              <p className="text-[10.5px] text-mis-faint">{x.v === null ? "เฉพาะภาพจังหวัด" : lvl}</p>
+            </div>
+          ))}
         </div>
       </div>
       <SourceNote
