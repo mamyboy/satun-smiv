@@ -19,7 +19,8 @@
     "extract:indicator_relate_15": "node scripts/extract-indicator.js indicator_relate_15",
     "extract:indicator_relate_16": "node scripts/extract-indicator.js indicator_relate_16",
     "extract:all": "node scripts/extract-indicator.js all",
-    "update:data": "bash scripts/update-data.sh"
+    "update:data": "bash scripts/update-data.sh",
+    "update:population": "node scripts/mis-update-population.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
